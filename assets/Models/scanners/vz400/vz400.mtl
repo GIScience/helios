@@ -1,0 +1,13 @@
+# Blender MTL File: 'scanners.blend'
+# Material Count: 1
+
+newmtl UV
+Ns 96.078431
+Ka 0.200000 0.200000 0.200000
+Kd 1.000000 1.000000 1.000000
+Ks 0.300000 0.300000 0.300000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /home/sebastian/devel/lidar/lidar_sim/eclipse_workspace/helios-maven/assets/blender/tripod.png
