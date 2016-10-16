@@ -18,7 +18,7 @@
 		
 		<part>
 			<filter type="objloader">
-				<param type="string" key="filepath" value="data/sceneparts/arbaro/martin.obj"/>
+				<param type="string" key="filepath" value="data/sceneparts/arbaro/sassafras_low.obj"/>
 				<param type="boolean" key="castShadows" value="true"/>
 				<param type="boolean" key="receiveShadows" value="true"/>
 
