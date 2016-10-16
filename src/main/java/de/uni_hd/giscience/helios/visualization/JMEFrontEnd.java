@@ -159,7 +159,9 @@ public class JMEFrontEnd extends SimpleApplication implements EventListener {
 		 */
 
 		// Register sceneparts folder in asset manager:
-		assetManager.registerLocator("sceneparts", FileLocator.class);
+		assetManager.registerLocator("assets", FileLocator.class);
+		assetManager.registerLocator("data", FileLocator.class);
+
 
 		cam.setFrustumFar(100000);
 
