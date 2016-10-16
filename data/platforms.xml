@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<document>
+	<!-- ###################### BEGIN ALS Platforms ###################### -->
+	<platform id="quadcopter" model="platforms/quadcopter/quadcopter.obj" name="Quadrocopter UAV" type="multicopter" drag="0.01">
+		<scannerMount x="0" y="0" z="0.2">
+			<rot axis="roll" angle_deg="180" />
+			<rot axis="yaw" angle_deg="180" />
+		</scannerMount>
+	</platform>
+
+	<platform id="sr22" model="platforms/cirrus-sr22/sr22.obj" name="Cirrus SR-22 (15 deg. forward mount)" type="linearpath">
+		<scannerMount z="0.7">
+			<rot axis="roll" angle_deg="0" />
+			<rot axis="pitch" angle_deg="195" />
+		</scannerMount>
+	</platform>
+	<!-- ###################### END ALS Platforms ###################### -->
+
+
+	<!-- ###################### BEGIN MLS Platforms ###################### -->
+	<platform id="tractor" model="platforms/tractor/tractor.j3o" name="Tractor" type="groundvehicle" drag="0.005">
+		<scannerMount x="0" y="1" z="4">
+		<rot axis="yaw" angle_deg="90" />
+		<rot axis="roll" angle_deg="-30" />
+		</scannerMount>
+	</platform>
+
+	<platform id="tractor_leftside" model="platforms/tractor/tractor.obj" name="Tractor" type="groundvehicle" drag="0.01">
+		<scannerMount x="0" y="0.8" z="4">
+			<rot axis="roll" angle_deg="-35" />
+		</scannerMount>
+	</platform>
+	<!-- ###################### END MLS Platforms ###################### -->
+
+
+	<!-- ###################### BEGIN TLS Platforms ###################### -->
+	<platform id="tripod" model="platforms/tripod/tripod.obj" name="TLS Tripod" type="dummy" drag="0">
+		<scannerMount x="0" y="0" z="1.5">
+		</scannerMount>
+	</platform>
+	<!-- ###################### END TLS Platforms ###################### -->
+	
+</document>
