@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<document>
+<!-- Default scanner settings: -->
+<scannerSettings  id="profile1" active="true" pulseFreq_hz="100000" scanAngle_deg="50.0" scanFreq_hz="120" headRotatePerSec_deg="10.0" headRotateStart_deg="0.0" headRotateStop_deg="0.0"/>
+
+<survey  defaultScannerSettings="profile1" name="Arbaro Demo" scene="data/scenes/demo/arbaro_demo.xml#arbaro_demo" platform="data/platforms.xml#tripod" scanner="data/scanners_tls.xml#riegl_vz400">
+<leg>
+<platformSettings  x="0.8566228596501162" y="25.587345982284987" z="-1.1102230246251565E-16" onGround="true"/>
+<scannerSettings  active="true" pulseFreq_hz="100000" scanAngle_deg="50.0" scanFreq_hz="120" headRotatePerSec_deg="10.0" headRotateStart_deg="128.91550582542592" headRotateStop_deg="223.45354343073828"/>
+</leg>
+
+</survey>
+</document>
