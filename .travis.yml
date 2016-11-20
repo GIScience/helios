@@ -2,12 +2,11 @@ language: java
 jdk:
 - oraclejdk8
 script: mvn clean compile package assembly:single
-notifications:
-  email: false
 deploy:
   provider: releases
   api_key:
     secure: iFpFF3nJuyQ3UaGQaOo3waJo28IniD88V35F9r0JZRejLS4unlRxjgO9pspK3xdJ5sLWo0MNA3OWwoPZrcqGkoVCBdYriJ1aYvw3mbAxlXhzUFVJruJZdeYv9wcRLRIDzDuqtqK/NKfqa/aYqQCfzcfgr67WWYns+++iOxW/6JHTcQvFHvGhEuzb2oXqSnFnSNgCpWlrmEyhe2XRbaLA1nXsxHwn+7P160JfgZhflqlfn2FadjCgdzECfG2c6Bt/FpKH5VuROy7+bAsTtrf6hQ+zttHmoe17kNQjzHfGphhMehH3D7vnhr/n18KbmPAFaiXdSrr3al5ud388Ou+FJaqBbKVplbRzGBMem/zcyw9AqJyQf9+vXsD1WCjT9SnY+AOZr5SGCGeFSxc9N0Q8FQBR2yBawalO8sTXuEjnYpryQWZF2NBXFvpVHuHva5lIZtI+0hFpzsDkm5pdvk+ErRoXeKhwf0DwJrlAPVz1HSvPEpHr7d+UZtqcF+jAeyxeC3kf7mtVJRJ20QEQO4KdHnUzrhZtOc2PwF0oxXdIlColw8ijs+AzrDcLYaOjYAv+QIbLpFITbCqqZ6ZUgRPk6wCCikt8uYMxoeUjhoCQMJDFjxZ90TcDWTZbtw6QoDj37v9sdV29VOwQCoUu8alhxPo5OwPE9v8P0pjBxZ9uWmA=
-  file: target/helios-*-bin.zip
+  file_glob: true
+  file: "target/helios-*-bin.zip"
   on:
     tags: true
