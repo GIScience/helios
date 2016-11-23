@@ -5,6 +5,12 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import de.uni_hd.giscience.helios.core.scanner.Measurement;
 
+/**
+ * The abstract ray pulse runnable is a worker/task which calculates points and attributes for a beam pulse.
+ * The calculation is realized in the speciallization of the run()-function. This function can calculate points
+ * be analysing the beam-vector(orientation and attitude).
+ *
+ */
 public abstract class AbstractPulseRunnable implements Runnable {
 
 	// ############## BEGIN Static variables ###############
@@ -23,13 +29,30 @@ public abstract class AbstractPulseRunnable implements Runnable {
 	final static double speedOfLight_mPerPicosec = 0.000299792458;
 	// ############## END Static variables ###############
 
+    /**
+     * Reference to detector for detector properties.
+     */
 	AbstractDetector detector = null;
 
+    /**
+     * Orientation of the detector.
+     */
 	Vector3D absoluteBeamOrigin;
-	Rotation absoluteBeamAttitude;
 
+    /**
+     * Attitude of the detector
+     */
+    Rotation absoluteBeamAttitude;
+
+    /**
+     * Count of pulses in detector
+     */
 	int currentPulseNum;
-	Long currentGpsTime;
+
+    /**
+     * Timestamp of measurement
+     */
+    Long currentGpsTime;
 
 	// The variable 'boxmuller_use_last' is needed for the box-muller gaussian random number generator:
 	boolean boxmuller_use_last = false;
@@ -108,6 +131,17 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		return (Pt2 * reflectanceBRDF * Math.cos(incidenceAngle) * eta_atm * eta_sys);
 	}
 
+    /**
+     * Calculates the coordinate and writes point attributes to a file and measure buffer.
+     *
+     * @param beamOrigin
+     * @param beamDir
+     * @param distance Distance between scanner and this calculated point
+     * @param intensity Intensity of the point
+     * @param returnNumber ?
+     * @param fullwaveIndex ?
+     * @param hitObjectId ?
+     */
 	void capturePoint(Vector3D beamOrigin, Vector3D beamDir, double distance, double intensity, int returnNumber, int fullwaveIndex, String hitObjectId) {
 
 		// Abort if point distance is below mininum scanner range:
@@ -115,12 +149,7 @@ public abstract class AbstractPulseRunnable implements Runnable {
 			return;
 		}
 
-		// ########## BEGIN Apply gaussian range accuracy error ###########
-		double precision = this.detector.cfg_device_accuracy_m / 2;
-		double error = -precision + Math.random() * (precision * 2);
-		error += boxMullerRandom(0.0, this.detector.cfg_device_accuracy_m / 2);
-		distance += error;
-		// ########## END Apply gaussian range accuracy error ###########
+        distance = reduceDistanceAccuracy(distance);
 
 		// Calculate final recorded point coordinates:
 		Vector3D pointPos = beamOrigin.add(beamDir.scalarMultiply(distance));
@@ -140,6 +169,23 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		detector.mBuffer.add(m);
 	}
 
-	public abstract void run();
+    /**
+     * Apply gaussian range accuracy error to the distance
+     * @param distance accurate distance
+     * @return distance with error
+     */
+    private double reduceDistanceAccuracy(double distance) {
+        double precision = this.detector.cfg_device_accuracy_m / 2;
+        double error = -precision + Math.random() * (precision * 2);
+        error += boxMullerRandom(0.0, this.detector.cfg_device_accuracy_m / 2);
+
+        distance += error;
+        return distance;
+    }
+
+    /**
+     * Function which calculate points on beam
+     */
+    public abstract void run();
 
 }

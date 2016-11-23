@@ -178,9 +178,9 @@ public class ShowPlatformAndScannerAppState extends BaseAppState {
 			if (sim.isPaused() || !mCurrentScanner.isActive() || !mCurrentScanner.beamDeflector.lastPulseLeftDevice()) {
 				beamLength = 0;
 			} else {
-				int lastMeasurementIndex = sim.mbuffer.getLastRecordedPointIndex();
+				int lastMeasurementIndex = sim.mPointBuffer.getLastRecordedPointIndex();
 
-				Measurement lastPoint = sim.mbuffer.getEntryAt(lastMeasurementIndex);
+				Measurement lastPoint = sim.mPointBuffer.getEntryAt(lastMeasurementIndex);
 
 				if (mCurrentScanner.lastPulseWasHit() && lastPoint != null) {
 					beamLength = (float) lastPoint.distance;

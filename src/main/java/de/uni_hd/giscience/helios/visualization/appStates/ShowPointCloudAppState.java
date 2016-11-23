@@ -2,8 +2,6 @@ package de.uni_hd.giscience.helios.visualization.appStates;
 
 import java.nio.FloatBuffer;
 
-import javax.vecmath.Color4f;
-
 import com.jme3.app.Application;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.KeyInput;
@@ -95,13 +93,7 @@ public class ShowPointCloudAppState extends BaseAppState implements EventListene
 		pointCloudGeometry = new Geometry("pointCloud", pointCloudMesh);
 
 		Material pointCloudMaterial = new Material(mAssetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Color4f col = sim.pointCloudColor;
-
-		if (col != null) {
-			pointCloudMaterial.setColor("Color", new ColorRGBA(col.x, col.y, col.z, col.w));
-		} else {
-			pointCloudMaterial.setColor("Color", new ColorRGBA(1, 1, 0, 1));
-		}
+		pointCloudMaterial.setColor("Color", new ColorRGBA(1, 1, 0, 1));
 
 		pointCloudGeometry.setMaterial(pointCloudMaterial);
 
@@ -126,7 +118,7 @@ public class ShowPointCloudAppState extends BaseAppState implements EventListene
 
 		boolean pointAdded = false;
 
-		int lastMeasurementIndex = sim.mbuffer.getLastRecordedPointIndex();
+		int lastMeasurementIndex = sim.mPointBuffer.getLastRecordedPointIndex();
 
 		// Was a new point added since the previous update of the point cloud VBO?
 		if (lastMeasurementIndex != lastVisualizedPointIndex) {
@@ -136,11 +128,11 @@ public class ShowPointCloudAppState extends BaseAppState implements EventListene
 
 			while (true) {
 
-				Measurement m = sim.mbuffer.getEntryAt(lastVisualizedPointIndex);
+				Measurement m = sim.mPointBuffer.getEntryAt(lastVisualizedPointIndex);
 
 				lastVisualizedPointIndex++;
 
-				if (lastVisualizedPointIndex >= sim.mbuffer.getSize() - 1) {
+				if (lastVisualizedPointIndex >= sim.mPointBuffer.getSize() - 1) {
 					lastVisualizedPointIndex = 0;
 				}
 

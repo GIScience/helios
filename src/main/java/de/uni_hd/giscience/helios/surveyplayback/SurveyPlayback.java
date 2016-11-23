@@ -26,12 +26,13 @@ public class SurveyPlayback extends Simulation {
 	String mOutputFilePathString = "";
 	String mFormatString = "%03d";
 
+	public boolean exitAtEnd = false;
+
 	public SurveyPlayback(Survey survey) {
 		this.mSurvey = survey;
 
 		// ######## BEGIN Create part of the leg point cloud file path #######
 		Calendar cal = Calendar.getInstance();
-		cal.getTime();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 		mDateString = sdf.format(cal.getTime());
 		mOutputFilePathString = "output/" + File.separator + "Survey Playback" + File.separator + mSurvey.name + File.separator + mDateString + File.separator;
