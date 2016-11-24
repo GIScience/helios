@@ -20,8 +20,6 @@ public class SurveyPlayback extends Simulation {
 
 	int mCurrentLegIndex = 0;
 
-	protected int mNumRunsCompleted = 0;
-
 	String mDateString = "";
 	String mOutputFilePathString = "";
 	String mFormatString = "%03d";
@@ -30,61 +28,66 @@ public class SurveyPlayback extends Simulation {
 
 	public SurveyPlayback(Survey survey) {
 		this.mSurvey = survey;
-
-		// ######## BEGIN Create part of the leg point cloud file path #######
-		Calendar cal = Calendar.getInstance();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-		mDateString = sdf.format(cal.getTime());
-		mOutputFilePathString = "output/" + File.separator + "Survey Playback" + File.separator + mSurvey.name + File.separator + mDateString + File.separator;
-		// ######## END Create part of the leg point cloud file path #######
+		this.mOutputFilePathString = CreateBasePath();
 
 		this.setScanner(mSurvey.scanner);
 
-		// ############### BEGIN If the leg has no survey defined, create a default one ################
+		// create default leg/stage when no leg is created
 		if (mSurvey.legs.size() == 0) {
 
-			Leg leg = new Leg();
-
-			// Set leg scanner settings:
-			leg.mScannerSettings = new ScannerSettings();
-
 			// Set leg position to the center of the scene:
-			PlatformSettings ps = new PlatformSettings();
-			ps.setPosition(mSurvey.scanner.platform.scene.getAABB().getCentroid());
+			Leg leg = new Leg();
+			leg.mPlatformSettings.setPosition(mSurvey.scanner.platform.scene.getAABB().getCentroid());
 
-			leg.mPlatformSettings = ps;
-
-			// Add leg to survey:
 			mSurvey.addLeg(0, leg);
 
 			SebEvents.events.fire("survey_changed", null);
 		}
-		// ############### END If the leg has no survey defined, create a default one ################
 
-		// Start the first leg:
+		// Prepare simulation with first leg
 		startLeg(0, true);
 
 		// If we start a new scan, move platform to destination of first leg:
 		getScanner().platform.setPosition(getCurrentLeg().mPlatformSettings.getPosition());
 	}
 
+	/**
+	 * Creates a base path to store simulation results
+	 * @return relative path for output simulation results
+	 */
+	protected String CreateBasePath() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+		mDateString = sdf.format(cal.getTime());
+		return "output/" + File.separator + "Survey Playback" + File.separator + mSurvey.name + File.separator + mDateString + File.separator;
+	}
+
+	/**
+	 * Creates the result filename with path for the present leg
+	 * @return relative file path
+	 */
+	public String getCurrentOutputPath() {
+		return mOutputFilePathString + File.separator + "points" + File.separator + "leg" + String.format(mFormatString, getCurrentLegIndex()) + "_points.xyz";
+	}
+
+	/**
+	 * Prepare the result output file on each simulation start
+	 */
 	@Override
 	public void doSimStep() {
 
 		if (!mLegStarted) {
-			// ########## BEGIN Clear point cloud file for current leg ###########
-			String outputPath = getCurrentOutputPath();
-			FileWriter bla;
-			try {
-				bla = new FileWriter(outputPath);
-				bla.close();
-			} catch (IOException e) {
-
+			File f = new File(getCurrentOutputPath());
+			if( f.exists())
+			{
+				f.delete();
+				System.out.println("WARNING: Old file detected, this file was deleted (" + f.getAbsolutePath() + ")");
 			}
-			// ########## END Clear point cloud file for current leg ###########
+			getScanner().detector.setOutputFilePath(getCurrentOutputPath());
+
 			mLegStarted = true;
 		}
-		
+
 		super.doSimStep();
 	}
 
@@ -121,15 +124,18 @@ public class SurveyPlayback extends Simulation {
 		}
 	}
 
-	public String getCurrentOutputPath() {
-		return mOutputFilePathString + File.separator + "points" + File.separator + "leg" + String.format(mFormatString, getCurrentLegIndex()) + "_points.xyz";
-	}
+
 
 	@Override
 	protected void onLegComplete() {
 		startNextLeg(false);
 	}
 
+	/**
+	 * ????? is this used in start of simulation or is this used when the user switch between stage/leg points???
+	 * @param legIndex
+	 * @param manual
+	 */
 	public void startLeg(int legIndex, boolean manual) {
 
 		if (legIndex < 0 || legIndex >= mSurvey.legs.size()) {
@@ -172,9 +178,6 @@ public class SurveyPlayback extends Simulation {
 			// ################ END Set platform destination ##################
 		}
 
-		// Specify output file:
-		getScanner().detector.setOutputFilePath(getCurrentOutputPath());
-
 		SebEvents.events.fire("playback_init_leg", getCurrentLeg());
 	}
 
@@ -202,7 +205,6 @@ public class SurveyPlayback extends Simulation {
 	}
 
 	public void writeToFile(String filePath) {
-
 		XmlSurveyWriter.writeSurveyXmlFile(this.mSurvey, filePath);
 
 		System.out.println("saved!");
