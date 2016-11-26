@@ -98,7 +98,7 @@ public class XmlSurveyWriter {
 		sss += mas("scanFreq_hz", settings.scanFreq_Hz);
 		sss += mas("headRotatePerSec_deg", String.format("%.2f", settings.headRotatePerSec_rad * (180 / Math.PI)));
 		sss += mas("headRotateStart_deg" , String.format("%.2f", settings.headRotateStart_rad * (180 / Math.PI)));
-		sss += mas("headRotateStop_deg"  , String.format("%.2f", settings.headRotateStop_rad * (180 / Math.PI)));
+		sss += mas("headRotateStop_deg", String.format("%.2f", settings.headRotateStopInRad * (180 / Math.PI)));
 		sss += "/>";
 
 		return sss;

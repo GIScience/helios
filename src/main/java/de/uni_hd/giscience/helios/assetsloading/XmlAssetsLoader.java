@@ -409,7 +409,7 @@ public class XmlAssetsLoader {
 		template.beamSampleQuality = 1;
 		template.headRotatePerSec_rad = 0d;
 		template.headRotateStart_rad = 0d;
-		template.headRotateStop_rad = 0d;
+		template.headRotateStopInRad = 0d;
 		template.pulseFreq_Hz = null;
 		template.scanAngle_rad = 0;
 		template.scanFreq_Hz = null;
@@ -426,7 +426,7 @@ public class XmlAssetsLoader {
 				// in case that a value is not specified in the XML!
 				template.headRotatePerSec_rad *= (180.0 / Math.PI);
 				template.headRotateStart_rad *= (180.0 / Math.PI);
-				template.headRotateStop_rad *= (180.0 / Math.PI);
+				template.headRotateStopInRad *= (180.0 / Math.PI);
 				template.scanAngle_rad *= (180.0 / Math.PI);
 			} else {
 				System.out.println("XML Assets Loader: WARNING: Scanner settings template specified in line " + node.getUserData("lineNumber") + " not found: '" + template
@@ -439,7 +439,7 @@ public class XmlAssetsLoader {
 		settings.headRotatePerSec_rad = (Double) getAttribute(node, "headRotatePerSec_deg", Double.class, template.headRotatePerSec_rad) * (Math.PI / 180);
 		settings.headRotateStart_rad = (Double) getAttribute(node, "headRotateStart_deg", Double.class, template.headRotateStart_rad) * (Math.PI / 180);
 
-		double hrStop_rad = (Double) getAttribute(node, "headRotateStop_deg", Double.class, template.headRotateStop_rad) * (Math.PI / 180);
+		double hrStop_rad = (Double) getAttribute(node, "headRotateStop_deg", Double.class, template.headRotateStopInRad) * (Math.PI / 180);
 
 		// Make sure that rotation stop angle is larger than rotation start angle if rotation speed is positive:
 		if (hrStop_rad < settings.headRotateStart_rad && settings.headRotatePerSec_rad > 0) {
@@ -453,7 +453,7 @@ public class XmlAssetsLoader {
 			System.exit(-1);
 		}
 
-		settings.headRotateStop_rad = hrStop_rad;
+		settings.headRotateStopInRad = hrStop_rad;
 
 		settings.pulseFreq_Hz = (Integer) getAttribute(node, "pulseFreq_hz", Integer.class, template.pulseFreq_Hz);
 		settings.scanAngle_rad = (Double) getAttribute(node, "scanAngle_deg", Double.class, template.scanAngle_rad) * (Math.PI / 180);

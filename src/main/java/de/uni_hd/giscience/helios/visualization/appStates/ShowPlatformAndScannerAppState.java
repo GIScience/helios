@@ -206,7 +206,7 @@ public class ShowPlatformAndScannerAppState extends BaseAppState {
 			// the coordinates of the last captured point are used. In most situations, these will not match,
 			// since pulses are simulated asynchronously by multiple threads. sbecht 2016-02-10
 
-			scannerNode.setLocalRotation(am2jme_rotation(mCurrentScanner.scannerHead.getMountRelativeAttitude()));
+			scannerNode.setLocalRotation(am2jme_rotation(mCurrentScanner.scannerHead.getHeadOrientation()));
 			// ############### END Update scanner ###############
 		} else {
 			System.out.println("Current scanner is null!");

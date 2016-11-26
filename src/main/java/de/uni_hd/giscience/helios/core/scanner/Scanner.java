@@ -67,7 +67,11 @@ public class Scanner extends Asset {
 	public void doSimStep(ExecutorService execService) {
 
 		// Update head attitude (we do this even when the scanner is inactive):
-		scannerHead.doSimStep(cfg_setting_pulseFreq_Hz);
+		try {
+			scannerHead.doSimStep(cfg_setting_pulseFreq_Hz);
+		} catch (Exception e) {
+			System.out.println("WARNING: PulseFrequence is to small.");
+		}
 
 		// If the scanner is inactive, stop here:
 		if (!state_isActive) {
@@ -88,7 +92,7 @@ public class Scanner extends Asset {
 		Vector3D absoluteBeamOrigin = this.platform.getAbsoluteMountPosition().add(cfg_device_headRelativeEmitterPosition);
 
 		// Calculate absolute beam attitude:
-		Rotation mountRelativeEmitterAttitude = this.scannerHead.getMountRelativeAttitude().applyTo(this.cfg_device_headRelativeEmitterAttitude);
+		Rotation mountRelativeEmitterAttitude = this.scannerHead.getHeadOrientation().applyTo(this.cfg_device_headRelativeEmitterAttitude);
 		Rotation absoluteBeamAttitude = platform.getAbsoluteMountAttitude().applyTo(mountRelativeEmitterAttitude).applyTo(beamDeflector.getEmitterRelativeAttitude());
 
 		// Caclulate time of the emitted pulse

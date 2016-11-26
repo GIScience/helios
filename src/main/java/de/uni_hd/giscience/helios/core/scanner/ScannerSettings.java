@@ -8,7 +8,7 @@ public class ScannerSettings extends Asset {
 	public Integer beamSampleQuality = 1;
 	public Double headRotatePerSec_rad = 0d;
 	public Double headRotateStart_rad = 0d;
-	public Double headRotateStop_rad = 0d;
+	public Double headRotateStopInRad = 0d;
 	public Integer pulseFreq_Hz = 0;
 	public double scanAngle_rad = 0;
 	public Integer scanFreq_Hz = 0;
@@ -27,7 +27,7 @@ public class ScannerSettings extends Asset {
 		this.beamSampleQuality = other.beamSampleQuality;
 		this.headRotatePerSec_rad = other.headRotatePerSec_rad;
 		this.headRotateStart_rad = other.headRotateStart_rad;
-		this.headRotateStop_rad = other.headRotateStop_rad;
+		this.headRotateStopInRad = other.headRotateStopInRad;
 		this.pulseFreq_Hz = other.pulseFreq_Hz;
 		this.scanAngle_rad = other.scanAngle_rad;
 		this.scanFreq_Hz = other.scanFreq_Hz;
