@@ -4,14 +4,13 @@ import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
- * This class represents the scanner head.
- * It is used to simulate the head rotation of the scanner.
- * The position of the head is important for calculation of
- * the direction of beam to emit it. The simulation
- * calculations on each doSimStep() call, the rotation
+ * This class represents the scanner head it is used to rotate
+ * the beam deflector.
+ * The simulation calculations on each doSimStep() call, the rotation
  * steps out of rotation speed (rad/s). This rotation is
  * provided as scanner head orientation around the
  * scanner head axis.
+ *
  */
 public class ScannerHead {
 
@@ -74,6 +73,7 @@ public class ScannerHead {
    * Calculates the next rotation step for the scanner head
    *
    * @param pulseFreqInHz rotation simulation step width in Hz (1/s)
+   * @throws Exception If the pulse frequency is zero or negative
    */
   public void doSimStep(double pulseFreqInHz) throws Exception {
 

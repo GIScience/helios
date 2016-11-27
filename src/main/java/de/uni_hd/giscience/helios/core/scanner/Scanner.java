@@ -24,8 +24,8 @@ public class Scanner extends Asset {
 	public String cfg_device_visModelPath = "";
 
 	// ########## BEGIN Emitter ###########
-	public Vector3D cfg_device_headRelativeEmitterPosition = new Vector3D(0, 0, 0);
-	public Rotation cfg_device_headRelativeEmitterAttitude = new Rotation(new Vector3D(1, 0, 0), 0);
+	public Vector3D position = new Vector3D(0, 0, 0);
+	public Rotation orientation = new Rotation(new Vector3D(1, 0, 0), 0);
 	ArrayList<Integer> cfg_device_supportedPulseFreqs_Hz = new ArrayList<Integer>();
 	public double cfg_device_beamDivergence_rad = 0;
 	double cfg_device_pulseLength_ns = 0;
@@ -38,12 +38,11 @@ public class Scanner extends Asset {
 	boolean state_lastPulseWasHit = false;
 	boolean state_isActive = true;
 
-	
-	public Scanner(double beamDiv_rad, Vector3D beamOrigin, Rotation beamOrientation, ArrayList<Integer> pulseFreqs, double pulseLength_ns, String visModel) {
-		
-		// Configure emitter:
-		this.cfg_device_headRelativeEmitterPosition = beamOrigin;
-		this.cfg_device_headRelativeEmitterAttitude = beamOrientation;
+
+	public Scanner(double beamDiv_rad, Vector3D position, Rotation orientation, ArrayList<Integer> pulseFreqs, double pulseLength_ns, String visModel) {
+
+		this.position = position;
+		this.orientation = orientation;
 		this.cfg_device_supportedPulseFreqs_Hz = pulseFreqs;
 		this.cfg_device_beamDivergence_rad = beamDiv_rad;
 		this.cfg_device_pulseLength_ns = pulseLength_ns;
@@ -81,7 +80,7 @@ public class Scanner extends Asset {
 		// Update beam deflector attitude:
 		this.beamDeflector.doSimStep();
 
-		if (!beamDeflector.lastPulseLeftDevice()) {
+		if (!beamDeflector.hasLastPulseLeftDevice()) {
 			return;
 		}
 
@@ -89,11 +88,11 @@ public class Scanner extends Asset {
 		state_currentPulseNumber++;
 
 		// Calculate absolute beam origin:
-		Vector3D absoluteBeamOrigin = this.platform.getAbsoluteMountPosition().add(cfg_device_headRelativeEmitterPosition);
+		Vector3D absoluteBeamOrigin = this.platform.getAbsoluteMountPosition().add(position);
 
 		// Calculate absolute beam attitude:
-		Rotation mountRelativeEmitterAttitude = this.scannerHead.getHeadOrientation().applyTo(this.cfg_device_headRelativeEmitterAttitude);
-		Rotation absoluteBeamAttitude = platform.getAbsoluteMountAttitude().applyTo(mountRelativeEmitterAttitude).applyTo(beamDeflector.getEmitterRelativeAttitude());
+		Rotation mountRelativeEmitterAttitude = this.scannerHead.getHeadOrientation().applyTo(this.orientation);
+		Rotation absoluteBeamAttitude = platform.getAbsoluteMountAttitude().applyTo(mountRelativeEmitterAttitude).applyTo(beamDeflector.getOrientation());
 
 		// Caclulate time of the emitted pulse
 		Long unixTime = System.currentTimeMillis() / 1000L;

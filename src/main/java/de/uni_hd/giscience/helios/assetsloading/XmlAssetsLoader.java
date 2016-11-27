@@ -368,18 +368,16 @@ public class XmlAssetsLoader {
 		AbstractBeamDeflector beamDeflector = null;
 
 		if (str_opticsType.equals("oscillating")) {
-
 			int scanProduct = (Integer) getAttribute(scannerNode, "scanProduct", Integer.class, 1000000);
-			beamDeflector = new OscillatingMirrorBeamDeflector(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz, scanProduct);
+			beamDeflector = new OscillatingMirrorBeamDeflector(scanAngleMax_rad, scanProduct);
 		} else if (str_opticsType.equals("conic")) {
-			beamDeflector = new ConicBeamDeflector(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz);
+			beamDeflector = new ConicBeamDeflector(scanAngleMax_rad, scanFreqMax_Hz);
 		} else if (str_opticsType.equals("line")) {
 			int numFibers = (Integer) getAttribute(scannerNode, "numFibers", Integer.class, 1);
-			beamDeflector = new FiberArrayBeamDeflector(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz, numFibers);
+			beamDeflector = new FiberArrayBeamDeflector(scanAngleMax_rad, numFibers);
 		} else if (str_opticsType.equals("rotating")) {
-
 			Double scanAngleEffectiveMax_rad = (Double) getAttribute(scannerNode, "scanAngleEffectiveMax_deg", Double.class, 0) * (Math.PI / 180);
-			beamDeflector = new PolygonMirrorBeamDeflector(scanFreqMax_Hz, scanFreqMin_Hz, scanAngleMax_rad, scanAngleEffectiveMax_rad);
+			beamDeflector = new PolygonMirrorBeamDeflector(scanAngleMax_rad, scanAngleEffectiveMax_rad);
 		}
 
 		if (beamDeflector == null) {
