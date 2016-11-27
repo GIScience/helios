@@ -19,13 +19,13 @@ public abstract class AbstractBeamDeflector {
   /**
    * \todo unclear information.
    */
-  private double scanFreqInHz = 0;
+  double scanFreqInHz = 0;
 
   /**
    * Stores the current scan radial angle of the deflector.
    * \todo what is the difference between scan angle and beam angle?
    */
-  private double currentScanAngleInRad = 0;
+  double currentScanAngleInRad = 0;
 
   // Stat variables:
   protected double currentBeamAngleInRad = 0;
