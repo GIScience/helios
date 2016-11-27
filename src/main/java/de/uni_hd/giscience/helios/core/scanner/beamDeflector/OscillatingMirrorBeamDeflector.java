@@ -63,15 +63,15 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 	}
 
 	@Override
-	public void setScanFreq_Hz(double scanFreq_Hz) {
+    public void setScanFreq_Hz(double scanFreqInHz) {
 
 		// Max. scan frequency is limited by scan product:
-      if (this.currentScanAngleInRad * (180.0 / Math.PI) * scanFreq_Hz > this.cfg_device_scanProduct) {
+      if (this.currentScanAngleInRad * (180.0 / Math.PI) * scanFreqInHz > this.cfg_device_scanProduct) {
         System.out.println("ERROR: Requested scan frequency exceeds device limitations as defined by scan product. Will set it to maximal possible value.");
-        scanFreq_Hz = ((double) this.cfg_device_scanProduct) / (this.currentScanAngleInRad * (180.0 / Math.PI));
+        scanFreqInHz = ((double) this.cfg_device_scanProduct) / (this.currentScanAngleInRad * (180.0 / Math.PI));
       }
 
-      this.scanFreqInHz = scanFreq_Hz;
+      this.scanFreqInHz = scanFreqInHz;
 
       System.out.println("Scan frequency set to " + this.scanFreqInHz + " Hz.");
     }

@@ -15,12 +15,12 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 public class ScannerHead {
 
   /**
-   * Defines the rotation axis of the scanner
+   * Defines the rotation axis of the scanner.
    */
-  public final Vector3D rotationAxis;
+  private final Vector3D rotationAxis;
 
   /**
-   * Defines the maximal radial rotation per second of the scanner (rad/s)
+   * Defines the maximal radial rotation per second of the scanner (rad/s).
    */
   private final double maximalRotationSpeedInRad;
 
@@ -35,17 +35,17 @@ public class ScannerHead {
   private double endOfRotationSimulationInRad = 0;
 
   /**
-   * Stores the rotation angle for the current simulation step
+   * Stores the rotation angle for the current simulation step.
    */
   private double currentRotateAngleInRad = 0;
 
   /**
-   * Stores the rotation matrix for the current simulation step
+   * Stores the rotation matrix for the current simulation step.
    */
   private Rotation currentHeadOrientation = new Rotation(new Vector3D(0, 1, 0), 0);
 
   /**
-   * Constructs the scanner head simulation part
+   * Constructs the scanner head simulation part.
    *
    * @param headRotationAxis     Rotation axis of the scanner
    * @param maxHeadRotationSpeed Maximal supported rotation speed of the scanner (rad/s)
@@ -56,7 +56,7 @@ public class ScannerHead {
   }
 
   /**
-   * Updates Scanner head simulation properties from a scanner configuration
+   * Updates Scanner head simulation properties from a scanner configuration.
    *
    * @param settings Scanner configuration
    */
@@ -70,7 +70,7 @@ public class ScannerHead {
   }
 
   /**
-   * Calculates the next rotation step for the scanner head
+   * Calculates the next rotation step for the scanner head.
    *
    * @param pulseFreqInHz rotation simulation step width in Hz (1/s)
    * @throws Exception If the pulse frequency is zero or negative
@@ -87,7 +87,7 @@ public class ScannerHead {
   }
 
   /**
-   * Provides orientation of scanner head
+   * Provides orientation of scanner head.
    *
    * @return scanner head orientation
    */
@@ -96,7 +96,7 @@ public class ScannerHead {
   }
 
   /**
-   * Returns completeness information of the rotation simulation
+   * Returns completeness information of the rotation simulation.
    *
    * @return Returns True if the rotation is completed, False when it is still running
    */
@@ -119,10 +119,11 @@ public class ScannerHead {
    *
    * @param angleInRad rotation angle of the scanner head in radial
    */
-  public void setCurrentRotateAngleInRad(double angleInRad) {
+  private void setCurrentRotateAngleInRad(double angleInRad) {
 
-    if (angleInRad == currentRotateAngleInRad)
+    if (angleInRad == currentRotateAngleInRad) {
       return;
+    }
 
     currentRotateAngleInRad = angleInRad;
     currentHeadOrientation = new Rotation(rotationAxis, currentRotateAngleInRad % (2 * Math.PI));
@@ -136,7 +137,7 @@ public class ScannerHead {
    *                    The value has to be smaller then maximal allowed rotation speed.
    *                    If the value is larger then the maximal allowed rotation speed is set.
    */
-  public void setRotatePerSecInRad(double rotateSpeed) {
+  private void setRotatePerSecInRad(double rotateSpeed) {
 
     // Limit head rotate speed to device maximum:
     if (Math.abs(rotateSpeed) > maximalRotationSpeedInRad) {

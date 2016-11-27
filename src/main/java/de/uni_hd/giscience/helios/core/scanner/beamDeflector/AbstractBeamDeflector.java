@@ -14,23 +14,23 @@ public abstract class AbstractBeamDeflector {
   /**
    * Defines the maximal allowed deflection angle.
    */
-  final double maximalDeflectionAngleInRad;
+  private final double maximalDeflectionAngleInRad;
 
   /**
-   * \todo unclear information
+   * \todo unclear information.
    */
-  double scanFreqInHz = 0;
+  private double scanFreqInHz = 0;
 
   /**
    * Stores the current scan radial angle of the deflector.
    * \todo what is the difference between scan angle and beam angle?
    */
-  double currentScanAngleInRad = 0;
+  private double currentScanAngleInRad = 0;
 
   // Stat variables:
-  double currentBeamAngleInRad = 0;
+  protected double currentBeamAngleInRad = 0;
 
-  double rotationAngleBetweenPulsesInRad;
+  protected double rotationAngleBetweenPulsesInRad;
 
   /**
    * Stores the current orientation of the emitter.
@@ -94,22 +94,22 @@ public abstract class AbstractBeamDeflector {
    * Assign the scan frequency, This frequency is used to calculate the scan angle step width.
    * The scan angle step width is used by doSimStep().
    *
-   * @param scanFreq_hz \todo what is the different between pulse and scan frequency?
+   * @param scanFreqInHz \todo what is the different between pulse and scan frequency?
    */
-  public void setScanFreq_Hz(double scanFreq_hz) {
-    this.scanFreqInHz = scanFreq_hz;
+  public void setScanFreq_Hz(double scanFreqInHz) {
+    this.scanFreqInHz = scanFreqInHz;
   }
 
   /**
    * Runs simulation step of the deflector. This will generate a new orientation for pulse emitter.
    */
-  abstract public void doSimStep();
+  public abstract void doSimStep();
 
   /**
    * Marks the deflector has send the last pulse out.
    *
    * @return True last pulse is send
    */
-  abstract public boolean hasLastPulseLeftDevice();
+  public abstract boolean hasLastPulseLeftDevice();
 
 }
