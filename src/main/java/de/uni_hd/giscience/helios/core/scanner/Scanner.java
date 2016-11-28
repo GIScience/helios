@@ -1,155 +1,175 @@
-// TODO 2: Fix scan angle getting out of control under certain (unknown) circumstances
+// TODO(Sebastian Bechtold): Fix scan angle getting out of control under certain (unknown) circumstances
 
 package de.uni_hd.giscience.helios.core.scanner;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
 
 import de.uni_hd.giscience.helios.core.Asset;
 import de.uni_hd.giscience.helios.core.platform.Platform;
 import de.uni_hd.giscience.helios.core.scanner.beamDeflector.AbstractBeamDeflector;
 import de.uni_hd.giscience.helios.core.scanner.detector.AbstractDetector;
 
+/**
+ * The scanner represents the lidar scanning system.
+ * This scanner gets information about the flight position/orientation form the platform
+ * and combines it with the scanning head for the beam origin and orientation on emit.
+ */
 public class Scanner extends Asset {
 
-	public ScannerHead scannerHead = null;
-	public AbstractBeamDeflector beamDeflector = null;
-	public Platform platform = null;
-	public AbstractDetector detector = null;
+  public ScannerHead scannerHead = null;
+  public AbstractBeamDeflector beamDeflector = null;
+  public Platform platform = null;
+  public AbstractDetector detector = null;
 
-	// Misc:
-	public String cfg_device_visModelPath = "";
+  // Misc:
+  public String cfg_device_visModelPath = "";
 
-	// ########## BEGIN Emitter ###########
-	public Vector3D position = new Vector3D(0, 0, 0);
-	public Rotation orientation = new Rotation(new Vector3D(1, 0, 0), 0);
-	ArrayList<Integer> cfg_device_supportedPulseFreqs_Hz = new ArrayList<Integer>();
-	public double cfg_device_beamDivergence_rad = 0;
-	double cfg_device_pulseLength_ns = 0;
+  // ########## BEGIN Emitter ###########
+  public Vector3D position = new Vector3D(0, 0, 0);
+  public Rotation orientation = new Rotation(new Vector3D(1, 0, 0), 0);
+  ArrayList<Integer> cfg_device_supportedPulseFreqs_Hz = new ArrayList<Integer>();
+  public double cfg_device_beamDivergence_rad = 0;
+  double cfg_device_pulseLength_ns = 0;
 
-	int cfg_setting_pulseFreq_Hz = 0;
-	// ########## END Emitter ###########
+  int pulseFrequencyInHz = 0;
+  // ########## END Emitter ###########
 
-	// State variables:
-	int state_currentPulseNumber = 0;
-	boolean state_lastPulseWasHit = false;
-	boolean state_isActive = true;
+  // State variables:
+  int state_currentPulseNumber = 0;
+  boolean state_lastPulseWasHit = false;
+  boolean isScannerActive = true;
 
 
-	public Scanner(double beamDiv_rad, Vector3D position, Rotation orientation, ArrayList<Integer> pulseFreqs, double pulseLength_ns, String visModel) {
+  public Scanner(
+          double beamDiv_rad,
+          Vector3D position,
+          Rotation orientation,
+          ArrayList<Integer> pulseFreqs,
+          double pulseLength_ns, String visModel) {
 
-		this.position = position;
-		this.orientation = orientation;
-		this.cfg_device_supportedPulseFreqs_Hz = pulseFreqs;
-		this.cfg_device_beamDivergence_rad = beamDiv_rad;
-		this.cfg_device_pulseLength_ns = pulseLength_ns;
+    this.position = position;
+    this.orientation = orientation;
+    this.cfg_device_supportedPulseFreqs_Hz = pulseFreqs;
+    this.cfg_device_beamDivergence_rad = beamDiv_rad;
+    this.cfg_device_pulseLength_ns = pulseLength_ns;
 
-		// Configure misc:
-		this.cfg_device_visModelPath = visModel;
-	}
-	
-	public void applySettings(ScannerSettings settings) {
+    // Configure misc:
+    this.cfg_device_visModelPath = visModel;
+  }
 
-		// Configure scanner:
-		this.setActive(settings.active);
-		this.setPulseFreq_Hz(settings.pulseFreq_Hz);
-		
-		detector.applySettings(settings);
-		scannerHead.applySettings(settings);
-		beamDeflector.applySettings(settings);
-	}
+  public void applySettings(ScannerSettings settings) {
 
-	
-	public void doSimStep(ExecutorService execService) {
+    // Configure scanner:
+    this.setActive(settings.active);
+    this.setPulseFreq_Hz(settings.pulseFreq_Hz);
 
-		// Update head attitude (we do this even when the scanner is inactive):
-		try {
-			scannerHead.doSimStep(cfg_setting_pulseFreq_Hz);
-		} catch (Exception e) {
-			System.out.println("WARNING: PulseFrequence is to small.");
-		}
+    detector.applySettings(settings);
+    scannerHead.applySettings(settings);
+    beamDeflector.applySettings(settings);
+  }
 
-		// If the scanner is inactive, stop here:
-		if (!state_isActive) {
-			return;
-		}
 
-		// Update beam deflector attitude:
-		this.beamDeflector.doSimStep();
+  /**
+   * The do simulation step function calculates for one simulation step the position and
+   * orientation for beam emitting and detects the reflected beam from the environment
+   * by the detector.
+   *
+   * @param execService Used for sharing thread pool
+   */
+  public void doSimStep(ExecutorService execService) {
 
-		if (!beamDeflector.hasLastPulseLeftDevice()) {
-			return;
-		}
+    // Update head attitude (we do this even when the scanner is inactive):
+    try {
+      scannerHead.doSimStep(pulseFrequencyInHz);
+    } catch (Exception e) {
+      System.out.println("WARNING: PulseFrequence is to small.");
+    }
 
-		// Global pulse counter:
-		state_currentPulseNumber++;
+    // If the scanner is inactive, stop here:
+    if (!isScannerActive) {
+      return;
+    }
 
-		// Calculate absolute beam origin:
-		Vector3D absoluteBeamOrigin = this.platform.getAbsoluteMountPosition().add(position);
+    // Update beam deflector attitude:
+    this.beamDeflector.doSimStep();
 
-		// Calculate absolute beam attitude:
-		Rotation mountRelativeEmitterAttitude = this.scannerHead.getHeadOrientation().applyTo(this.orientation);
-		Rotation absoluteBeamAttitude = platform.getAbsoluteMountAttitude().applyTo(mountRelativeEmitterAttitude).applyTo(beamDeflector.getOrientation());
+    if (!beamDeflector.hasLastPulseLeftDevice()) {
+      return;
+    }
 
-		// Caclulate time of the emitted pulse
-		Long unixTime = System.currentTimeMillis() / 1000L;
-		Long currentGpsTime = (unixTime - 315360000) - 1000000000;
+    // Global pulse counter:
+    state_currentPulseNumber++;
 
-		detector.simulatePulse(execService, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
-	}
+    // Calculate absolute beam origin:
+    Vector3D absoluteBeamOrigin = platform.getAbsoluteMountPosition().add(position);
 
-	
-	
-	public int getPulseFreq_Hz() {
-		return this.cfg_setting_pulseFreq_Hz;
-	}
+    // Calculate absolute beam orientation:
+    Rotation beamOrientationInScannerSystem = this.scannerHead.getHeadOrientation().applyTo(this.orientation);
+    Rotation beamOrientationInEnvironmentSystem = platform.getAbsoluteMountAttitude()
+            .applyTo(beamOrientationInScannerSystem)
+            .applyTo(beamDeflector.getOrientation());
 
-	public double getPulseLength_ns() {
-		return this.cfg_device_pulseLength_ns;
-	}
+    // Calculate time of the emitted pulse
+    // \todo(KoeMai) Why is the emitted pulse using the system clock for simulation is this a good idea?
+    // The timestamps are not reproduced in test setup for verification of software.
+    Long unixTime = System.currentTimeMillis() / 1000L;
+    Long currentGpsTime = (unixTime - 315360000) - 1000000000;
 
-	
-	public boolean lastPulseWasHit() {
-		return this.state_lastPulseWasHit;
-	}
+    detector.simulatePulse(execService, absoluteBeamOrigin, beamOrientationInEnvironmentSystem, state_currentPulseNumber, currentGpsTime);
+  }
 
-	public boolean isActive() {
-		return this.state_isActive;
-	}
 
-	public void setActive(boolean active) {
-		state_isActive = active;
-	}
+  public int getPulseFreq_Hz() {
+    return this.pulseFrequencyInHz;
+  }
 
-	
-	public void setPulseFreq_Hz(int pulseFreq_Hz) {
+  public double getPulseLength_ns() {
+    return this.cfg_device_pulseLength_ns;
+  }
 
-		// Check of requested pulse freq is > 0:
-		if (pulseFreq_Hz < 0) {
-			System.out.println("ERROR: Attempted to set pulse frequency < 0. This is not possible.");
-			pulseFreq_Hz = 0;
-		}
 
-		// Check if requested pulse freq is supported by device:
-		if (!cfg_device_supportedPulseFreqs_Hz.contains(pulseFreq_Hz)) {
-			System.out.println("WARNING: Specified pulse frequency is not supported by this device. We'll set it nevertheless.");
-		}
+  public boolean lastPulseWasHit() {
+    return this.state_lastPulseWasHit;
+  }
 
-		// Set new pulse frequency:
-		this.cfg_setting_pulseFreq_Hz = pulseFreq_Hz;
+  public boolean isActive() {
+    return this.isScannerActive;
+  }
 
-		//System.out.println("Pulse frequency set to " + this.cfg_setting_pulseFreq_Hz);
-	}
-	
-	public void setLastPulseWasHit(boolean value) {
-		
-		if (value == state_lastPulseWasHit) return;
-		
-		synchronized(this) {
-			this.state_lastPulseWasHit = value;
-		}
-	}
+  public void setActive(boolean active) {
+    isScannerActive = active;
+  }
+
+
+  public void setPulseFreq_Hz(int pulseFrequencyInHz) {
+
+    // Check of requested pulse freq is > 0:
+    if (pulseFrequencyInHz < 0) {
+      System.out.println("ERROR: Attempted to set pulse frequency < 0. This is not possible.");
+      pulseFrequencyInHz = 0;
+    }
+
+    // Check if requested pulse freq is supported by device:
+    if (!cfg_device_supportedPulseFreqs_Hz.contains(pulseFrequencyInHz)) {
+      System.out.println("WARNING: Specified pulse frequency is not supported by this device. We'll set it nevertheless.");
+    }
+
+    // Set new pulse frequency:
+    this.pulseFrequencyInHz = pulseFrequencyInHz;
+  }
+
+  public void setLastPulseWasHit(boolean value) {
+
+    if (value == state_lastPulseWasHit) {
+      return;
+    }
+
+    synchronized (this) {
+      this.state_lastPulseWasHit = value;
+    }
+  }
 }
