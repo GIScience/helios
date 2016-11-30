@@ -173,7 +173,7 @@ public class EditScanFieldAppState extends BaseAppState implements EventListener
 		ve1.pos = v1;
 
 		Double angle_start = currentLeg.mScannerSettings.headRotateStart_rad + Math.PI / 2;
-		Double angle_stop = currentLeg.mScannerSettings.headRotateStop_rad + Math.PI / 2;
+		Double angle_stop = currentLeg.mScannerSettings.headRotateStopInRad + Math.PI / 2;
 
 		Double angle_diff = angle_stop - angle_start;
 
@@ -310,14 +310,14 @@ public class EditScanFieldAppState extends BaseAppState implements EventListener
 			// ############ BEGIN Set up horizontal scan field indicator ############
 			Leg currentLeg = mPlayback.getCurrentLeg();
 
-			if (mScanAngleStart_last != currentLeg.mScannerSettings.headRotateStart_rad || mScanAngleStop_last != currentLeg.mScannerSettings.headRotateStop_rad) {
+			if (mScanAngleStart_last != currentLeg.mScannerSettings.headRotateStart_rad || mScanAngleStop_last != currentLeg.mScannerSettings.headRotateStopInRad) {
 
 				Mesh mesh = updateScanFieldIndicatorMesh();
 				// mScanFieldGeometry.setMesh(mesh);
 				// mScanFieldGeometry.updateModelBound();
 
 				mScanAngleStart_last = currentLeg.mScannerSettings.headRotateStart_rad;
-				mScanAngleStop_last = currentLeg.mScannerSettings.headRotateStop_rad;
+				mScanAngleStop_last = currentLeg.mScannerSettings.headRotateStopInRad;
 			}
 
 		}
@@ -325,7 +325,7 @@ public class EditScanFieldAppState extends BaseAppState implements EventListener
 
 		// ################# BEGIN Edit Scan Field Mode ####################
 
-		float scanFieldHalfWidth_rad = (float) ((ss.headRotateStop_rad - ss.headRotateStart_rad) / 2);
+		float scanFieldHalfWidth_rad = (float) ((ss.headRotateStopInRad - ss.headRotateStart_rad) / 2);
 		float scanFieldCenterAngle_rad = (float) (ss.headRotateStart_rad + scanFieldHalfWidth_rad);
 
 		if (mGrowDir != 0) {
@@ -340,7 +340,7 @@ public class EditScanFieldAppState extends BaseAppState implements EventListener
 			}
 
 			ss.headRotateStart_rad = (double) (scanFieldCenterAngle_rad - scanFieldHalfWidth_rad);
-			ss.headRotateStop_rad = (double) (scanFieldCenterAngle_rad + scanFieldHalfWidth_rad);
+			ss.headRotateStopInRad = (double) (scanFieldCenterAngle_rad + scanFieldHalfWidth_rad);
 
 			sim.getScanner().applySettings(ss);
 
@@ -350,7 +350,7 @@ public class EditScanFieldAppState extends BaseAppState implements EventListener
 			scanFieldCenterAngle_rad += mRotateDir * mRotateStep;
 
 			ss.headRotateStart_rad = (double) (scanFieldCenterAngle_rad - scanFieldHalfWidth_rad);
-			ss.headRotateStop_rad = (double) (scanFieldCenterAngle_rad + scanFieldHalfWidth_rad);
+			ss.headRotateStopInRad = (double) (scanFieldCenterAngle_rad + scanFieldHalfWidth_rad);
 
 			sim.getScanner().applySettings(ss);
 		}

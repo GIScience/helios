@@ -10,10 +10,10 @@ public class FiberArrayBeamDeflector extends AbstractBeamDeflector {
 	int cfg_device_numFibers = 32;
 	int state_currentFiber = 0;
 
-	
-	public FiberArrayBeamDeflector(double scanAngleMax_rad, double scanFreqMax_Hz, double scanFreqMin_Hz, int numFibers) {
-			
-		super(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz);
+
+	public FiberArrayBeamDeflector(double scanAngleMax_rad, int numFibers) {
+
+		super(scanAngleMax_rad);
 	
 		cfg_device_numFibers = numFibers;
 	}
@@ -22,7 +22,7 @@ public class FiberArrayBeamDeflector extends AbstractBeamDeflector {
 	public void applySettings(ScannerSettings settings) {
 		super.applySettings(settings);
 
-		state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad;
+		currentBeamAngleInRad = -this.currentScanAngleInRad;
 		setNumFibers(cfg_device_numFibers);
 	}
 	
@@ -30,13 +30,13 @@ public class FiberArrayBeamDeflector extends AbstractBeamDeflector {
 	public void setNumFibers(int numFibers) {
 		this.cfg_device_numFibers = numFibers;
 
-		cached_angleBetweenPulses_rad = (this.cfg_setting_scanAngle_rad * 2) / cfg_device_numFibers;
+		rotationAngleBetweenPulsesInRad = (this.currentScanAngleInRad * 2) / cfg_device_numFibers;
 	}
 
 	@Override
 	public void doSimStep() {
 
-		state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad + cached_angleBetweenPulses_rad * state_currentFiber;
+		currentBeamAngleInRad = -this.currentScanAngleInRad + rotationAngleBetweenPulsesInRad * state_currentFiber;
 
 		state_currentFiber++;
 		if (state_currentFiber >= cfg_device_numFibers) {
@@ -44,6 +44,11 @@ public class FiberArrayBeamDeflector extends AbstractBeamDeflector {
 		}
 
 		// Compute relative beam direction:
-		this.cached_emitterRelativeAttitude = new Rotation(Directions.right, state_currentBeamAngle_rad);
+		this.orientation = new Rotation(Directions.right, currentBeamAngleInRad);
+	}
+
+	@Override
+	public boolean hasLastPulseLeftDevice() {
+		return true;
 	}
 }

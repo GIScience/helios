@@ -8,9 +8,12 @@ import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
 
 public class ConicBeamDeflector extends AbstractBeamDeflector {
 
-	public ConicBeamDeflector(double scanAngleMax_rad, double scanFreqMax_Hz, double scanFreqMin_Hz) {
-		super(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz);
-		// TODO Auto-generated constructor stub
+	double cfg_device_scanFreqMax_Hz = 0;
+
+	public ConicBeamDeflector(double scanAngleMax_rad, double scanFreqMax_Hz) {
+		super(scanAngleMax_rad);
+
+		cfg_device_scanFreqMax_Hz = scanFreqMax_Hz;
 	}
 
 
@@ -21,10 +24,10 @@ public class ConicBeamDeflector extends AbstractBeamDeflector {
 	public void applySettings(ScannerSettings settings) {
 
 		super.applySettings(settings);
-			
-		cached_angleBetweenPulses_rad = (double) (this.cfg_device_scanFreqMax_Hz * Math.PI * 2) / settings.pulseFreq_Hz;
 
-		r1 = new Rotation(new Vector3D(1, 0, 0), this.cfg_setting_scanAngle_rad);
+		rotationAngleBetweenPulsesInRad = (double) (this.cfg_device_scanFreqMax_Hz * Math.PI * 2) / settings.pulseFreq_Hz;
+
+		r1 = new Rotation(new Vector3D(1, 0, 0), this.currentScanAngleInRad);
 	}
 	
 
@@ -32,17 +35,22 @@ public class ConicBeamDeflector extends AbstractBeamDeflector {
 	public void doSimStep() {
 
 		// ####### BEGIN Update mirror angle ########
-		state_currentBeamAngle_rad += cached_angleBetweenPulses_rad;
+		currentBeamAngleInRad += rotationAngleBetweenPulsesInRad;
 
-		if (state_currentBeamAngle_rad >= Math.PI * 2) {
-			state_currentBeamAngle_rad = state_currentBeamAngle_rad % (Math.PI * 2);
+		if (currentBeamAngleInRad >= Math.PI * 2) {
+			currentBeamAngleInRad = currentBeamAngleInRad % (Math.PI * 2);
 		}
 		// ####### END Update mirror angle ########
 
 		// Rotate to current position on the cone circle:
-		Rotation r2 = new Rotation(Directions.forward, state_currentBeamAngle_rad);
+		Rotation r2 = new Rotation(Directions.forward, currentBeamAngleInRad);
 
-		this.cached_emitterRelativeAttitude = r2.applyTo(r1);
+		this.orientation = r2.applyTo(r1);
+	}
+
+	@Override
+	public boolean hasLastPulseLeftDevice() {
+		return true;
 	}
 
 }

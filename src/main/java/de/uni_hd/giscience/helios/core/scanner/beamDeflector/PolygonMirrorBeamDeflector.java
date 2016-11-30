@@ -9,14 +9,11 @@ public class PolygonMirrorBeamDeflector extends AbstractBeamDeflector {
 	protected double cfg_device_scanAngleEffective_rad = 0;
 	protected double cfg_device_scanAngleEffectiveMax_rad = 0;
 
-	
-	public PolygonMirrorBeamDeflector(	 
-										double scanFreqMax_Hz, 
-										double scanFreqMin_Hz,
-										double scanAngleMax_rad,
-										double scanAngleEffectiveMax_rad) {
-		
-		super(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz);
+
+	public PolygonMirrorBeamDeflector(double scanAngleMax_rad,
+									  double scanAngleEffectiveMax_rad) {
+
+		super(scanAngleMax_rad);
 		
 		this.cfg_device_scanAngleEffectiveMax_rad = scanAngleEffectiveMax_rad;
 		this.cfg_device_scanAngleEffective_rad = this.cfg_device_scanAngleEffectiveMax_rad;
@@ -27,18 +24,18 @@ public class PolygonMirrorBeamDeflector extends AbstractBeamDeflector {
 	public void doSimStep() {
 
 		// Update beam angle:
-		state_currentBeamAngle_rad += cached_angleBetweenPulses_rad;
+		currentBeamAngleInRad += rotationAngleBetweenPulsesInRad;
 
-		if (state_currentBeamAngle_rad >= this.cfg_setting_scanAngle_rad) {
-			state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad;
+		if (currentBeamAngleInRad >= this.currentScanAngleInRad) {
+			currentBeamAngleInRad = -this.currentScanAngleInRad;
 		}
 
 		// Rotate to current position:
-		this.cached_emitterRelativeAttitude = new Rotation(Directions.right, state_currentBeamAngle_rad);
+		this.orientation = new Rotation(Directions.right, currentBeamAngleInRad);
 	}
 
 	@Override
-	public boolean lastPulseLeftDevice() {		
-		return Math.abs(this.state_currentBeamAngle_rad) <= this.cfg_device_scanAngleEffective_rad;
+	public boolean hasLastPulseLeftDevice() {
+		return Math.abs(this.currentBeamAngleInRad) <= this.cfg_device_scanAngleEffective_rad;
 	}
 }

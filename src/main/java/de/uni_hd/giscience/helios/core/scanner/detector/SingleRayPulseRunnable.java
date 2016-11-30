@@ -6,9 +6,26 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import de.uni_hd.giscience.helios.core.scene.RaySceneIntersection;
 import de.uni_hd.giscience.helios.core.scene.Scene;
 
+/**
+ * The single ray pulse runnable is a worker/task for calculation points out of a single beam pulse.
+ *
+ */
 public class SingleRayPulseRunnable extends AbstractPulseRunnable {
 
-	public SingleRayPulseRunnable(AbstractDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int pulseNumber, Long gpstime) {
+	/**
+	 * Initializes the worker
+	 * @param detector
+	 * @param absoluteBeamOrigin
+	 * @param absoluteBeamAttitude
+	 * @param pulseNumber
+	 * @param gpstime
+	 */
+	public SingleRayPulseRunnable(
+			AbstractDetector detector,
+			Vector3D absoluteBeamOrigin,
+			Rotation absoluteBeamAttitude,
+			int pulseNumber,
+			Long gpstime) {
 		super(detector, absoluteBeamOrigin, absoluteBeamAttitude, pulseNumber, gpstime);
 	}
 

@@ -2,73 +2,114 @@ package de.uni_hd.giscience.helios.core.scanner.beamDeflector;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-
 import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
 
+/**
+ * The beam deflector is used to calculate the direction of
+ * emitting the pulse. There are different deflection methods.
+ * This class is the interface for the different defection method models.
+ */
 public abstract class AbstractBeamDeflector {
 
-	// Device definition variables:
-	double cfg_device_scanFreqMax_Hz = 0;
-	double cfg_device_scanFreqMin_Hz = 0;
-	double cfg_device_scanAngleMax_rad = 0;
+  /**
+   * Defines the maximal allowed deflection angle.
+   */
+  private final double maximalDeflectionAngleInRad;
 
-	// Setting variables:
-	double cfg_setting_scanFreq_Hz = 0;
-	double cfg_setting_scanAngle_rad = 0;
+  /**
+   * \todo unclear information.
+   */
+  double scanFreqInHz = 0;
 
-	// Stat variables:
-	double state_currentBeamAngle_rad = 0;
+  /**
+   * Stores the current scan radial angle of the deflector.
+   * \todo what is the difference between scan angle and beam angle?
+   */
+  double currentScanAngleInRad = 0;
 
-	public AbstractBeamDeflector(double scanAngleMax_rad, double scanFreqMax_Hz, double scanFreqMin_Hz) {
-		this.cfg_device_scanAngleMax_rad = scanAngleMax_rad;
-		this.cfg_device_scanFreqMax_Hz = scanFreqMax_Hz;
-		this.cfg_device_scanFreqMin_Hz = scanFreqMin_Hz;
+  // Stat variables:
+  protected double currentBeamAngleInRad = 0;
 
-	}
-	
-	// ############# BEGIN "state cache" members ##############
-	// Members with "_cached" prefix contain values that are derived from state variables and
-	// required multiple times per sim step at different places in the code. In order to avoid
-	// unneccessary re-computations of the same value, they are cached in special variables:
-	double cached_angleBetweenPulses_rad;
-	Rotation cached_emitterRelativeAttitude = new Rotation(new Vector3D(1, 0, 0), 0);
-	// ############# END "state cache" members ##############
+  protected double rotationAngleBetweenPulsesInRad;
 
-	public void applySettings(ScannerSettings settings) {
+  /**
+   * Stores the current orientation of the emitter.
+   */
+  Rotation orientation = new Rotation(new Vector3D(1, 0, 0), 0);
 
-		setScanAngle_rad(settings.scanAngle_rad);
-		setScanFreq_Hz(settings.scanFreq_Hz);
-		
-		state_currentBeamAngle_rad = 0;
-		cached_angleBetweenPulses_rad = (double) (this.cfg_setting_scanFreq_Hz * this.cfg_setting_scanAngle_rad * 2) / settings.pulseFreq_Hz;
-	}
+  /**
+   * Constructs the interface properties of the beam deflector.
+   *
+   * @param deflectionAngleMaxInRad maximal allowed beam deflections angle
+   */
+  public AbstractBeamDeflector(double deflectionAngleMaxInRad) {
+    this.maximalDeflectionAngleInRad = deflectionAngleMaxInRad;
+  }
 
-	public Rotation getEmitterRelativeAttitude() {
-		return this.cached_emitterRelativeAttitude;
-	}
+  /**
+   * Loads the beam deflector settings from scanner configuration.
+   *
+   * @param settings Scanner configuration of interest
+   */
+  public void applySettings(ScannerSettings settings) {
 
+    setScanAngleInRad(settings.scanAngle_rad);
+    setScanFreq_Hz(settings.scanFreq_Hz);
 
-	abstract public void doSimStep();
+    currentBeamAngleInRad = 0;
+    rotationAngleBetweenPulsesInRad =
+            (this.scanFreqInHz * this.currentScanAngleInRad * 2)
+                    / settings.pulseFreq_Hz;
+  }
 
-	public void setScanAngle_rad(double scanAngle_rad) {
+  /**
+   * Provides orientation of deflector.
+   *
+   * @return orientation
+   */
+  public Rotation getOrientation() {
+    return this.orientation;
+  }
 
-		if (scanAngle_rad < 0) {
-			scanAngle_rad = 0;
-		} else if (scanAngle_rad > this.cfg_device_scanAngleMax_rad) {
-			scanAngle_rad = this.cfg_device_scanAngleMax_rad;
-		}
+  /**
+   * Assigns the current scan angle. The method checks the maximal allowed scan
+   * angle. If the current scan angle is larger then the method will set it to
+   * the maximal allowed value.
+   *
+   * @param scanAngleInRad current scan angle (Allowed range 0..maximalDeflectionAngleInRad)
+   */
+  public void setScanAngleInRad(double scanAngleInRad) {
 
-		this.cfg_setting_scanAngle_rad = scanAngle_rad;
+    // Check scan angle range
+    if (scanAngleInRad < 0) {
+      scanAngleInRad = 0;
+    } else if (scanAngleInRad > this.maximalDeflectionAngleInRad) {
+      scanAngleInRad = this.maximalDeflectionAngleInRad;
+    }
 
-		// System.out.println("Scan angle set to " + this.cfg_setting_scanAngle_rad * (180.0 / Math.PI));
-	}
+    this.currentScanAngleInRad = scanAngleInRad;
+  }
 
-	public boolean lastPulseLeftDevice() {
-		return true;
-	}
+  /**
+   * Assign the scan frequency, This frequency is used to calculate the scan angle step width.
+   * The scan angle step width is used by doSimStep().
+   *
+   * @param scanFreqInHz \todo what is the different between pulse and scan frequency?
+   */
+  public void setScanFreq_Hz(double scanFreqInHz) {
+    this.scanFreqInHz = scanFreqInHz;
+  }
 
-	public void setScanFreq_Hz(double scanFreq_hz) {
-		this.cfg_setting_scanFreq_Hz = scanFreq_hz;
-	}
+  /**
+   * Runs simulation step of the deflector. This will generate a new orientation for pulse emitter.
+   */
+  public abstract void doSimStep();
+
+  /**
+   * Marks the deflector has send the last pulse out.
+   *
+   * @return True last pulse is send
+   */
+  public abstract boolean hasLastPulseLeftDevice();
 
 }

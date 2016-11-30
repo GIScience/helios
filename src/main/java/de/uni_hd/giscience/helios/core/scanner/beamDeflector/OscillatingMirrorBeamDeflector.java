@@ -7,10 +7,10 @@ import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
 
 public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 
-	public OscillatingMirrorBeamDeflector(double scanAngleMax_rad, double scanFreqMax_Hz, double scanFreqMin_Hz, int scanProduct) {
-		super(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz);
-		
-		this.cfg_device_scanProduct = scanProduct;
+  public OscillatingMirrorBeamDeflector(double scanAngleMax_rad, int scanProduct) {
+    super(scanAngleMax_rad);
+
+    this.cfg_device_scanProduct = scanProduct;
 	}
 
 	int cfg_device_scanProduct = 1000000;
@@ -23,9 +23,9 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 	public void applySettings(ScannerSettings settings) {
 		super.applySettings(settings);
 
-		cached_angleBetweenPulses_rad = (double) (this.cfg_setting_scanFreq_Hz * this.cfg_setting_scanAngle_rad * 4) / settings.pulseFreq_Hz;
-		cached_pulsesPerScanline = (int) (((double) settings.pulseFreq_Hz) / this.cfg_setting_scanFreq_Hz);
-	}
+      rotationAngleBetweenPulsesInRad = (this.scanFreqInHz * this.currentScanAngleInRad * 4) / settings.pulseFreq_Hz;
+      cached_pulsesPerScanline = (int) (((double) settings.pulseFreq_Hz) / this.scanFreqInHz);
+    }
 
 	
 	@Override
@@ -40,39 +40,44 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 		// Update beam angle:
 		int bla = Math.min(currentScanLinePulse, cached_pulsesPerScanline / 2) - Math.max(0, currentScanLinePulse - cached_pulsesPerScanline / 2);
 
-		state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad + cached_angleBetweenPulses_rad * bla;
+      currentBeamAngleInRad = -this.currentScanAngleInRad + rotationAngleBetweenPulsesInRad * bla;
 
 		// Rotate to current position:
-		this.cached_emitterRelativeAttitude = new Rotation(Directions.right, state_currentBeamAngle_rad);
-	}
+      this.orientation = new Rotation(Directions.right, currentBeamAngleInRad);
+    }
 
 	@Override
-	public void setScanAngle_rad(double scanAngle_rad) {
+    public void setScanAngleInRad(double scanAngle_rad) {
 
 		double scanAngle_deg = scanAngle_rad * (180.0 / Math.PI);
 
 		// Max. scan angle is limited by scan product:
-		if (scanAngle_deg * this.cfg_setting_scanFreq_Hz > this.cfg_device_scanProduct) {
-			System.out.println("ERROR: Requested scan angle exceeds device limitations as defined by scan product. Will set it to maximal possible value.");
-			scanAngle_deg = ((double) this.cfg_device_scanProduct) / this.cfg_setting_scanFreq_Hz;
-		}
+      if (scanAngle_deg * this.scanFreqInHz > this.cfg_device_scanProduct) {
+        System.out.println("ERROR: Requested scan angle exceeds device limitations as defined by scan product. Will set it to maximal possible value.");
+        scanAngle_deg = ((double) this.cfg_device_scanProduct) / this.scanFreqInHz;
+      }
 
-		this.cfg_setting_scanAngle_rad = scanAngle_deg * (Math.PI / 180);
+      this.currentScanAngleInRad = scanAngle_deg * (Math.PI / 180);
 
 		System.out.println("Scan angle set to " + scanAngle_deg + " degrees.");
 	}
 
 	@Override
-	public void setScanFreq_Hz(double scanFreq_Hz) {
+    public void setScanFreq_Hz(double scanFreqInHz) {
 
 		// Max. scan frequency is limited by scan product:
-		if (this.cfg_setting_scanAngle_rad * (180.0 / Math.PI) * scanFreq_Hz > this.cfg_device_scanProduct) {
-			System.out.println("ERROR: Requested scan frequency exceeds device limitations as defined by scan product. Will set it to maximal possible value.");
-			scanFreq_Hz = ((double) this.cfg_device_scanProduct) / (this.cfg_setting_scanAngle_rad * (180.0 / Math.PI));
-		}
+      if (this.currentScanAngleInRad * (180.0 / Math.PI) * scanFreqInHz > this.cfg_device_scanProduct) {
+        System.out.println("ERROR: Requested scan frequency exceeds device limitations as defined by scan product. Will set it to maximal possible value.");
+        scanFreqInHz = ((double) this.cfg_device_scanProduct) / (this.currentScanAngleInRad * (180.0 / Math.PI));
+      }
 
-		this.cfg_setting_scanFreq_Hz = scanFreq_Hz;
+      this.scanFreqInHz = scanFreqInHz;
 
-		System.out.println("Scan frequency set to " + this.cfg_setting_scanFreq_Hz + " Hz.");
-	}
+      System.out.println("Scan frequency set to " + this.scanFreqInHz + " Hz.");
+    }
+
+  @Override
+  public boolean hasLastPulseLeftDevice() {
+    return true;
+  }
 }

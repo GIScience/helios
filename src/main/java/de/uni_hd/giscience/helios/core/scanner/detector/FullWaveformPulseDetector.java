@@ -24,7 +24,6 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 
 	@Override
 	public void applySettings(ScannerSettings settings) {
-		super.applySettings(settings);
 		// Configure pulse simulation:
 		cfg_setting_beamSampleQuality = settings.beamSampleQuality;		
 	}
@@ -51,11 +50,11 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 	}
 
 	@Override
-	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime) {
-		// TODO Auto-generated method stub
+    public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int currentPulseNumber, long currentGpsTime) {
+      // TODO Auto-generated method stub
 
 		// Submit pulse computation task to multithread executor service:
-		AbstractPulseRunnable worker = new FullWaveformPulseRunnable(this, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
+      AbstractPulseRunnable worker = new FullWaveformPulseRunnable(this, absoluteBeamOrigin, absoluteBeamAttitude, currentPulseNumber, currentGpsTime);
 
 		// Submit pulse runnable to worker threads:
 		execService.execute(worker);

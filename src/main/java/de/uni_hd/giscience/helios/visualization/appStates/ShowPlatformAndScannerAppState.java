@@ -134,8 +134,8 @@ public class ShowPlatformAndScannerAppState extends BaseAppState {
 
 				// Set emitter position and attitude:
 
-				emitterNode.setLocalTranslation(am2jme_vector(mCurrentScanner.cfg_device_headRelativeEmitterPosition));
-				emitterNode.setLocalRotation(am2jme_rotation(mCurrentScanner.cfg_device_headRelativeEmitterAttitude));
+				emitterNode.setLocalTranslation(am2jme_vector(mCurrentScanner.position));
+				emitterNode.setLocalRotation(am2jme_rotation(mCurrentScanner.orientation));
 
 				// ################ BEGIN What happens when there is a new platform ################
 				if (mCurrentScanner.platform != currentPlatform) {
@@ -170,17 +170,19 @@ public class ShowPlatformAndScannerAppState extends BaseAppState {
 		if (mCurrentScanner != null) {
 
 			// Update laser beam attitude:
-			beamGeometry.setLocalRotation(am2jme_rotation(mCurrentScanner.beamDeflector.getEmitterRelativeAttitude()));
+			beamGeometry.setLocalRotation(am2jme_rotation(mCurrentScanner.beamDeflector.getOrientation()));
 
 			// Update laser beam length:
 			float beamLength = 10000;
 
-			if (sim.isPaused() || !mCurrentScanner.isActive() || !mCurrentScanner.beamDeflector.lastPulseLeftDevice()) {
+			if (sim.isPaused() ||
+							!mCurrentScanner.isActive() ||
+							!mCurrentScanner.beamDeflector.hasLastPulseLeftDevice()) {
 				beamLength = 0;
 			} else {
-				int lastMeasurementIndex = sim.mbuffer.getLastRecordedPointIndex();
+				int lastMeasurementIndex = sim.mPointBuffer.getLastRecordedPointIndex();
 
-				Measurement lastPoint = sim.mbuffer.getEntryAt(lastMeasurementIndex);
+				Measurement lastPoint = sim.mPointBuffer.getEntryAt(lastMeasurementIndex);
 
 				if (mCurrentScanner.lastPulseWasHit() && lastPoint != null) {
 					beamLength = (float) lastPoint.distance;
@@ -206,7 +208,7 @@ public class ShowPlatformAndScannerAppState extends BaseAppState {
 			// the coordinates of the last captured point are used. In most situations, these will not match,
 			// since pulses are simulated asynchronously by multiple threads. sbecht 2016-02-10
 
-			scannerNode.setLocalRotation(am2jme_rotation(mCurrentScanner.scannerHead.getMountRelativeAttitude()));
+			scannerNode.setLocalRotation(am2jme_rotation(mCurrentScanner.scannerHead.getHeadOrientation()));
 			// ############### END Update scanner ###############
 		} else {
 			System.out.println("Current scanner is null!");
