@@ -97,10 +97,16 @@ public class LidarSim {
 		// ############ BEGIN Start visualization module #############
 
 		if (!headless) {
+			// Slow down simulation for visualization
+			playback.setSimSpeedFactor( 0);
+
 			JMEFrontEnd frontend = new JMEFrontEnd();
 			frontend.init(playback);
 			frontend.start();
 			playback.pause(true);
+
+		} else {
+			playback.setSimSpeedFactor( 0);
 		}
 		// ############ END Start visualization module #############
 

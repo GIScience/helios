@@ -5,6 +5,9 @@ package de.uni_hd.giscience.helios.core;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 import javax.vecmath.Color4f;
@@ -14,8 +17,10 @@ import sebevents.SebEvents;
 
 public abstract class Simulation {
 
-	private final static long NANOSECONDS_PER_SECOND = 1000000000;
-	
+    final Lock lock = new ReentrantLock();
+    final Condition condPause  = lock.newCondition();
+
+  private final static long NANOSECONDS_PER_SECOND = 1000000000;
 	protected boolean mStopped = false;
 	protected boolean mPaused = false;
 
@@ -28,7 +33,7 @@ public abstract class Simulation {
 
 	private ThreadPoolExecutor mExecService = null;
 
-	private long mStopwatch = 0;
+	private long simulationTimeStamp = 0;
 
 	public boolean exitAtEnd = false;
 	
@@ -48,8 +53,7 @@ public abstract class Simulation {
 	};
 
 	public void doSimStep() {
-		
-		
+
 		// Check for leg completion:		
 		if (mScanner.scannerHead.rotateCompleted() && getScanner().platform.waypointReached()) {
 			onLegComplete();
@@ -60,14 +64,18 @@ public abstract class Simulation {
 		mScanner.doSimStep(mExecService);
 
 		// ######### BEGIN Real-time brake (slow down simulation to real-world time speed ) #########
-		long timePerStep_nanosec = Math.round(NANOSECONDS_PER_SECOND / this.mScanner.getPulseFreq_Hz());
-		long now = System.nanoTime();
+		long timePerStepInNanoSec = Math.round(NANOSECONDS_PER_SECOND / this.mScanner.getPulseFreq_Hz());
 
-		while (now - mStopwatch < timePerStep_nanosec * mSimSpeedFactor) {
-			now = System.nanoTime();
+		if( mSimSpeedFactor == 0) {
+			long now = System.nanoTime();
+
+			while (now - simulationTimeStamp < timePerStepInNanoSec * mSimSpeedFactor) {
+				now = System.nanoTime();
+			}
+			simulationTimeStamp = now;
+		} else {
+			simulationTimeStamp += timePerStepInNanoSec;
 		}
-		
-		mStopwatch = now;
 		// ######### END Real-time brake (slow down simulation to real-world time speed ) #########
 	}
 
@@ -92,6 +100,9 @@ public abstract class Simulation {
 	public void pause(boolean pause) {
 		this.mPaused = pause;
 		SebEvents.events.fire("simulation_pause_state_changed", this.mPaused);
+      lock.lock();
+        condPause.signal();
+      lock.unlock();
 	}
 
 	protected void setScanner(Scanner scanner) {
@@ -112,11 +123,13 @@ public abstract class Simulation {
 		SebEvents.events.fire("playback_set_scanner", this.mScanner);
 	}
 
-	public void setSimSpeedFactor(double factor) {
+  /**
+   * Sets the simulation speed delay factor.
 
-		if (factor <= 0) {
-			factor = 0.0001;
-		}
+   * @param factor slow down each simulation step by (x*1ns)/PulseFrequencyInHz
+   *               If the value is ZERO 0.0 then the simulation runs as fast as possible
+   */
+	public void setSimSpeedFactor(double factor) {
 
 		if (factor > 10000) {
 			factor = 10000;
@@ -134,19 +147,23 @@ public abstract class Simulation {
 		// ############# BEGIN Main simulation loop ############
 		while (!isStopped()) {
 
-			if (!isPaused()) {
-				doSimStep();
-			} else {
-				// ATTENTION:
-				// For some unknown reason, toggling pause mode only works if the thread
-				// sleeps for a short time during each loop iteration (instead of running doSimStep())
-				// while the simulation is paused:
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+          lock.lock();
+          boolean pause = isPaused();
+          lock.unlock();
+
+		  if (pause) {
+            lock.lock();
+            try {
+              condPause.awaitNanos(1000);
+            } catch (Exception e) {
+              e.printStackTrace();
+            } finally {
+
+              lock.unlock();
+            }
+          } else {
+		    doSimStep();
+          }
 		}
 		// ############# END Main simulation loop ############
 
