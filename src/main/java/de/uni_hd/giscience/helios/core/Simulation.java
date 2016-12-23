@@ -98,11 +98,12 @@ public abstract class Simulation {
 	protected abstract void onLegComplete();
 
 	public void pause(boolean pause) {
-		this.mPaused = pause;
-		SebEvents.events.fire("simulation_pause_state_changed", this.mPaused);
       lock.lock();
-        condPause.signal();
+      this.mPaused = pause;
+      condPause.signal();
       lock.unlock();
+
+      SebEvents.events.fire("simulation_pause_state_changed", this.mPaused);
 	}
 
 	protected void setScanner(Scanner scanner) {
