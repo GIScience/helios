@@ -16,15 +16,16 @@ import de.uni_hd.giscience.helios.core.scanner.Scanner;
 import sebevents.SebEvents;
 
 public abstract class Simulation {
+    private final static long NANOSECONDS_PER_SECOND = 1000000000;
 
-    final Lock lock = new ReentrantLock();
-    final Condition condPause  = lock.newCondition();
+	private boolean mStopped = false;
+    private final Lock lockStop = new ReentrantLock();
 
-  private final static long NANOSECONDS_PER_SECOND = 1000000000;
-	protected boolean mStopped = false;
-	protected boolean mPaused = false;
+	private boolean mPaused = false;
+    private final Lock lockPause = new ReentrantLock();
+    private final Condition condPause  = lockPause.newCondition();
 
-	private double mSimSpeedFactor = 1;
+	private double simSpeedFactor = 1;
 
 	private Scanner mScanner = null;
 
@@ -65,11 +66,12 @@ public abstract class Simulation {
 
 		// ######### BEGIN Real-time brake (slow down simulation to real-world time speed ) #########
 		long timePerStepInNanoSec = Math.round(NANOSECONDS_PER_SECOND / this.mScanner.getPulseFreq_Hz());
+        final double simFactor = getSimSpeedFactor();
 
-		if( mSimSpeedFactor == 0) {
+		if( simFactor == 0) {
 			long now = System.nanoTime();
 
-			while (now - simulationTimeStamp < timePerStepInNanoSec * mSimSpeedFactor) {
+			while (now - simulationTimeStamp < timePerStepInNanoSec * simFactor) {
 				now = System.nanoTime();
 			}
 			simulationTimeStamp = now;
@@ -84,27 +86,56 @@ public abstract class Simulation {
 	}
 
 	public double getSimSpeedFactor() {
-		return this.mSimSpeedFactor;
+		return this.simSpeedFactor;
 	}
 
-	public boolean isPaused() {
-		return this.mPaused;
-	}
+    /**
+     * Sets the simulation speed delay factor.
 
-	public boolean isStopped() {
-		return this.mStopped;
+     * @param factor slow down each simulation step by (factor*1ns)/PulseFrequencyInHz
+     *               If the value is ZERO 0.0 then the simulation runs as fast as possible
+     */
+    public void setSimSpeedFactor(double factor) {
+
+      if (factor > 10000) {
+        factor = 10000;
+      }
+
+      this.simSpeedFactor = factor;
+    }
+
+    public boolean isStopped() {
+      lockStop.lock();
+      boolean stop = this.mStopped;
+      lockStop.unlock();
+
+      return stop;
+    }
+
+    public void stop() {
+      lockStop.lock();
+      this.mStopped = true;
+      lockStop.unlock();
+    }
+
+    public boolean isPaused() {
+      lockPause.lock();
+      boolean pause = this.mPaused;
+      lockPause.unlock();
+
+      return pause;
 	}
-	
-	protected abstract void onLegComplete();
 
 	public void pause(boolean pause) {
-      lock.lock();
+      lockPause.lock();
       this.mPaused = pause;
       condPause.signal();
-      lock.unlock();
+      lockPause.unlock();
 
       SebEvents.events.fire("simulation_pause_state_changed", this.mPaused);
 	}
+
+    protected abstract void onLegComplete();
 
 	protected void setScanner(Scanner scanner) {
 		
@@ -124,23 +155,6 @@ public abstract class Simulation {
 		SebEvents.events.fire("playback_set_scanner", this.mScanner);
 	}
 
-  /**
-   * Sets the simulation speed delay factor.
-
-   * @param factor slow down each simulation step by (x*1ns)/PulseFrequencyInHz
-   *               If the value is ZERO 0.0 then the simulation runs as fast as possible
-   */
-	public void setSimSpeedFactor(double factor) {
-
-		if (factor > 10000) {
-			factor = 10000;
-		}
-
-		this.mSimSpeedFactor = factor;
-
-		System.out.println("Simulation speed set to " + mSimSpeedFactor);
-	}
-
 	public void start() {
 
 		long timeStart = System.nanoTime();
@@ -148,19 +162,17 @@ public abstract class Simulation {
 		// ############# BEGIN Main simulation loop ############
 		while (!isStopped()) {
 
-          lock.lock();
           boolean pause = isPaused();
-          lock.unlock();
 
 		  if (pause) {
-            lock.lock();
+            lockPause.lock();
             try {
               condPause.awaitNanos(1000);
             } catch (Exception e) {
               e.printStackTrace();
             } finally {
 
-              lock.unlock();
+              lockPause.unlock();
             }
           } else {
 		    doSimStep();
@@ -169,43 +181,68 @@ public abstract class Simulation {
 		// ############# END Main simulation loop ############
 
 		long timeMainLoopFinish = System.nanoTime();
-
 		double seconds = (double) (timeMainLoopFinish - timeStart) / 1000000000;
-
 		System.out.println("Main thread simulation loop finished in " + seconds + " sec.");
+
 		System.out.print("Waiting for completion of pulse computation tasks...");
+		waitForPulseComputationCompleted( (countWaitingPulses) -> {
+            String output = String.format( "\r %d running pulse computations, waiting for complete.",
+                  countWaitingPulses);
 
-		// ########## BEGIN Loop that waits for the executor service to complete all tasks ###########
-		while (true) {
+            System.out.print( output);
+            }
+        );
+        mExecService.shutdown();
 
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 
-			if (mExecService.getQueue().size() == 0) {
-				mExecService.shutdown();
-
-				long timeFinishAll = System.nanoTime();
-
-				double secondsAll = (double) (timeFinishAll - timeStart) / 1000000000;
-
-				System.out.print("Pulse computation tasks finished in " + secondsAll + " sec.\n");
-
-				break;
-			}
-		}
-		// ########## END Loop that waits for the executor service to complete all tasks ###########
+        long timeFinishAll = System.nanoTime();
+        double secondsAll = (double) (timeFinishAll - timeStart) / 1000000000;
+        System.out.print("\rPulse computation tasks finished in " + secondsAll + " sec.\n");
 
 		// Shutdown the simulation (e.g. close all file output streams. Implemented in derived classes.)
 		shutdown();
 	}
 
-	public void stop() {
-		this.mStopped = true;
+  /**
+   * Defines a callback interface for the pulse calculation worker task
+   */
+  protected interface ICountWaitingTasksChanged {
+    /**
+     * Callback is called when the count of running executors has changed.
+     * @param countWaitingTasks count of still open tasks
+     */
+    void update(long countWaitingTasks);
+  }
 
-	}
+  /**
+   * Waits until completion of all pulse computations.
+   * @param callback Callback informs user about count waiting tasks changed
+   */
+  protected void waitForPulseComputationCompleted( ICountWaitingTasksChanged callback) {
+      long countWaitingTasks = mExecService.getQueue().size();
+      long lastCountWaitingTasks;
+
+      while ( countWaitingTasks != 0) {
+
+        // Delay completion check
+        try {
+          Thread.sleep(100); // ms
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+
+        lastCountWaitingTasks = countWaitingTasks;
+        countWaitingTasks = mExecService.getQueue().size();
+
+        // Check for counter change
+        if( countWaitingTasks != lastCountWaitingTasks) {
+          if( callback != null) {
+            callback.update(countWaitingTasks);
+          }
+        }
+      }
+    }
+
 
 	public void shutdown() {
 

@@ -98,7 +98,7 @@ public class LidarSim {
 
 		if (!headless) {
 			// Slow down simulation for visualization
-			playback.setSimSpeedFactor( 0);
+			playback.setSimSpeedFactor( 1);
 
 			JMEFrontEnd frontend = new JMEFrontEnd();
 			frontend.init(playback);
