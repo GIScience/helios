@@ -16,7 +16,19 @@ import de.uni_hd.giscience.helios.core.scanner.Scanner;
 import sebevents.SebEvents;
 
 public abstract class Simulation {
-    private final static long NANOSECONDS_PER_SECOND = 1000000000;
+  /**
+   * http://stackoverflow.com/questions/20521750/ticks-between-unix-epoch-and-gps-epoch
+   * SimpleDateFormat df = new SimpleDateFormat();
+   * df.setTimeZone(TimeZone.getTimeZone("UTC"));
+   *
+   * Date x = df.parse("1.1.1970 00:00:00");
+   * Date y = df.parse("6.1.1980 00:00:00");
+   *
+   * long diff = y.getTime() - x.getTime();
+   * long diffSec = diff / 1000;
+   */
+  private final static long UNIX_TIME_TO_GPS_TIME = 315964800; // sec
+  private final static long NANOSECONDS_PER_SECOND = 1000000000;
 
 	private boolean mStopped = false;
     private final Lock lockStop = new ReentrantLock();
@@ -34,7 +46,8 @@ public abstract class Simulation {
 
 	private ThreadPoolExecutor mExecService = null;
 
-	private long simulationTimeStamp = 0;
+	private long simulationDiffTimeInNs = 0;
+    private long simulationTimeStampUnixInMs = System.currentTimeMillis();
 
 	public boolean exitAtEnd = false;
 	
@@ -61,8 +74,10 @@ public abstract class Simulation {
 			return;
 		}
 
+		Long gpsTimeInSec = (simulationTimeStampUnixInMs + (simulationDiffTimeInNs / 1000)) / 1000 + UNIX_TIME_TO_GPS_TIME;
+
 		mScanner.platform.doSimStep(this.mScanner.getPulseFreq_Hz());
-		mScanner.doSimStep(mExecService);
+      	mScanner.doSimStep(mExecService, gpsTimeInSec);
 
 		// ######### BEGIN Real-time brake (slow down simulation to real-world time speed ) #########
 		long timePerStepInNanoSec = Math.round(NANOSECONDS_PER_SECOND / this.mScanner.getPulseFreq_Hz());
@@ -71,12 +86,12 @@ public abstract class Simulation {
 		if( simFactor == 0) {
 			long now = System.nanoTime();
 
-			while (now - simulationTimeStamp < timePerStepInNanoSec * simFactor) {
+			while (now - simulationDiffTimeInNs < timePerStepInNanoSec * simFactor) {
 				now = System.nanoTime();
 			}
-			simulationTimeStamp = now;
+			simulationDiffTimeInNs = now;
 		} else {
-			simulationTimeStamp += timePerStepInNanoSec;
+			simulationDiffTimeInNs += timePerStepInNanoSec;
 		}
 		// ######### END Real-time brake (slow down simulation to real-world time speed ) #########
 	}
