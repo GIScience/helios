@@ -51,7 +51,7 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 	}
 
 	@Override
-	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime) {
+	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, Long currentGpsTime) {
 		// TODO Auto-generated method stub
 
 		// Submit pulse computation task to multithread executor service:

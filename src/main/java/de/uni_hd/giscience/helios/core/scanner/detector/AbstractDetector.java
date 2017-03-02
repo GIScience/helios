@@ -23,7 +23,7 @@ public abstract class AbstractDetector {
 	public int cfg_setting_beamSampleQuality = 1;
 
 	// File output:
-	String outputFileLineFormatString = "%.3f %.3f %.3f %.4f \"%s\"";
+	String outputFileLineFormatString = "%.3f %.3f %.3f %.4f \"%s\" %d";
 	BufferedWriter mPointsFileWriter = null;
 
 	String outputFilePath;
@@ -76,7 +76,7 @@ public abstract class AbstractDetector {
 		}
 	}
 
-	public abstract void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime);
+	public abstract void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, Long currentGpsTime);
 
 	synchronized public void shutdown() {
 
@@ -100,7 +100,7 @@ public abstract class AbstractDetector {
 
 			// String line = String.format(outputFileLineFormatString, shifted.getX(), shifted.getY(), shifted.getZ(), m.intensity, m.returnNumber, m.fullwaveIndex);
 
-			String line = String.format(outputFileLineFormatString, shifted.getX(), shifted.getY(), shifted.getZ(), m.intensity, m.hitObjectId);
+			String line = String.format(outputFileLineFormatString, shifted.getX(), shifted.getY(), shifted.getZ(), m.intensity, m.hitObjectId, m.gpsTime);
 
 			line += "\n";
 

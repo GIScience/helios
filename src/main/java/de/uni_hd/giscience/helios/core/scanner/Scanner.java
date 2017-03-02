@@ -38,7 +38,6 @@ public class Scanner extends Asset {
 	boolean state_lastPulseWasHit = false;
 	boolean state_isActive = true;
 
-	
 	public Scanner(double beamDiv_rad, Vector3D beamOrigin, Rotation beamOrientation, ArrayList<Integer> pulseFreqs, double pulseLength_ns, String visModel) {
 		
 		// Configure emitter:
@@ -64,7 +63,7 @@ public class Scanner extends Asset {
 	}
 
 	
-	public void doSimStep(ExecutorService execService) {
+	public void doSimStep(ExecutorService execService, Long currentGpsTime) {
 
 		// Update head attitude (we do this even when the scanner is inactive):
 		scannerHead.doSimStep(cfg_setting_pulseFreq_Hz);
@@ -90,10 +89,6 @@ public class Scanner extends Asset {
 		// Calculate absolute beam attitude:
 		Rotation mountRelativeEmitterAttitude = this.scannerHead.getMountRelativeAttitude().applyTo(this.cfg_device_headRelativeEmitterAttitude);
 		Rotation absoluteBeamAttitude = platform.getAbsoluteMountAttitude().applyTo(mountRelativeEmitterAttitude).applyTo(beamDeflector.getEmitterRelativeAttitude());
-
-		// Caclulate time of the emitted pulse
-		Long unixTime = System.currentTimeMillis() / 1000L;
-		Long currentGpsTime = (unixTime - 315360000) - 1000000000;
 
 		detector.simulatePulse(execService, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
 	}

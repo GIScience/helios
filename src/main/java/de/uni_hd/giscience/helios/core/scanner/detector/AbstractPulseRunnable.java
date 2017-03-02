@@ -126,6 +126,7 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		Vector3D pointPos = beamOrigin.add(beamDir.scalarMultiply(distance));
 
 		Measurement m = new Measurement();
+		m.gpsTime = currentGpsTime;
 		m.position = pointPos;
 		m.distance = distance;
 		m.intensity = intensity;

@@ -13,4 +13,5 @@ public class Measurement {
 	public double intensity = 0;
 	public int returnNumber;
 	public int fullwaveIndex;
+	public Long gpsTime;
 }
