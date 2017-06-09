@@ -1,117 +1,76 @@
 package de.uni_hd.giscience.helios;
 
-import java.util.Locale;
-
 import de.uni_hd.giscience.helios.surveyplayback.Survey;
 import de.uni_hd.giscience.helios.surveyplayback.SurveyPlayback;
-import de.uni_hd.giscience.helios.surveyplayback.XmlSurveyLoader;
 import de.uni_hd.giscience.helios.visualization.JMEFrontEnd;
 
-/*
- * Coordinate system convention for the lidar sim:
- * 
- * x - right
- * y - forward
- * z - up
+/** Initialization point of the application
+ *
+ * The LidarSim start the program and configure its simulation modes.
+ * The application can run as commandline tool for only simulation or
+ * in graphical mode for preparation of a simulation or to see
+ * the scanning process.
  */
-
 public class LidarSim {
 
-	// public static Logger log = Logger.getLogger(LidarSim.class.getName());
+    public static void main(String[] args) {
+        CliParser parser = new CliParser();
+        if (parser.parse(args)) {
+            LidarSim simulation = new LidarSim(parser.getSurvey());
 
-	public static void main(String[] args) {
+            if (parser.runHeadless()) {
+                simulation.executeSimulation();
+            } else {
+                simulation.startVisualization();
+            }
+        }
+    }
 
-		Locale.setDefault(new Locale("en", "US"));
+    private SurveyPlayback mPlayback;
 
-		/*
-		 * // ########### BEGIN Set up logger ##############
-		 * 
-		 * FileHandler fh = null;
-		 * 
-		 * try { fh = new FileHandler("lidarsim.log"); } catch (SecurityException e) { e.printStackTrace(); } catch (IOException e) { e.printStackTrace(); }
-		 * 
-		 * log.addHandler(fh); log.setLevel(Level.ALL);
-		 * 
-		 * SimpleFormatter formatter = new SimpleFormatter(); fh.setFormatter(formatter);
-		 * 
-		 * // ########### END Set up logger ##############
-		 */
-		LidarSim app = new LidarSim();
-		app.init(args);
-	}
+    /** Constructor for simulation with a survey which should be simulated.
+     *
+     * @param survey Survey of interest
+     */
+    public LidarSim(Survey survey) {
+        this.mPlayback = new SurveyPlayback(survey);
+    }
 
-	void init(String[] args) {
+    /** Executes the simulation
+     *
+     * The execution of the simulation immediately and exit on completion.
+     * The results are stored for later visualization or
+     * post processing by other tools.
+     *
+     */
+    void executeSimulation() {
 
-		String surveyFilePath = "";
+        mPlayback.setExitOnEndOfSimulation(true);
+        mPlayback.setSimSpeedFactor(0);
 
-		boolean headless = false;
+        mPlayback.start();
+    }
 
-		// Read survey file from command line argument:
-		if (args.length > 0) {
-			surveyFilePath = args[0];
-		}
-		if (args.length > 1) {
-			if (args[1].equals("headless")) {
-				headless = true;
-			}
+    /** Start of visualization GUI
+     *
+     * This function prepares the backend for running in combination
+     * with a graphical front-end. This function will return when
+     * the frontend is closed.
+     *
+     */
+    void startVisualization() {
 
-		}
+        // Prepare simulation
+        // Slow down simulation for visualization
+        mPlayback.setExitOnEndOfSimulation(false);
+        mPlayback.setSimSpeedFactor(1);
 
-		if (surveyFilePath.equals("")) {
-			surveyFilePath = "data/surveys/demo/tls_arbaro_demo.xml";
+        // Prepare visualization of simulation
+        JMEFrontEnd frontend = new JMEFrontEnd();
+        frontend.init(mPlayback);
+        frontend.start();
+        mPlayback.pause(true);
 
-			surveyFilePath = "data/surveys/demo/mls_tractor.xml";
-			surveyFilePath = "data/surveys/demo/felsding.xml";
-			
-
-			surveyFilePath = "data/surveys/uav_terrain2.xml";
-			
-			surveyFilePath = "data/surveys/tractortest.xml";
-
-			surveyFilePath = "data/surveys/als_washington.xml";
-
-			surveyFilePath = "data/surveys/simon/als_terrain2.xml";
-			surveyFilePath = "data/surveys/simon/tls_simon_trail.xml";
-			
-			
-			
-			
-			surveyFilePath = "data/surveys/demo/tls_terrain1.xml";
-			
-			surveyFilePath = "data/surveys/premium/tls_hrusov_castle.xml";
-			surveyFilePath = "data/surveys/demo/tls_arbaro_demo.xml";
-		}
-
-		// Load survey description from XML file:
-		XmlSurveyLoader xmlreader = new XmlSurveyLoader(surveyFilePath);
-		Survey survey = xmlreader.load();
-
-		if (survey == null) {
-			System.out.println("Failed to load survey!");
-			System.exit(-1);
-		}
-
-		SurveyPlayback playback = new SurveyPlayback(survey);
-		playback.exitAtEnd = headless;
-
-		// ############ BEGIN Start visualization module #############
-
-		if (!headless) {
-			// Slow down simulation for visualization
-			playback.setSimSpeedFactor( 1);
-
-			JMEFrontEnd frontend = new JMEFrontEnd();
-			frontend.init(playback);
-			frontend.start();
-			playback.pause(true);
-
-		} else {
-			playback.setSimSpeedFactor( 0);
-		}
-		// ############ END Start visualization module #############
-
-		System.out.print("Running simulation...");
-
-		playback.start();
-	}
+        mPlayback.start();
+    }
 }

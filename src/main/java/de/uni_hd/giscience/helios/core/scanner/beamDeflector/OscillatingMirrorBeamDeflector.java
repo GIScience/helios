@@ -43,7 +43,7 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 		state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad + cached_angleBetweenPulses_rad * bla;
 
 		// Rotate to current position:
-		this.cached_emitterRelativeAttitude = new Rotation(Directions.right, state_currentBeamAngle_rad);
+		this.cached_emitterRelativeAttitude = new Rotation(Directions.RIGHT, state_currentBeamAngle_rad);
 	}
 
 	@Override

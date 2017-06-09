@@ -40,7 +40,7 @@ public class ConicBeamDeflector extends AbstractBeamDeflector {
 		// ####### END Update mirror angle ########
 
 		// Rotate to current position on the cone circle:
-		Rotation r2 = new Rotation(Directions.forward, state_currentBeamAngle_rad);
+		Rotation r2 = new Rotation(Directions.FORWARD, state_currentBeamAngle_rad);
 
 		this.cached_emitterRelativeAttitude = r2.applyTo(r1);
 	}

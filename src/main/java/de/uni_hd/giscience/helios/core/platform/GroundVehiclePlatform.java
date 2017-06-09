@@ -82,7 +82,7 @@ public class GroundVehiclePlatform extends SimplePhysicsPlatform {
 		// ################## END Steering and engine power #################
 
 		// Set platform attitude:
-		this.setAttitude(new Rotation(Directions.up, headingChange_rad).applyTo(getAttitude()));
+		this.setAttitude(new Rotation(Directions.UP, headingChange_rad).applyTo(getAttitude()));
 
 		// ########## BEGIN Set engine force #########
 		mEngineForceCurrent += Math.signum(mEngineForceTarget - mEngineForceCurrent) * 0.0001;

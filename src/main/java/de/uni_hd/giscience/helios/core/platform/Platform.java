@@ -161,7 +161,7 @@ public class Platform extends Asset {
 		cached_vectorToTarget = this.cfg_settings_nextWaypointPosition.subtract(this.position);
 		cached_vectorToTarget_xy = new Vector3D(cached_vectorToTarget.getX(), cached_vectorToTarget.getY(), 0);
 	
-		cached_dir_current = this.attitude.applyTo(Directions.forward);
+		cached_dir_current = this.attitude.applyTo(Directions.FORWARD);
 		cached_dir_current_xy = new Vector3D(cached_dir_current.getX(), cached_dir_current.getY(), 0).normalize();
 	}
 
