@@ -44,6 +44,6 @@ public class FiberArrayBeamDeflector extends AbstractBeamDeflector {
 		}
 
 		// Compute relative beam direction:
-		this.cached_emitterRelativeAttitude = new Rotation(Directions.right, state_currentBeamAngle_rad);
+		this.cached_emitterRelativeAttitude = new Rotation(Directions.RIGHT, state_currentBeamAngle_rad);
 	}
 }

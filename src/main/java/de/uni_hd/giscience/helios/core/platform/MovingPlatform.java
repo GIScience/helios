@@ -48,7 +48,7 @@ public class MovingPlatform extends Platform {
 
 				heading_rad += angle;
 
-				Rotation r = new Rotation(Directions.up, heading_rad);
+				Rotation r = new Rotation(Directions.UP, heading_rad);
 
 				this.setAttitude(r);
 

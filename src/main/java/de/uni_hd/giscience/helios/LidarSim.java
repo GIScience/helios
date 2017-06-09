@@ -4,15 +4,6 @@ import de.uni_hd.giscience.helios.surveyplayback.Survey;
 import de.uni_hd.giscience.helios.surveyplayback.SurveyPlayback;
 import de.uni_hd.giscience.helios.visualization.JMEFrontEnd;
 
-/*
- * Coordinate system convention for the lidar sim:
- * 
- * x - right
- * y - forward
- * z - up
- */
-
-
 /** Initialization point of the application
  *
  * The LidarSim start the program and configure its simulation modes.

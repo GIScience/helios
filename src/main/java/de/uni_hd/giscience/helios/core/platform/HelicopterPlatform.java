@@ -65,8 +65,8 @@ public class HelicopterPlatform extends SimplePhysicsPlatform {
 		
 		// ###################### BEGIN Set attitude ########################
 		// Acceleration tilt:
-		Rotation newAttitude = new Rotation(Directions.right, -mEngineForce.getY() * cfg_accel_tilt)
-				.applyTo(new Rotation(Directions.forward, mEngineForce.getX() * cfg_accel_tilt));
+		Rotation newAttitude = new Rotation(Directions.RIGHT, -mEngineForce.getY() * cfg_accel_tilt)
+				.applyTo(new Rotation(Directions.FORWARD, mEngineForce.getX() * cfg_accel_tilt));
 
 		// ########### BEGIN Yaw rotation into movement direction ##############
 		try {
@@ -78,7 +78,7 @@ public class HelicopterPlatform extends SimplePhysicsPlatform {
 
 			heading_rad += (rotSpeed * sign) / simFrequency_hz;
 
-			r = new Rotation(newAttitude.applyTo(Directions.up), heading_rad);
+			r = new Rotation(newAttitude.applyTo(Directions.UP), heading_rad);
 			this.setAttitude(r.applyTo(newAttitude));
 		} catch (Exception e) {
 
