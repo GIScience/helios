@@ -15,7 +15,9 @@ import sebevents.SebEvents;
 public class SurveyPlayback extends Simulation {
 
 	public boolean mLegStarted = false;
-	
+	private boolean mExitAtEnd = false;
+
+
 	public Survey mSurvey = null;
 
 	int mCurrentLegIndex = 0;
@@ -65,6 +67,10 @@ public class SurveyPlayback extends Simulation {
 
 		// If we start a new scan, move platform to destination of first leg:
 		getScanner().platform.setPosition(getCurrentLeg().mPlatformSettings.getPosition());
+	}
+
+	public void setExitOnEndOfSimulation(boolean exitAtEnd) {
+		this.mExitAtEnd = exitAtEnd;
 	}
 
 	@Override
@@ -184,7 +190,7 @@ public class SurveyPlayback extends Simulation {
 			startLeg(mCurrentLegIndex + 1, manual);
 		} else {
 			// If this was the final leg, stop the simulation:
-			if (exitAtEnd) {
+			if (mExitAtEnd) {
 				shutdown();
 				stop();
 			} else {

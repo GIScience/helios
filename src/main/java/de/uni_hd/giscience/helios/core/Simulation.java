@@ -49,10 +49,6 @@ public abstract class Simulation {
 	private long simulationDiffTimeInNs = 0;
     private long simulationTimeStampUnixInMs = System.currentTimeMillis();
 
-	public boolean exitAtEnd = false;
-	
-	
-
 	
 	public MeasurementsBuffer mbuffer = new MeasurementsBuffer();
 
