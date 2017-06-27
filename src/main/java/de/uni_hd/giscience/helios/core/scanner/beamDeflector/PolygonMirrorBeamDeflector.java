@@ -38,7 +38,7 @@ public class PolygonMirrorBeamDeflector extends AbstractBeamDeflector {
 	}
 
 	@Override
-	public boolean lastPulseLeftDevice() {		
+	public boolean HasLastPulseLeftDevice() {
 		return Math.abs(this.state_currentBeamAngle_rad) <= this.cfg_device_scanAngleEffective_rad;
 	}
 }

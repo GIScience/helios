@@ -175,7 +175,8 @@ public class ShowPlatformAndScannerAppState extends BaseAppState {
 			// Update laser beam length:
 			float beamLength = 10000;
 
-			if (sim.isPaused() || !mCurrentScanner.isActive() || !mCurrentScanner.beamDeflector.lastPulseLeftDevice()) {
+			if (sim.isPaused() ||
+				!mCurrentScanner.isActive()) {
 				beamLength = 0;
 			} else {
 				int lastMeasurementIndex = sim.mbuffer.getLastRecordedPointIndex();

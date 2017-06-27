@@ -5,18 +5,18 @@ package de.uni_hd.giscience.helios.core.scanner;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
+import de.uni_hd.giscience.helios.core.scanner.beamDeflector.IBeamDeflector;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import de.uni_hd.giscience.helios.core.Asset;
 import de.uni_hd.giscience.helios.core.platform.Platform;
-import de.uni_hd.giscience.helios.core.scanner.beamDeflector.AbstractBeamDeflector;
 import de.uni_hd.giscience.helios.core.scanner.detector.AbstractDetector;
 
 public class Scanner extends Asset {
 
 	public ScannerHead scannerHead = null;
-	public AbstractBeamDeflector beamDeflector = null;
+	public IBeamDeflector beamDeflector = null;
 	public Platform platform = null;
 	public AbstractDetector detector = null;
 
@@ -76,7 +76,7 @@ public class Scanner extends Asset {
 		// Update beam deflector attitude:
 		this.beamDeflector.doSimStep();
 
-		if (!beamDeflector.lastPulseLeftDevice()) {
+		if (!beamDeflector.HasLastPulseLeftDevice()) {
 			return;
 		}
 

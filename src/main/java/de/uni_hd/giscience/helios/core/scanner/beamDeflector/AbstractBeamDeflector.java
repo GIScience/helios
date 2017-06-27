@@ -5,7 +5,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
 
-public abstract class AbstractBeamDeflector {
+public abstract class AbstractBeamDeflector implements IBeamDeflector{
 
 	// Device definition variables:
 	double cfg_device_scanFreqMax_Hz = 0;
@@ -63,7 +63,7 @@ public abstract class AbstractBeamDeflector {
 		// System.out.println("Scan angle set to " + this.cfg_setting_scanAngle_rad * (180.0 / Math.PI));
 	}
 
-	public boolean lastPulseLeftDevice() {
+	public boolean HasLastPulseLeftDevice() {
 		return true;
 	}
 
