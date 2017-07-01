@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import javax.vecmath.Color4f;
 
+import de.uni_hd.giscience.helios.core.scanner.beamDeflector.*;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.w3c.dom.Element;
@@ -36,11 +37,6 @@ import de.uni_hd.giscience.helios.core.platform.SimplePhysicsPlatform;
 import de.uni_hd.giscience.helios.core.scanner.Scanner;
 import de.uni_hd.giscience.helios.core.scanner.ScannerHead;
 import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
-import de.uni_hd.giscience.helios.core.scanner.beamDeflector.AbstractBeamDeflector;
-import de.uni_hd.giscience.helios.core.scanner.beamDeflector.ConicBeamDeflector;
-import de.uni_hd.giscience.helios.core.scanner.beamDeflector.FiberArrayBeamDeflector;
-import de.uni_hd.giscience.helios.core.scanner.beamDeflector.OscillatingMirrorBeamDeflector;
-import de.uni_hd.giscience.helios.core.scanner.beamDeflector.PolygonMirrorBeamDeflector;
 import de.uni_hd.giscience.helios.core.scanner.detector.SingleRayPulseDetector;
 import de.uni_hd.giscience.helios.core.scene.Scene;
 import de.uni_hd.giscience.helios.core.scene.primitives.Primitive;
@@ -365,7 +361,7 @@ public class XmlAssetsLoader {
 
 		String str_opticsType = scannerNode.getAttribute("optics");
 
-		AbstractBeamDeflector beamDeflector = null;
+		IBeamDeflector beamDeflector = null;
 
 		if (str_opticsType.equals("oscillating")) {
 
