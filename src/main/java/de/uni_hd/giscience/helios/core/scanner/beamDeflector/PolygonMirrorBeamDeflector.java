@@ -6,53 +6,58 @@ import de.uni_hd.giscience.helios.Directions;
 import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
 
 /**
- * The polygon mirror beam deflector us a rotating mirror. In the real world
- * this mirror makes a 360 rotation with a fix frequency, called scan frequency.
+ * The polygon mirror beam deflector is a rotating mirror. In the real world
+ * this mirror makes a 360 rotation with a fix speed, called scan speed.
  * The beam from the emitter is deflector on the mirror in the direction of
  * the current scan angle. In the configuration of a lidar system it is possible
- * to define the maximal deflection of the mirror.
- * This maximal deflection is the scan angle max.
+ * to define the maximal deflection of the mirror. This is called the scan angle
+ * max.
  *
- * The scanner has to technical properties:
+ * The scanner poly mirror has two main technical properties:
  *
- * - The supported maximal scan angle is the technical maximal usable scan angle.
- *   It describes the maximum value of the scanner windows to emit beams into the environment.
+ * - The supported maximal scan angle is the technical maximal
+ *   usable scan angle. It describes the maximum supported scan angle.
+ *   This limited because the mirror emit the beam over the mirror through a
+ *   windows into the environment.
  *
- * - The scan frequency is the rotation speed of the mirror for 360 degree.
+ * - The minimal and maximal scan speed, the rotation speed of the mirror.
  *
  *
  * This class simulates the rotation of the mirror for deflection of the emitted
  * beam. The scan angle only runs over the range +- maximal deflection angle.
- * The rotation width of the mirror is defined by the scan frequency and
- * the pulse frequency of the emitter.
- *
- *       stepAngle = (360 degree / scan frequency) * pulse frequency
+ * Scan angles larger then the supported scan angle are not simulated.
  *
  * The class will also create a last pulse left device state if the current scan
  * angle overruns the scan angle max.
  *
+ * The figure below describes the relation between do simulation step and the
+ * angle of the mirror. The current scan angle gradient of one simulation step
+ * is defined by the simulation step duration and the scan speed.
  *
- *         ^
- *  scan   |
- *  angle  |
- *         |
- *  scan   |
- *  angle  |
- *  max   +|         x          x          x
- *         |        x          x          x
- *         |       x          x          x
- *         |      x          x          x
- *         |     x          x          x
- *    0   +|    x          x          x
- *         |   x          x          x
- *         |  x          x          x
- *  scan   | x          x          x
- *  angle  |x          x          x
- *  -max  +x          x          x
- *         |
- *  	   +----------+----------+------------------------> doSimStep()s
- *         |          |          |
- *         +----------+----------+----------> HasLastPulseLeftDevice() == true
+ *             ^
+ *  scan       |
+ *  angle      |
+ *             |
+ *  supported +|
+ *  max        |
+ *             |
+ *  max       +|         x          x          x
+ *             |        x          x          x
+ *             |       x          x          x
+ *             |      x          x          x
+ *             |     x          x          x
+ *    0       +|    x          x          x
+ *             |   x          x          x
+ *             |  x          x          x
+ *             | x          x          x
+ *             |x          x          x
+ *  -max      +x          x          x
+ *             |
+ *  -supported+|
+ *  max        |
+ *  	       +----------+----------+------------------------> doSimStep()s
+ *             |          |          |
+ *             +----------+----------+----------> HasLastPulseLeftDevice() == true
  *
  */
 public class PolygonMirrorBeamDeflector implements IBeamDeflector {
@@ -68,17 +73,20 @@ public class PolygonMirrorBeamDeflector implements IBeamDeflector {
 
 		this.scanAngleSupportedMaxInRad = scanAngleSupportedMax_rad;
 
-		calculateMirrorAttitudeByCurrentBeamAngle();
+		updateMirrorAttitudeByCurrentBeamAngle();
 	}
 
 	private final double scanAngleSupportedMaxInRad;
 
 	private double scanAngleMaxInRad = 0;
-	private double angleBetweenSimulationStepsInRad = 0;
+	private double simStepDurationInSec = 0;
+	private double scanSpeedInRadPerSec = 0;
 
 
 	private double currentScanAngleInRad = 0;
 	private Rotation currentScanAngleAsAttitude;
+
+	private boolean isScanAngleOverrun = false;
 
 
 	public void applySettings(ScannerSettings settings) {
@@ -86,18 +94,24 @@ public class PolygonMirrorBeamDeflector implements IBeamDeflector {
 		setScanAngleMaxInRad(settings.scanAngle_rad);
 
 		setCurrentScanAngleInRad(-1 * scanAngleMaxInRad);
-		calculateMirrorAttitudeByCurrentBeamAngle();
+		updateMirrorAttitudeByCurrentBeamAngle();
 
-		calculateAngleBetweenSimulationSteps(settings);
+		scanSpeedInRadPerSec = calculateScanSpeed(settings);
+		simStepDurationInSec = 1.0 / (double)settings.pulseFreq_Hz;
+	}
+
+	private double calculateScanSpeed(ScannerSettings settings) {
+		double totalScanAngleRange = 2 * this.scanAngleMaxInRad;
+		return totalScanAngleRange / (double)settings.scanFreq_Hz;
 	}
 
 	public void doSimStep() {
-		calculateNextBeamAngle();
-		calculateMirrorAttitudeByCurrentBeamAngle();
+		calculateNextBeamAngle(simStepDurationInSec);
+		updateMirrorAttitudeByCurrentBeamAngle();
 	}
 
 	public boolean HasLastPulseLeftDevice() {
-		return currentScanAngleInRad != (-1 * scanAngleMaxInRad);
+		return !isScanAngleOverrun;
 	}
 
 	public Rotation getEmitterRelativeAttitude() {
@@ -120,26 +134,19 @@ public class PolygonMirrorBeamDeflector implements IBeamDeflector {
 		// restart rotation on overrun
 		if (scanAngleInRad < this.scanAngleMaxInRad) {
 			currentScanAngleInRad = scanAngleInRad;
+			isScanAngleOverrun = false;
 		} else {
 			currentScanAngleInRad = -this.scanAngleMaxInRad;
+			isScanAngleOverrun = true;
 		}
 	}
 
-	double getCurrentScanAngleInRad() {
-		return currentScanAngleInRad;
-	}
-
-	private void calculateAngleBetweenSimulationSteps(ScannerSettings settings) {
-		double totalScanAngleRange = 2 * this.scanAngleMaxInRad;
-		angleBetweenSimulationStepsInRad = totalScanAngleRange *
-						((double) settings.scanFreq_Hz / (double) settings.scanFreq_Hz);
-	}
-
-	private void calculateMirrorAttitudeByCurrentBeamAngle() {
+	private void updateMirrorAttitudeByCurrentBeamAngle() {
 		currentScanAngleAsAttitude = new Rotation(Directions.right, currentScanAngleInRad);
 	}
 
-	private void calculateNextBeamAngle() {
-		setCurrentScanAngleInRad(currentScanAngleInRad + angleBetweenSimulationStepsInRad);
+	private void calculateNextBeamAngle( double durationInSec) {
+		double rotationAngleInRad = scanSpeedInRadPerSec * durationInSec;
+		setCurrentScanAngleInRad(currentScanAngleInRad + rotationAngleInRad);
 	}
 }
