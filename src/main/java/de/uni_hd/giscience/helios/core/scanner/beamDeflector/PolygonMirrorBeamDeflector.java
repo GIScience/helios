@@ -23,12 +23,9 @@ import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
  * - The minimal and maximal scan speed, the rotation speed of the mirror.
  *
  *
- * This class simulates the rotation of the mirror for deflection of the emitted
- * beam. The scan angle only runs over the range +- maximal deflection angle.
+ * This class simulates rotation of the mirror for deflection for emitted
+ * beams. The scan angle only runs over the range +- maximal deflection angle.
  * Scan angles larger then the supported scan angle are not simulated.
- *
- * The class will also create a last pulse left device state if the current scan
- * angle overruns the scan angle max.
  *
  * The figure below describes the relation between do simulation step and the
  * angle of the mirror. The current scan angle gradient of one simulation step
@@ -56,14 +53,15 @@ import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
  *  -supported+|
  *  max        |
  *  	       +----------+----------+------------------------> doSimStep()s
- *             |          |          |
- *             +----------+----------+----------> HasLastPulseLeftDevice() == true
- *
  */
 public class PolygonMirrorBeamDeflector implements IBeamDeflector {
 
 	/**
-	 * @param scanAngleSupportedMax_rad defines the maximum angle from center which the scanner supports to scan (scanner technical limitation)
+	 * \todo(KoeMai) Refactore to scanSpeed, translation from scan frequency and
+	 * 				pulse frequceny can by done  by scanner.
+	 * @param scanAngleSupportedMax_rad defines the maximum angle
+	 *                                  from center which the scanner supports
+	 *                                  to scan (scanner technical limitation)
 	 */
 	public PolygonMirrorBeamDeflector(
 					double scanFreqMax_Hz,
@@ -82,13 +80,14 @@ public class PolygonMirrorBeamDeflector implements IBeamDeflector {
 	private double simStepDurationInSec = 0;
 	private double scanSpeedInRadPerSec = 0;
 
-
 	private double currentScanAngleInRad = 0;
 	private Rotation currentScanAngleAsAttitude;
 
-	private boolean isScanAngleOverrun = false;
 
-
+	/** Updates simulation settings for the mirror simulation
+	 *
+	 * @param settings scanner settings for simulation
+	 */
 	public void applySettings(ScannerSettings settings) {
 
 		setScanAngleMaxInRad(settings.scanAngle_rad);
@@ -100,24 +99,49 @@ public class PolygonMirrorBeamDeflector implements IBeamDeflector {
 		simStepDurationInSec = 1.0 / (double)settings.pulseFreq_Hz;
 	}
 
+	/** Calculates scan speed out of angle and scan frequency
+	 *
+	 * @param settings Scanner configuration with scan angle
+	 * @return returns scan speed
+	 */
 	private double calculateScanSpeed(ScannerSettings settings) {
 		double totalScanAngleRange = 2 * this.scanAngleMaxInRad;
-		return totalScanAngleRange / (double)settings.scanFreq_Hz;
+		return totalScanAngleRange * (double)settings.scanFreq_Hz;
 	}
 
+	/** Simulates the next mirror rotation position in simulation.
+	 * \todo(KoeMai) doSimStep gets duration. THe duration can be calculated in scanner)
+	 */
 	public void doSimStep() {
 		calculateNextBeamAngle(simStepDurationInSec);
 		updateMirrorAttitudeByCurrentBeamAngle();
 	}
 
+	/** Provides completeness of motion position.
+	 *
+	 * The polygon mirror beam deflector is finished with simulation on each
+	 * motion position. The mirror angle is independent of the motion position.
+	 * The emitted beams will have a position change.
+	 * For this kind of mirror are no multiply simulation steps needed.
+	 *
+	 * @return Always true
+	 */
 	public boolean HasLastPulseLeftDevice() {
-		return !isScanAngleOverrun;
+		return true;
 	}
 
+	/** Mirror attitude of the last doSimStep().
+	 *
+	 * @return Represents the present mirror angle
+	 */
 	public Rotation getEmitterRelativeAttitude() {
 		return this.currentScanAngleAsAttitude;
 	}
 
+	/** Sets the maximal expected scan angle for simulation
+	 *
+	 * @param newScanAngleMaxInRad angle of simulation end
+	 */
 	private void setScanAngleMaxInRad(double newScanAngleMaxInRad) {
 
 		// \TODO(KoeMai) create warning for auto correction of scanAngle
@@ -130,21 +154,35 @@ public class PolygonMirrorBeamDeflector implements IBeamDeflector {
 		this.scanAngleMaxInRad = newScanAngleMaxInRad;
 	}
 
+	/** Sets the new present can angle
+	 *
+	 * This function assign and corrects the overrun of the can angle
+	 *
+	 * @param scanAngleInRad present scan angle in rad
+	 */
 	private void setCurrentScanAngleInRad(double scanAngleInRad) {
 		// restart rotation on overrun
-		if (scanAngleInRad < this.scanAngleMaxInRad) {
-			currentScanAngleInRad = scanAngleInRad;
-			isScanAngleOverrun = false;
+		boolean isScanAngleOverrun = scanAngleInRad >= this.scanAngleMaxInRad;
+
+		if (isScanAngleOverrun) {
+			double angleOfOverrunInRad = scanAngleInRad % this.scanAngleMaxInRad;
+			currentScanAngleInRad = -this.scanAngleMaxInRad + angleOfOverrunInRad;
 		} else {
-			currentScanAngleInRad = -this.scanAngleMaxInRad;
-			isScanAngleOverrun = true;
+			currentScanAngleInRad = scanAngleInRad;
 		}
 	}
 
+	/**
+	 * Update mirror attitude out of the present scan angle
+	 */
 	private void updateMirrorAttitudeByCurrentBeamAngle() {
 		currentScanAngleAsAttitude = new Rotation(Directions.right, currentScanAngleInRad);
 	}
 
+	/**
+	 * Calculates the next present scan angle for a given duration
+	 * @param durationInSec duration of mirror rotation of the single calculation step.
+	 */
 	private void calculateNextBeamAngle( double durationInSec) {
 		double rotationAngleInRad = scanSpeedInRadPerSec * durationInSec;
 		setCurrentScanAngleInRad(currentScanAngleInRad + rotationAngleInRad);
