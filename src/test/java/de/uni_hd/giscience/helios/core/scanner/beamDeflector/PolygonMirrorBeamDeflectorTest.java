@@ -4,8 +4,6 @@ package de.uni_hd.giscience.helios.core.scanner.beamDeflector;
 import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.RotationOrder;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,7 +52,7 @@ class PolygonMirrorBeamDeflectorTest {
 
   private double GetRotationAngleFromAttitudeInDegree(PolygonMirrorBeamDeflector mirror) {
     Rotation r = mirror.getEmitterRelativeAttitude();
-    return r.getAngles(RotationOrder.XYZ)[0]*360/(2*Math.PI);
+    return r.getAngles(RotationOrder.XYZ)[0] * 360 / (2 * Math.PI);
   }
 
   @Test
@@ -65,7 +63,7 @@ class PolygonMirrorBeamDeflectorTest {
             ScanSteps.Small
     );
 
-    for (int i = 0; i < 5000; i++){
+    for (int i = 0; i < 5000; i++) {
       mirror.doSimStep();
 
       double angle = GetRotationAngleFromAttitudeInDegree(mirror);
@@ -74,8 +72,7 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testMultiplySimulationSteps()
-  {
+  void testMultiplySimulationSteps() {
     PolygonMirrorBeamDeflector mirror = createMirror(
             100,
             100,
@@ -91,8 +88,8 @@ class PolygonMirrorBeamDeflectorTest {
     mirror.doSimStep();
     double next2ScanAngle = GetRotationAngleFromAttitudeInDegree(mirror);
 
-    double firstDist = nextScanAngle-firstScanAngle;
-    double nextDist = next2ScanAngle-nextScanAngle;
+    double firstDist = nextScanAngle - firstScanAngle;
+    double nextDist = next2ScanAngle - nextScanAngle;
 
     assertEquals(
             firstDist,
@@ -102,7 +99,7 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testStartAngle(){
+  void testStartAngle() {
     PolygonMirrorBeamDeflector mirror = createMirror(
             100,
             100,
@@ -113,7 +110,7 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testSmallSimulationStepWithoutOverrun(){
+  void testSmallSimulationStepWithoutOverrun() {
     PolygonMirrorBeamDeflector mirror = createMirror(
             100,
             100,
@@ -130,8 +127,7 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testLargeSimulationStepWithoutOverrunOfRotation()
-  {
+  void testLargeSimulationStepWithoutOverrunOfRotation() {
     PolygonMirrorBeamDeflector mirror = createMirror(
             100,
             100,
@@ -147,15 +143,14 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testOverrunOfRotationToNegativeMaxScanAngle()
-  {
+  void testOverrunOfRotationToNegativeMaxScanAngle() {
     PolygonMirrorBeamDeflector mirror = createMirror(
             100,
             100,
             ScanSteps.Small
     );
 
-    for( int steps = 0; steps < 200; steps++) {
+    for (int steps = 0; steps < 200; steps++) {
       mirror.doSimStep();
     }
 
@@ -166,15 +161,14 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testOverrunOfRotationToNegativeMaxScanAngleWithDifferentMax()
-  {
+  void testOverrunOfRotationToNegativeMaxScanAngleWithDifferentMax() {
     PolygonMirrorBeamDeflector mirror = createMirror(
             100,
             50,
             ScanSteps.Small
     );
 
-    for( int steps = 0; steps < 200; steps++) {
+    for (int steps = 0; steps < 200; steps++) {
       mirror.doSimStep();
     }
 
@@ -185,8 +179,7 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testLargeSimulationStepsWithOverrunOfRotation()
-  {
+  void testLargeSimulationStepsWithOverrunOfRotation() {
     PolygonMirrorBeamDeflector mirror = createMirror(
             100,
             100,
@@ -203,8 +196,7 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testMultiplyOverrunOfRotationInOneSimulationStep()
-  {
+  void testMultiplyOverrunOfRotationInOneSimulationStep() {
     PolygonMirrorBeamDeflector mirror = new PolygonMirrorBeamDeflector(
             0,
             0,
@@ -231,8 +223,7 @@ class PolygonMirrorBeamDeflectorTest {
   }
 
   @Test
-  void testHasLastPulseLeftDeviceForMultiplyStep()
-  {
+  void testHasLastPulseLeftDeviceForMultiplyStep() {
     PolygonMirrorBeamDeflector mirror = createMirror(
             100,
             100,
@@ -240,13 +231,13 @@ class PolygonMirrorBeamDeflectorTest {
     );
 
     mirror.doSimStep();
-    assertTrue( mirror.HasLastPulseLeftDevice());
+    assertTrue(mirror.HasLastPulseLeftDevice());
 
     mirror.doSimStep();
-    assertTrue( mirror.HasLastPulseLeftDevice());
+    assertTrue(mirror.HasLastPulseLeftDevice());
 
     mirror.doSimStep();
-    assertTrue( mirror.HasLastPulseLeftDevice());
+    assertTrue(mirror.HasLastPulseLeftDevice());
   }
 
   // \todo (KoeMai) Add tests for configuration warnings
