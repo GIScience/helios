@@ -122,6 +122,21 @@
 			<version>1.9.1</version>
 		</dependency>
 		<!-- ############# END Lemur Dependencies ############# -->
+
+		<!-- ############# BEGIN LeastSquares Dependencies ############# -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>gov.nist.math</groupId>
+			<artifactId>jama</artifactId>
+			<version>1.0.3</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- ############# END LeastSquares Dependencies ############# -->
 	</dependencies>
 
 
