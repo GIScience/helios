@@ -84,7 +84,7 @@ public class Triangle extends Primitive {
 
 	@Override
 	public double getIncidenceAngle_rad(Vector3D rayOrigin, Vector3D rayDir) {
-		return (Math.PI / 2) - Math.acos(rayDir.dotProduct(faceNormal));
+		return (Math.PI) - Math.acos(rayDir.dotProduct(faceNormal)/(rayDir.getNorm()*faceNormal.getNorm()));
 	}
 
 	@Override

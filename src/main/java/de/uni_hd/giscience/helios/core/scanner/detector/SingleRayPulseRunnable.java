@@ -43,7 +43,7 @@ public class SingleRayPulseRunnable extends AbstractPulseRunnable {
 		
 		double intensity = Math.cos(incidenceAngle) * (1.0 / distance);
 
-		capturePoint(absoluteBeamOrigin, beamDir, distance, intensity, 0, currentPulseNum, intersect.prim.part.mId);
+		capturePoint(absoluteBeamOrigin, beamDir, distance, intensity, 0, 0, currentPulseNum, 0, intersect.prim.part.mId);
 	}
 
 }

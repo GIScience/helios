@@ -4,15 +4,15 @@
 	<!-- ###################### BEGIN ALS Platforms ###################### -->
 	<platform id="quadcopter" model="platforms/quadcopter/quadcopter.obj" name="Quadrocopter UAV" type="multicopter" drag="0.01">
 		<scannerMount x="0" y="0" z="0.2">
-			<rot axis="roll" angle_deg="180" />
+			<rot axis="pitch" angle_deg="180" />
 			<rot axis="yaw" angle_deg="180" />
 		</scannerMount>
 	</platform>
 
 	<platform id="sr22" model="platforms/cirrus-sr22/sr22.obj" name="Cirrus SR-22 (15 deg. forward mount)" type="linearpath">
 		<scannerMount z="0.7">
-			<rot axis="roll" angle_deg="0" />
-			<rot axis="pitch" angle_deg="195" />
+			<rot axis="pitch" angle_deg="-90" />
+			<rot axis="yaw" angle_deg="90" />
 		</scannerMount>
 	</platform>
 	<!-- ###################### END ALS Platforms ###################### -->
@@ -31,6 +31,22 @@
 			<rot axis="roll" angle_deg="-35" />
 		</scannerMount>
 	</platform>
+	
+	<platform id="vmx-450-car-left" model="platforms/vivaro/vivaro.obj" name="RIEGL VMX-450 Car Left" type="linearpath">
+		<scannerMount x="-0.18" y="-2.2" z="2.2">
+		<rot axis="pitch" angle_deg="40" />
+		<rot axis="yaw" angle_deg="150" />		
+		</scannerMount>
+	</platform>
+
+	<platform id="vmx-450-car-right" model="platforms/vivaro/vivaro.obj" name="RIEGL VMX-450 Car Right" type="linearpath">
+		<scannerMount x="0.18" y="-2.2" z="2.2">
+		<rot axis="pitch" angle_deg="40" />
+		<rot axis="yaw" angle_deg="210" />		
+		</scannerMount>
+	</platform>
+
+	
 	<!-- ###################### END MLS Platforms ###################### -->
 
 

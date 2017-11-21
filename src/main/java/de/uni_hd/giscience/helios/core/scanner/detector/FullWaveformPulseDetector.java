@@ -26,11 +26,11 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 	public void applySettings(ScannerSettings settings) {
 		super.applySettings(settings);
 		// Configure pulse simulation:
-		cfg_setting_beamSampleQuality = settings.beamSampleQuality;		
+		//cfg_setting_beamSampleQuality = settings.beamSampleQuality;		
 	}
 
 	
-	public void setOutputFilePath(String path) {
+	public synchronized void setOutputFilePath(String path) {
 
 		super.setOutputFilePath(path);
 
@@ -43,15 +43,14 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 			File outputFilePath = new File(path);
 			outputFilePath.getParentFile().mkdirs();
 
-			fullWaveFileWriter = new BufferedWriter(new FileWriter(outputFilePath + "fullwave.txt"), 500000);
+			fullWaveFileWriter = new BufferedWriter(new FileWriter(outputFilePath + "fullwave.txt"), 2500000);
 		} catch (Exception e) {
-			mPointsFileWriter = null;
 			fullWaveFileWriter = null;
 		}
 	}
 
 	@Override
-	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, Long currentGpsTime) {
+	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime) {
 		// TODO Auto-generated method stub
 
 		// Submit pulse computation task to multithread executor service:
@@ -62,9 +61,8 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 	}
 
 	synchronized public void shutdown() {
-
 		super.shutdown();
-
+		
 		if (fullWaveFileWriter != null) {
 			try {
 				fullWaveFileWriter.flush();
@@ -76,7 +74,7 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 	}
 
 	// TODO 2: Move this to pulse class (or somewhere else)
-	public synchronized void writeFullWave(ArrayList<Double> fullwave, Integer fullwave_index, Double max_time, Vector3D beamOrigin, Vector3D beamDir, Long gpstime) {
+	public synchronized void writeFullWave(ArrayList<Double> fullwave, Integer fullwave_index, Double min_time, Double max_time, Vector3D beamOrigin, Vector3D beamDir, Long gpstime) {
 		// ############# BEGIN Writefullwave to output file ############
 		if (fullWaveFileWriter != null) {
 			String line = fullwave_index.toString() + " ";
@@ -86,6 +84,7 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 			line += ((Double) beamDir.getX()).toString() + " ";
 			line += ((Double) beamDir.getY()).toString() + " ";
 			line += ((Double) beamDir.getZ()).toString() + " ";
+			line += min_time.toString() + " ";
 			line += max_time.toString() + " ";
 
 			// add GPSTIME (since 1980) in seconds

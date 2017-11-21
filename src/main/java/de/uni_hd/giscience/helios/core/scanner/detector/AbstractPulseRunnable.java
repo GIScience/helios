@@ -108,7 +108,7 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		return (Pt2 * reflectanceBRDF * Math.cos(incidenceAngle) * eta_atm * eta_sys);
 	}
 
-	void capturePoint(Vector3D beamOrigin, Vector3D beamDir, double distance, double intensity, int returnNumber, int fullwaveIndex, String hitObjectId) {
+	void capturePoint(Vector3D beamOrigin, Vector3D beamDir, double distance, double intensity, double echo_width, int returnNumber, int pulseReturnNumber, int fullwaveIndex, String hitObjectId) {
 
 		// Abort if point distance is below mininum scanner range:
 		if (distance < detector.cfg_device_rangeMin_m) {
@@ -126,11 +126,12 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		Vector3D pointPos = beamOrigin.add(beamDir.scalarMultiply(distance));
 
 		Measurement m = new Measurement();
-		m.gpsTime = currentGpsTime;
 		m.position = pointPos;
 		m.distance = distance;
 		m.intensity = intensity;
+		m.echo_width = echo_width;
 		m.returnNumber = returnNumber;
+		m.pulseReturnNumber = pulseReturnNumber;
 		m.fullwaveIndex = fullwaveIndex;
 		m.beamOrigin = beamOrigin;
 		m.beamDirection = beamDir;
@@ -141,6 +142,28 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		detector.mBuffer.add(m);
 	}
 
+	void capturePoint(Measurement m) {
+
+		// Abort if point distance is below mininum scanner range:
+		if (m.distance < detector.cfg_device_rangeMin_m) {
+			return;
+		}
+
+		// ########## BEGIN Apply gaussian range accuracy error ###########
+		double precision = this.detector.cfg_device_accuracy_m / 2;
+		double error = -precision + Math.random() * (precision * 2);
+		error += boxMullerRandom(0.0, this.detector.cfg_device_accuracy_m / 2);
+		m.distance += error;
+		// ########## END Apply gaussian range accuracy error ###########
+
+		// Calculate final recorded point coordinates:
+		m.position = m.beamOrigin.add(m.beamDirection.scalarMultiply(m.distance));
+
+		detector.writeMeasurement(m);
+
+		detector.mBuffer.add(m);
+	}
+	
 	public abstract void run();
 
 }

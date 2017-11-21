@@ -33,6 +33,7 @@ import de.uni_hd.giscience.helios.core.platform.LinearPathPlatform;
 import de.uni_hd.giscience.helios.core.platform.Platform;
 import de.uni_hd.giscience.helios.core.platform.PlatformSettings;
 import de.uni_hd.giscience.helios.core.platform.SimplePhysicsPlatform;
+import de.uni_hd.giscience.helios.core.scanner.FWFSettings;
 import de.uni_hd.giscience.helios.core.scanner.Scanner;
 import de.uni_hd.giscience.helios.core.scanner.ScannerHead;
 import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
@@ -41,6 +42,8 @@ import de.uni_hd.giscience.helios.core.scanner.beamDeflector.ConicBeamDeflector;
 import de.uni_hd.giscience.helios.core.scanner.beamDeflector.FiberArrayBeamDeflector;
 import de.uni_hd.giscience.helios.core.scanner.beamDeflector.OscillatingMirrorBeamDeflector;
 import de.uni_hd.giscience.helios.core.scanner.beamDeflector.PolygonMirrorBeamDeflector;
+//import de.uni_hd.giscience.helios.core.scanner.detector.SingleRayPulseDetector;
+import de.uni_hd.giscience.helios.core.scanner.detector.FullWaveformPulseDetector;
 import de.uni_hd.giscience.helios.core.scanner.detector.SingleRayPulseDetector;
 import de.uni_hd.giscience.helios.core.scene.Scene;
 import de.uni_hd.giscience.helios.core.scene.primitives.Primitive;
@@ -114,6 +117,8 @@ public class XmlAssetsLoader {
 			result = (Asset) createSceneFromXml(assetNode);
 		} else if (type == "scannerSettings") {
 			result = (Asset) createScannerSettingsFromXml(assetNode);
+		} else if (type == "FWFSettings") {
+			result = (Asset) createFWFSettingsFromXml(assetNode);
 		} else {
 			System.out.println("ERROR: Unknown asset type: " + type);
 			System.exit(-1);
@@ -321,11 +326,12 @@ public class XmlAssetsLoader {
 		// ########## END Read supported pulse frequencies ############
 
 		// ########### BEGIN Read all the rest #############
-		Double beamDiv_rad = (Double) getAttribute(scannerNode, "beamDivergence_rad", Double.class, 0.0d);
+		Double beamDiv_rad = (Double) getAttribute(scannerNode, "beamDivergence_rad", Double.class, 0.0003d);
 
 		Double pulseLength_ns = (Double) getAttribute(scannerNode, "pulseLength_ns", Double.class, 1.0d);
 
 		String visModel = (String) getAttribute(scannerNode, "visModel", String.class, "");
+		
 		// ########### END Read all the rest #############
 
 		Scanner scanner = new Scanner(beamDiv_rad, emitterPosition, emitterAttitude, pulseFreqs, pulseLength_ns, visModel);
@@ -394,7 +400,8 @@ public class XmlAssetsLoader {
 		// ############################ BEGIN Configure detector ###############################
 		Double rangeMin_m = (Double) getAttribute(scannerNode, "rangeMin_m", Double.class, 0.0d);
 		Double accuracy_m = (Double) getAttribute(scannerNode, "accuracy_m", Double.class, 0.0d);
-		scanner.detector = new SingleRayPulseDetector(scanner, accuracy_m, rangeMin_m);
+		scanner.detector = new FullWaveformPulseDetector(scanner, accuracy_m, rangeMin_m);
+	//	scanner.detector = new SingleRayPulseDetector(scanner, accuracy_m, rangeMin_m);
 		// ############################ END Configure detector ###############################
 
 		return scanner;
@@ -406,7 +413,6 @@ public class XmlAssetsLoader {
 		ScannerSettings template = new ScannerSettings();
 
 		template.active = true;
-		template.beamSampleQuality = 1;
 		template.headRotatePerSec_rad = 0d;
 		template.headRotateStart_rad = 0d;
 		template.headRotateStop_rad = 0d;
@@ -458,6 +464,26 @@ public class XmlAssetsLoader {
 		settings.pulseFreq_Hz = (Integer) getAttribute(node, "pulseFreq_hz", Integer.class, template.pulseFreq_Hz);
 		settings.scanAngle_rad = (Double) getAttribute(node, "scanAngle_deg", Double.class, template.scanAngle_rad) * (Math.PI / 180);
 		settings.scanFreq_Hz = (Integer) getAttribute(node, "scanFreq_hz", Integer.class, template.scanFreq_Hz);
+
+		return settings;
+	}
+	
+
+	public FWFSettings createFWFSettingsFromXml(Element node) {
+		FWFSettings settings = new FWFSettings();
+
+		settings.numTimeBins = (Integer) getAttribute(node, "numTimeBins", Integer.class, settings.numTimeBins);
+		settings.numFullwaveBins = (Integer) getAttribute(node, "numFullwaveBins", Integer.class, settings.numFullwaveBins);
+		settings.minEchoWidth = (Double) getAttribute(node, "minEchoWidth", Double.class, settings.minEchoWidth);
+		settings.peakEnergy = (Double) getAttribute(node, "peakEnergy", Double.class, settings.peakEnergy);
+		settings.apartureDiameter = (Double) getAttribute(node, "apartureDiameter", Double.class, settings.apartureDiameter);
+		settings.scannerEfficiency = (Double) getAttribute(node, "scannerEfficiency", Double.class, settings.scannerEfficiency);
+		settings.atmosphericVisibility = (Double) getAttribute(node, "atmosphericVisibility", Double.class, settings.atmosphericVisibility);
+		settings.scannerWaveLength = (Double) getAttribute(node, "scannerWaveLength", Double.class, settings.scannerWaveLength);
+		settings.beamDivergence_rad = (Double) getAttribute(node, "beamDivergence_rad", Double.class, settings.beamDivergence_rad);
+		settings.pulseLength_ns = (Double) getAttribute(node, "pulseLength_ns", Double.class, settings.pulseLength_ns);
+		settings.beamSampleQuality = (Integer) getAttribute(node, "beamSampleQuality", Integer.class, settings.beamSampleQuality);
+		settings.winSize = (Integer) getAttribute(node, "winSize", Integer.class, settings.winSize);
 
 		return settings;
 	}

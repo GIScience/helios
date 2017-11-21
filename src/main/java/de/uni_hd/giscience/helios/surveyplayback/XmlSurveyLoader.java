@@ -8,6 +8,7 @@ import org.w3c.dom.NodeList;
 
 import de.uni_hd.giscience.helios.assetsloading.XmlAssetsLoader;
 import de.uni_hd.giscience.helios.core.platform.Platform;
+import de.uni_hd.giscience.helios.core.scanner.FWFSettings;
 import de.uni_hd.giscience.helios.core.scanner.Scanner;
 import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
 import de.uni_hd.giscience.helios.core.scene.Scene;
@@ -53,7 +54,6 @@ public class XmlSurveyLoader extends XmlAssetsLoader {
 
 		//String defaultScannerSettingsLocation = (String) getAttribute(surveyNode, "defaultScannerSettings", String.class, "default");
 
-		//survey.mDefaultScannerSettings = (ScannerSettings) getAssetByLocation("scannerSettings", defaultScannerSettingsLocation);
 
 		String scannerAssetLocation = (String) getAttribute(surveyNode, "scanner", String.class, null);
 
@@ -64,6 +64,17 @@ public class XmlSurveyLoader extends XmlAssetsLoader {
 
 		survey.scanner.platform = platform;
 
+		// FWF info
+		Element scannerFWFSettingsNode = (Element) surveyNode.getElementsByTagName("FWFSettings").item(0);
+		survey.scanner.applySettingsFWF((FWFSettings)createFWFSettingsFromXml(scannerFWFSettingsNode));
+		 
+		// temp backward compatibility
+		if(survey.scanner.cfg_device_beamDivergence_rad>0) 
+			survey.scanner.FWF_settings.beamDivergence_rad=survey.scanner.cfg_device_beamDivergence_rad;
+
+		if(survey.scanner.getPulseLength_ns()>0) 
+			survey.scanner.FWF_settings.pulseLength_ns=survey.scanner.getPulseLength_ns();
+		
 		// #################### BEGIN Read point cloud color ####################
 
 		Color4f col = createColorFromXml((Element) surveyNode.getElementsByTagName("pointCloudColor").item(0));
