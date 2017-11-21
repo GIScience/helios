@@ -1,4 +1,5 @@
-# [HELIOS](http://www.geog.uni-heidelberg.de/gis/helios_en.html) - the Heidelberg LiDAR Operations Simulator - is a software package for interactive real-time simulation and visualization of terrestrial, mobile and airborne laser scanning surveys written in Java.
+# HELIOS
+The Heidelberg LiDAR Operations Simulator ([HELIOS](http://www.geog.uni-heidelberg.de/gis/helios_en.html)) is a software package for interactive real-time simulation and visualization of terrestrial, mobile and airborne laser scanning surveys written in Java.
 
 ## HELIOS-FWF
 HELIOS ver. 2.0 - Full-WaveForm implementation within the Heidelberg LiDAR Operations Simulator.
