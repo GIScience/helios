@@ -8,7 +8,6 @@
 	<scanner 	id 							= "riegl_vz400"
 				name              			= "RIEGL VZ-400"
 				visModel					= "scanners/vz400/vz400.obj"
-				
 				accuracy_m					= "0.005"
 			 	beamDivergence_rad 			= "0.00035"
 				headRotatePerSecMax_deg		= "60"
@@ -155,5 +154,28 @@
 	<!-- ##### END Tractor scanner ##### -->
 	
 	<!-- ############### END "Fantasy" Scanners ############### -->
+
+    	<!--######## BEGIN RIEGL VQ-450 ####### -->
+		<scanner 
+        	id="riegl_vq-450" 
+       		accuracy_m="0.008"
+		beamDivergence_rad="0.0003" 
+        	name="RIEGL VQ-450" optics="rotating"
+		pulseFreqs_Hz="150000,200000,300000,380000,550000,550000"
+		pulseLength_ns="4" 
+        	rangeMin_m="1.5" 
+        	scanAngleMax_deg="360"
+		scanAngleEffectiveMax_deg="360" 
+        	scanFreqMin_Hz="10" 
+        	scanFreqMax_Hz="200"
+		visModel="scanners/vux-1uav/vux-1uav.obj">
+
+		<beamOrigin x="0" y="0.14" z="0.126">
+			<rot axis="pitch" angle_deg="90" />
+			<rot axis="yaw" angle_deg="90" />
+		</beamOrigin>
+		<headRotateAxis x="0" y="0" z="1" />
+		</scanner>
+    	<!--######## END RIEGL VQ-450 ####### -->
 
 </document>

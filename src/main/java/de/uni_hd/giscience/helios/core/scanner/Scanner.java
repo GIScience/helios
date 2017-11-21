@@ -20,6 +20,10 @@ public class Scanner extends Asset {
 	public Platform platform = null;
 	public AbstractDetector detector = null;
 
+	// FWF settings
+	public FWFSettings FWF_settings;
+	//
+	
 	// Misc:
 	public String cfg_device_visModelPath = "";
 
@@ -38,6 +42,7 @@ public class Scanner extends Asset {
 	boolean state_lastPulseWasHit = false;
 	boolean state_isActive = true;
 
+	
 	public Scanner(double beamDiv_rad, Vector3D beamOrigin, Rotation beamOrientation, ArrayList<Integer> pulseFreqs, double pulseLength_ns, String visModel) {
 		
 		// Configure emitter:
@@ -56,14 +61,18 @@ public class Scanner extends Asset {
 		// Configure scanner:
 		this.setActive(settings.active);
 		this.setPulseFreq_Hz(settings.pulseFreq_Hz);
-		
+
 		detector.applySettings(settings);
 		scannerHead.applySettings(settings);
 		beamDeflector.applySettings(settings);
 	}
 
-	
-	public void doSimStep(ExecutorService execService, Long currentGpsTime) {
+	public void applySettingsFWF(FWFSettings settings) {
+		FWF_settings=settings;
+		
+	}
+
+	public void doSimStep(ExecutorService execService) {
 
 		// Update head attitude (we do this even when the scanner is inactive):
 		scannerHead.doSimStep(cfg_setting_pulseFreq_Hz);
@@ -89,6 +98,10 @@ public class Scanner extends Asset {
 		// Calculate absolute beam attitude:
 		Rotation mountRelativeEmitterAttitude = this.scannerHead.getMountRelativeAttitude().applyTo(this.cfg_device_headRelativeEmitterAttitude);
 		Rotation absoluteBeamAttitude = platform.getAbsoluteMountAttitude().applyTo(mountRelativeEmitterAttitude).applyTo(beamDeflector.getEmitterRelativeAttitude());
+
+		// Caclulate time of the emitted pulse
+		Long unixTime = System.currentTimeMillis() / 1000L;
+		Long currentGpsTime = (unixTime - 315360000) - 1000000000;
 
 		detector.simulatePulse(execService, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
 	}
