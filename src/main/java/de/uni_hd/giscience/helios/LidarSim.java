@@ -58,8 +58,8 @@ public class LidarSim {
 		}
 
 		if (surveyFilePath.equals("")) {
-		//	surveyFilePath = "data/surveys/als_PN1.xml";
-			surveyFilePath = "data/surveys/tls_PoN3.xml";
+			System.out.println("Error: Input survey not specified");
+			System.exit(-1);
 		}
 
 		// Load survey description from XML file:

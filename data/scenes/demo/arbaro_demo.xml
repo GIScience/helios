@@ -33,7 +33,7 @@
 
 
 			<filter type="translate">
-				<param type="vec3" key="offset" value="25;15;0"/>				
+				<param type="vec3" key="offset" value="0;15;0"/>				
 			</filter>
 
 

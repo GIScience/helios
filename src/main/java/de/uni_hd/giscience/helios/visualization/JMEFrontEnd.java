@@ -122,7 +122,7 @@ public class JMEFrontEnd extends SimpleApplication implements EventListener {
 
 		setSettings(mSettings);
 
-		setShowSettings(false);
+		setShowSettings(true);
 
 		// ATTENTION: This is REQUIRED to prevent freezing of the whole computer if the program loses focus!
 		// setPauseOnLostFocus() must be "false" since currently, setting it to "true" won't stop the actual simulation anyway.
