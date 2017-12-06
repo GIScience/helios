@@ -31,14 +31,19 @@ First install the dependencies, then compile the source code, and finally execut
 - Maven 3
 - Git
 
-In Ubuntu the these packages can be installed by:
+In Ubuntu these packages can be installed by:
 ```bash
 sudo apt-get install oracle-java8-installer maven git
 ```
 
 ### Compilation
 
-Inside the root folder simply execute:
+Download the source code:
+
+```bash
+git clone https://github.com/GIScience/helios.git
+```
+Then inside the root folder simply execute:
 ```bash
 mvn package
 ```
@@ -53,44 +58,43 @@ HELIOS supports both single-ray and full-waveform simulations. Currently the def
 
 ### Input
 
-The argument of the program is the survey XML file.  See  [Wiki: Basic input data](https://github.com/GIScience/helios/wiki/Quick-start-guide#basic-input-data) for further details. 
-
+The argument of the program is the survey XML file. See [Wiki: Basic input data](https://github.com/GIScience/helios/wiki/Quick-start-guide#basic-input-data) for further details. 
 
 ### Execution
 
 From the root folder run:
 
 ```bash
-java -jar target/helios.jar <survey-file>
+java -jar target/helios-0.0.1.jar <survey-file>
 ```
 To use the batch mode (no visualization):
 
 ```bash
-java -jar target/helios.jar <survey-file> headless
+java -jar target/helios-0.0.1.jar <survey-file> headless
 ```
 ### Output
 
 Output files are generated inside *output/Survey Playback* folder.
 
-* Point cloud: File *legxxx_points.xyz*  separated by spaces
+* Point cloud: File *legxxx_points.xyz* separated by spaces
 Fields:  
 X Y Z I ECHO_WIDTH RN NOR FWF_ID OBJ_ID
 Example:  
 -4.615 15.979 2.179 4.0393 1.4317 1 1 214275 1
-* Waveform: File *legxxx_points.xyzfullwave.txt*  separated by spaces
+* Waveform: File *legxxx_points.xyzfullwave.txt* separated by spaces  
 See [FWF.md](FWF.md) for further details. 
 
 ## Documentation
 
-See the [Wiki](https://github.com/GIScience/helios/wiki)  for futher details.
+See the [Wiki](https://github.com/GIScience/helios/wiki) for futher details.
 
 
 ## Authorship
 
-GIScience Research Group
-Institute of Geography
-University of Heidelberg
-Maintainers: @sebastian-bechtold @nlukac @deuxbot 
+GIScience Research Group  
+Institute of Geography  
+University of Heidelberg  
+Maintainers: @sebastian-bechtold @nlukac @KoeMai @deuxbot   
 
 Research paper:
 
@@ -99,5 +103,3 @@ Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Frame
 ## License
 
 GNU General Public License v3.0
-
-
