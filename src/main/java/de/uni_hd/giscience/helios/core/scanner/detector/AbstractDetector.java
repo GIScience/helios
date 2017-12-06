@@ -22,7 +22,7 @@ public abstract class AbstractDetector {
 	public double cfg_device_rangeMin_m = 0;
 
 	// File output:
-	String outputFileLineFormatString = "%.3f %.3f %.3f %.4f %.4f %d %d %d %d";
+	String outputFileLineFormatString = "%.3f %.3f %.3f %.4f %.4f %d %d %d %s";
 	BufferedWriter mPointsFileWriter = null;
 
 	String outputFilePath;
