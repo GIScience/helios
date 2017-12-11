@@ -22,7 +22,7 @@ public abstract class AbstractDetector {
 	public double cfg_device_rangeMin_m = 0;
 
 	// File output:
-	String outputFileLineFormatString = "%.3f %.3f %.3f %.4f %.4f %d %d %d %s";
+	String outputFileLineFormatString = "%.3f %.3f %.3f %.4f %.4f %d %d %d %s %d";
 	BufferedWriter mPointsFileWriter = null;
 
 	String outputFilePath;
@@ -97,7 +97,7 @@ public abstract class AbstractDetector {
 
 			Vector3D shifted = m.position.add(scanner.platform.scene.getShift());
 
-			String line = String.format(outputFileLineFormatString, shifted.getX(), shifted.getY(), shifted.getZ(), m.intensity, m.echo_width, m.returnNumber, m.pulseReturnNumber, m.fullwaveIndex, m.hitObjectId);
+			String line = String.format(outputFileLineFormatString, shifted.getX(), shifted.getY(), shifted.getZ(), m.intensity, m.echo_width, m.returnNumber, m.pulseReturnNumber, m.fullwaveIndex, m.hitObjectId, m.classification);
 
 			line += "\n";
 

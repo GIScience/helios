@@ -1,11 +1,14 @@
 package de.uni_hd.giscience.helios.surveyplayback;
 
+import java.io.File;
+
 import javax.vecmath.Color4f;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import de.uni_hd.giscience.helios.assetsloading.SpectralLibrary;
 import de.uni_hd.giscience.helios.assetsloading.XmlAssetsLoader;
 import de.uni_hd.giscience.helios.core.platform.Platform;
 import de.uni_hd.giscience.helios.core.scanner.FWFSettings;
@@ -148,17 +151,13 @@ public class XmlSurveyLoader extends XmlAssetsLoader {
 		// until the scene is loaded, only to learn that something has failed.
 
 		// ########### BEGIN Load scene ############
-		String sceneString = surveyNode.getAttribute("scene");
 
-		Scene scene = (Scene) getAssetByLocation("scene", sceneString);
-
-		if (scene == null) {
-			System.out.println("Failed to load scene");
-			System.exit(1);
-		}
-
-		survey.scanner.platform.scene = scene;
-
+		survey.scanner.platform.scene = loadScene(surveyNode.getAttribute("scene"));
+		
+		SpectralLibrary spectralLibrary = new SpectralLibrary((float)survey.scanner.cfg_device_wavelength_m);
+		spectralLibrary.loadReflectances();
+		spectralLibrary.setReflectances(survey.scanner.platform.scene);
+		
 		// ########### END Load scene ############
 
 		// ######## BEGIN Apply scene geometry shift to platform waypoint coordinates ###########
@@ -171,7 +170,7 @@ public class XmlSurveyLoader extends XmlAssetsLoader {
 				if (leg.mPlatformSettings.onGround) {
 					Vector3D pos = leg.mPlatformSettings.getPosition();
 
-					Vector3D ground = scene.getGroundPointAt(pos);
+					Vector3D ground = survey.scanner.platform.scene.getGroundPointAt(pos);
 
 					if (ground != null) {
 						leg.mPlatformSettings.setPosition(new Vector3D(pos.getX(), pos.getY(), ground.getZ()));
@@ -197,5 +196,46 @@ public class XmlSurveyLoader extends XmlAssetsLoader {
 		}
 
 		return createSurveyFromXml((Element) surveyNodes.item(0));
+	}
+	
+	private Scene loadScene(String sceneString) {
+
+		System.out.println("Loading Scene...");
+		
+		Scene scene = null;
+		
+		long timeStart = System.nanoTime();
+		
+		String sceneFullPath = null;
+		try {
+			sceneFullPath = sceneString.split("#")[0];
+			sceneFullPath = sceneFullPath.substring(0, sceneFullPath.length() - 3);
+		} catch (StringIndexOutOfBoundsException e) {	// Case for having Survey and Scene in the same XML 
+			sceneFullPath = xmlDocFilePath.substring(0, xmlDocFilePath.length() - 3);
+		}
+		String sceneObjPath = sceneFullPath + "scene";
+		File sceneObj = new File(sceneObjPath);
+		File sceneXml = new File(sceneFullPath + "xml");
+		
+		if (sceneObj.exists() && sceneObj.lastModified() > sceneXml.lastModified())	{
+			scene = Scene.readObject(sceneObjPath);
+		}
+		else {		
+			scene = (Scene) getAssetByLocation("scene", sceneString);
+			scene.writeObject(sceneObjPath);
+		}
+		
+		if (scene == null) {
+			System.out.println("Error: Cannot load scene");
+			System.exit(1);
+		}
+		
+		long timeFinish = System.nanoTime();
+		
+		double seconds = (double) (timeFinish - timeStart) / 1000000000;
+
+		System.out.println("finished in " + seconds + " sec.");
+		
+		return scene;		
 	}
 }

@@ -15,4 +15,5 @@ public class Measurement {
 	public int returnNumber = 0;
 	public int pulseReturnNumber=0;
 	public int fullwaveIndex = 0;
+	public int classification = 0;
 }

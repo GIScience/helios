@@ -1,5 +1,6 @@
 package de.uni_hd.giscience.helios.core.scene.primitives;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -7,7 +8,9 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import de.uni_hd.giscience.helios.assetsloading.ScenePart;
 import de.uni_hd.giscience.helios.core.scene.Material;
 
-public abstract class Primitive {
+public abstract class Primitive implements Serializable {
+
+	private static final long serialVersionUID = 74916691493048350L;
 
 	public Material material = null;
 

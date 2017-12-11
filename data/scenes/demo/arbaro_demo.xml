@@ -41,7 +41,7 @@
 				<param type="double" key="scale" value="0.5"/>						
 			</filter>				
 		</part>
-		<!-- 
+		
 		<part>
 			<filter type="objloader">
 				<param type="string" key="filepath" value="data/sceneparts/arbaro/sassafras_low.obj"/>
@@ -58,7 +58,7 @@
 			</filter>	
 
 			<filter type="translate">
-				<param type="vec3" key="offset" value="-25;15;0"/>				
+				<param type="vec3" key="offset" value="-10;15;0"/>				
 			</filter>
 
 
@@ -67,7 +67,7 @@
 			</filter>	
 		</part>
 		
-		
+		<!-- 
 		<part>
 			<filter type="objloader">
 				<param type="string" key="filepath" value="data/sceneparts/arbaro/weeping_willow_low.obj"/>

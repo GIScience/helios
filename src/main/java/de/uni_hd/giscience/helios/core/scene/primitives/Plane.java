@@ -6,6 +6,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class Plane extends Primitive {
 
+	private static final long serialVersionUID = 3358077982881990656L;
 	Vector3D n = null;
 	Vector3D d = null;
 

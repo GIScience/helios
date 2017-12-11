@@ -114,7 +114,7 @@ public class XmlAssetsLoader {
 		} else if (type == "scanner") {
 			result = (Asset) createScannerFromXml(assetNode);
 		} else if (type == "scene") {
-			result = (Asset) createSceneFromXml(assetNode);
+			result = (Asset) createSceneFromXml(assetNode, xmlDocFilePath);
 		} else if (type == "scannerSettings") {
 			result = (Asset) createScannerSettingsFromXml(assetNode);
 		} else if (type == "FWFSettings") {
@@ -332,9 +332,22 @@ public class XmlAssetsLoader {
 
 		String visModel = (String) getAttribute(scannerNode, "visModel", String.class, "");
 		
+		String id = (String) getAttribute(scannerNode, "id", String.class, "Default");
+		
+		Double avgPower = (Double) getAttribute(scannerNode, "averagePower_w", Double.class, 4.0);
+		
+		Double beamQuality = (Double) getAttribute(scannerNode, "beamQualityFactor", Double.class, 1.0);
+		
+		Double efficiency = (Double) getAttribute(scannerNode, "opticalEfficiency", Double.class, 0.99);
+
+		Double receiverDiameter = (Double) getAttribute(scannerNode, "receiverDiameter_m", Double.class, 0.15);
+
+		Double visibility = (Double) getAttribute(scannerNode, "atmosphericVisibility_km", Double.class, 23d);
+		
+		Integer wavelength = (Integer) getAttribute(scannerNode, "wavelength_nm", Integer.class, 1064);
 		// ########### END Read all the rest #############
 
-		Scanner scanner = new Scanner(beamDiv_rad, emitterPosition, emitterAttitude, pulseFreqs, pulseLength_ns, visModel);
+		Scanner scanner = new Scanner(beamDiv_rad, emitterPosition, emitterAttitude, pulseFreqs, pulseLength_ns, visModel, id, avgPower, beamQuality, efficiency, receiverDiameter, visibility, wavelength);
 
 		// ############################# BEGIN Configure scanner head ##############################
 		// ################### BEGIN Read Scan head rotation axis #############
@@ -490,9 +503,10 @@ public class XmlAssetsLoader {
 
 	// ################# END get(asset) by id methods #############
 
-	public Scene createSceneFromXml(Element sceneNode) {
+	public Scene createSceneFromXml(Element sceneNode, String path) {
 
 		Scene scene = new Scene();
+		scene.sourceFilePath = path;
 
 		// ############## BEGIN Read sun direction ###############
 		try {
@@ -748,7 +762,7 @@ public class XmlAssetsLoader {
 	public Asset getAssetByLocation(String type, String location) {
 
 		String[] bla = location.split("#");
-
+		
 		XmlAssetsLoader loader = this;
 		String id = bla[0].trim();
 

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
 import de.uni_hd.giscience.helios.core.Simulation;
 import de.uni_hd.giscience.helios.core.platform.Platform;
 import de.uni_hd.giscience.helios.core.platform.PlatformSettings;
@@ -69,7 +71,18 @@ public class SurveyPlayback extends Simulation {
 
 	@Override
 	public void doSimStep() {
-
+		
+		/*
+		if(mSurvey.legs.size() > 0 ) {
+			Vector3D initLegPos = getCurrentLeg().mPlatformSettings.getPosition();
+			Vector3D lastLegPos = mSurvey.legs.get(getCurrentLegIndex()+1).mPlatformSettings.getPosition();
+			double legsDistance = Vector3D.distance(initLegPos, lastLegPos);
+			Vector3D curPlatPos = this.mSurvey.scanner.platform.getPosition();
+			double curDistance = Vector3D.distance(curPlatPos, lastLegPos);
+			int progress = (int) ((legsDistance - curDistance ) / legsDistance * 100);
+			//System.out.println("Progress: " + progress + "%");
+		}*/
+		
 		if (!mLegStarted) {
 			// ########## BEGIN Clear point cloud file for current leg ###########
 			String outputPath = getCurrentOutputPath();

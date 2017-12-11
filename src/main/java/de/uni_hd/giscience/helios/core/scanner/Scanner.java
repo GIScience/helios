@@ -21,7 +21,7 @@ public class Scanner extends Asset {
 	public AbstractDetector detector = null;
 
 	// FWF settings
-	public FWFSettings FWF_settings;
+	public FWFSettings FWF_settings = null;
 	//
 	
 	// Misc:
@@ -33,17 +33,31 @@ public class Scanner extends Asset {
 	ArrayList<Integer> cfg_device_supportedPulseFreqs_Hz = new ArrayList<Integer>();
 	public double cfg_device_beamDivergence_rad = 0;
 	double cfg_device_pulseLength_ns = 0;
-
 	int cfg_setting_pulseFreq_Hz = 0;
+	public String cfg_device_id = "";
+	public double cfg_device_averagePower_w;
+	public double cfg_device_beamQuality;
+	public double cfg_device_efficiency;
+	public double cfg_device_receiverDiameter_m;
+	public double cfg_device_visibility_km;
+	public double cfg_device_wavelength_m;
+	
+	public double atmosphericExtinction;
+	public double beamWaistRadius;
 	// ########## END Emitter ###########
 
 	// State variables:
 	int state_currentPulseNumber = 0;
 	boolean state_lastPulseWasHit = false;
 	boolean state_isActive = true;
+	
+	// Cached variables
+	public double cached_Dr2;
+	public double cached_Bt2;
 
 	
-	public Scanner(double beamDiv_rad, Vector3D beamOrigin, Rotation beamOrientation, ArrayList<Integer> pulseFreqs, double pulseLength_ns, String visModel) {
+	public Scanner(double beamDiv_rad, Vector3D beamOrigin, Rotation beamOrientation, ArrayList<Integer> pulseFreqs, double pulseLength_ns, String visModel, 
+			String id, double averagePower, double beamQuality, double efficiency, double receiverDiameter, double atmosphericVisibility, int wavelength) {
 		
 		// Configure emitter:
 		this.cfg_device_headRelativeEmitterPosition = beamOrigin;
@@ -51,9 +65,25 @@ public class Scanner extends Asset {
 		this.cfg_device_supportedPulseFreqs_Hz = pulseFreqs;
 		this.cfg_device_beamDivergence_rad = beamDiv_rad;
 		this.cfg_device_pulseLength_ns = pulseLength_ns;
-
+		this.cfg_device_id = id;
+		this.cfg_device_averagePower_w = averagePower;
+		this.cfg_device_beamQuality = beamQuality;			
+		this.cfg_device_efficiency = efficiency;
+		this.cfg_device_receiverDiameter_m = receiverDiameter;
+		this.cfg_device_visibility_km = atmosphericVisibility;
+		this.cfg_device_wavelength_m = wavelength / 1000000000f;
+		
+		this.atmosphericExtinction = calcAtmosphericAttenuation();
+		this.beamWaistRadius = (cfg_device_beamQuality * cfg_device_wavelength_m) / (Math.PI * cfg_device_beamDivergence_rad);	
+		
 		// Configure misc:
 		this.cfg_device_visModelPath = visModel;
+		
+		// Precompute variables
+		this.cached_Dr2 = cfg_device_receiverDiameter_m * cfg_device_receiverDiameter_m;
+		this.cached_Bt2 = cfg_device_beamDivergence_rad * cfg_device_beamDivergence_rad;
+			
+		System.out.println(this.toString());
 	}
 	
 	public void applySettings(ScannerSettings settings) {
@@ -107,7 +137,6 @@ public class Scanner extends Asset {
 	}
 
 	
-	
 	public int getPulseFreq_Hz() {
 		return this.cfg_setting_pulseFreq_Hz;
 	}
@@ -128,8 +157,41 @@ public class Scanner extends Asset {
 	public void setActive(boolean active) {
 		state_isActive = active;
 	}
-
 	
+	public double calcFootprintArea(double distance) {
+		double Bt2 = cached_Bt2;
+		double R = distance;
+		
+		return (Math.PI * R * R * Bt2) / 4;
+	}
+	
+	public double calcFootprintRadius(double distance) {  // TODO Jorge: This is overkill
+		double area = calcFootprintArea(distance);
+		
+		return Math.sqrt(area / Math.PI);
+	}
+	
+	// Simulate energy loss from aerial particles (Carlsson et al., 2001)
+	private double calcAtmosphericAttenuation() {  
+		double q;
+		
+		double wavelenth_nm = cfg_device_wavelength_m * 1000000000f;
+		
+		if (wavelenth_nm < 500 && wavelenth_nm > 2000) {
+			return 0;	// Do no nothing if wavelength is outside this range as the approximation will be bad
+		}				  
+		
+		if (cfg_device_visibility_km > 50) 
+			q = 1.6; 
+		else if (cfg_device_visibility_km > 6 && cfg_device_visibility_km < 50) 
+			q = 1.3; 
+		else 
+			q = 0.585 * Math.pow(cfg_device_visibility_km, 0.33);		
+		
+		return (3.91 / cfg_device_visibility_km) * Math.pow((wavelenth_nm / 0.55), -q);
+  	}
+
+
 	public void setPulseFreq_Hz(int pulseFreq_Hz) {
 
 		// Check of requested pulse freq is > 0:
@@ -156,5 +218,14 @@ public class Scanner extends Asset {
 		synchronized(this) {
 			this.state_lastPulseWasHit = value;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "SCANNER: " + cfg_device_id + " " + 
+				"Power: " + Double.toString(cfg_device_averagePower_w) + " W " + 
+				"Divergence: " + Double.toString(cfg_device_beamDivergence_rad * 1000) + " mrad " + 
+				"Wavelength: " + Double.toString(cfg_device_wavelength_m * Math.pow(10, 9)) + " nm " + 
+				"Visibility: " + Double.toString(cfg_device_visibility_km) + " km";
 	}
 }

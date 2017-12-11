@@ -23,7 +23,7 @@ public class MaterialsFileReader {
 			br = new BufferedReader(new FileReader(filePathString));
 		} catch (FileNotFoundException e) {
 			System.out.println("Failed to load materials file: " + filePathString);
-			return newMats;
+			System.exit(0);
 		}
 
 		System.out.println("Reading materials from .mtl file '" + filePathString);
@@ -87,6 +87,14 @@ public class MaterialsFileReader {
 
 				else if (lineParts[0].equals("helios_receiveShadows") && lineParts.length >= 2) {
 					newMat.receiveShadows = Integer.parseInt(lineParts[1]);
+				}				
+
+				else if (lineParts[0].equals("helios_classification") && lineParts.length >= 2) {
+					newMat.classification = Integer.parseInt(lineParts[1]);
+				}
+				
+				else if (lineParts[0].equals("helios_definition") && lineParts.length >= 2) {
+					newMat.definition = lineParts[1];
 				}
 				// ######### END HELIOS-specific additions to the wavefront .mtl standard #########
 			}

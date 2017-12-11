@@ -116,9 +116,9 @@ public class JMEFrontEnd extends SimpleApplication implements EventListener {
 		mSettings.setResolution(1280, 1024);
 		mSettings.setResolution(1600, 1024);
 		// setting.setResolution(1024,768);
-		mSettings.setResolution(1024,768);
+		mSettings.setResolution(1280,720);
 
-		mSettings.setSamples(4);
+		mSettings.setSamples(2);
 
 		setSettings(mSettings);
 

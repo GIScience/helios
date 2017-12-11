@@ -8,6 +8,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class Voxel extends Primitive {
 
+	private static final long serialVersionUID = -3790649092674318442L;
 	public Vertex v = new Vertex();
 
 	public int numPoints = 0;

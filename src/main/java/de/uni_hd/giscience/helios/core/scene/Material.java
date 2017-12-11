@@ -1,9 +1,16 @@
 package de.uni_hd.giscience.helios.core.scene;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-public class Material {
+public class Material implements Serializable {
+
+	private static final long serialVersionUID = -8009116279827086555L;
 
 	public String name = "default";
 
@@ -12,10 +19,13 @@ public class Material {
 	public int castShadows = 0;
 	public int receiveShadows = 0;
 
-	public Path matFilePath = null;
+	public transient Path matFilePath = null;
 
 	public String map_Kd = "";
-	public double reflectance = 0;
+	public double reflectance = 0;	
+	public double specularity = 0;	
+	public int classification = 0;	
+	public String definition;		
 
 	public float[] ka = { 0, 0, 0, 0 };
 	public float[] kd = { 0, 0, 0, 0 };
@@ -28,6 +38,15 @@ public class Material {
 		result[2] = kd[2] * factor;
 
 		return result;
+	}
+	
+	public void setSpecularity() {
+		double kdSum = kd[0] + kd[1] + kd[2];
+		double ksSum = ks[0] + ks[1] + ks[2];
+		double dsSum = kdSum + ksSum;
+		if(dsSum > 0) {
+			specularity = ksSum / dsSum;
+		}
 	}
 
 	@Override
@@ -92,5 +111,24 @@ public class Material {
 			return false;
 		return true;
 	}
-
+		
+	private void writeObject(ObjectOutputStream oos) {
+		
+		try {	
+			oos.defaultWriteObject();
+			oos.writeObject((String)matFilePath.toString());
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}        
+	 }
+	 
+	private void readObject(ObjectInputStream ois) {
+		 
+		try {	
+			ois.defaultReadObject();
+			matFilePath = FileSystems.getDefault().getPath((String)ois.readObject());
+		} catch (IOException | ClassNotFoundException e) {			
+			e.printStackTrace();
+		}		 	
+	}
 }
