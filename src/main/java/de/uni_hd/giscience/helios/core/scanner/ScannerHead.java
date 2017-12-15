@@ -12,7 +12,9 @@ public class ScannerHead {
 	// Settings:
 	private double cfg_setting_rotatePerSec_rad = 0;
 	private double cfg_setting_rotateStop_rad = 0;
-
+	private double cfg_setting_rotateStart_rad = 0;
+	private double cfg_setting_rotateRange_rad = 0;
+	
 	// State variables:
 	private double state_currentRotateAngle_rad = 0;
 
@@ -30,8 +32,9 @@ public class ScannerHead {
 		this.setRotatePerSec_rad(settings.headRotatePerSec_rad);
 		this.setCurrentRotateAngle_rad(settings.headRotateStart_rad);
 
-		// Set rotate stop angle:
 		this.cfg_setting_rotateStop_rad = settings.headRotateStop_rad;
+		this.cfg_setting_rotateStart_rad = settings.headRotateStart_rad;
+		this.cfg_setting_rotateRange_rad = Math.abs(cfg_setting_rotateStart_rad - cfg_setting_rotateStop_rad);
 	}
 
 
@@ -78,5 +81,17 @@ public class ScannerHead {
 		}
 
 		this.cfg_setting_rotatePerSec_rad = rotateSpeed_rad;
+	}
+	
+	public double getRotateStart() {
+		return this.cfg_setting_rotateStart_rad;
+	}
+	
+	public double getRotateRange() {
+		return this.cfg_setting_rotateRange_rad;
+	}
+	
+	public double getRotateCurrent() {
+		return this.state_currentRotateAngle_rad;
 	}
 }

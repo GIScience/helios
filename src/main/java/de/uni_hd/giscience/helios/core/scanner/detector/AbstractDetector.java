@@ -109,5 +109,28 @@ public abstract class AbstractDetector {
 		}
 		// ############# END Write measured point to output file ############
 	}
+	
+	public synchronized void writeMeasurements(Measurement[] ms) {
+
+		// ############# BEGIN Write measured point to output file ############
+		if (mPointsFileWriter != null) {
+
+			for(Measurement m: ms) {
+			
+				Vector3D shifted = m.position.add(scanner.platform.scene.getShift());
+	
+				String line = String.format(outputFileLineFormatString, shifted.getX(), shifted.getY(), shifted.getZ(), m.intensity, m.echo_width, m.returnNumber, m.pulseReturnNumber, m.fullwaveIndex, m.hitObjectId, m.classification);
+	
+				line += "\n";
+	
+				try {
+					mPointsFileWriter.write(line);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		// ############# END Write measured point to output file ############
+	}
 
 }

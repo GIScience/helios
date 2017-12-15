@@ -71,8 +71,7 @@ public class LidarSim {
 			System.exit(-1);
 		}
 
-		SurveyPlayback playback = new SurveyPlayback(survey);
-		playback.exitAtEnd = headless;
+		SurveyPlayback playback = new SurveyPlayback(survey, headless);
 
 		// ############ BEGIN Start visualization module #############
 
@@ -85,7 +84,7 @@ public class LidarSim {
 		}
 		// ############ END Start visualization module #############
 
-		System.out.print("Running simulation...");
+		System.out.println("Running simulation...");
 
 		playback.start();
 	}

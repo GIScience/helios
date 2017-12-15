@@ -67,12 +67,12 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 
 	// Space distribution equation to calculate the beam energy decreasing the further away from the center (Carlsson et al., 2001)
 	private double calcEmmitedPower(double radius, double targetRange) {
-		double I0 = detector.scanner.cfg_device_averagePower_w;
-		double lambda = detector.scanner.cfg_device_wavelength_m;
+		double I0 = detector.scanner.getAveragePower();
+		double lambda = detector.scanner.getWavelenth();
 		double R = targetRange;
 		double R0 = detector.cfg_device_rangeMin_m;
 		double r = radius;
-		double w0 = detector.scanner.beamWaistRadius;
+		double w0 = detector.scanner.getBeamWaistRadius();
 		
 		double denom = Math.PI * w0 * w0;
 		double omega = (lambda * R) / denom;

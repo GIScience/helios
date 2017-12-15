@@ -86,7 +86,7 @@ public abstract class AbstractPulseRunnable implements Runnable {
 	// Calculate the strength of the laser going back to the detector
 	double calcIntensity(double incidenceAngle, double targetRange, double targetReflectivity, double targetSpecularity, double targetArea) {	      
 		
-		double emmitedPower = detector.scanner.cfg_device_averagePower_w;
+		double emmitedPower = detector.scanner.getAveragePower();
 		double intensity = calcReceivedPower(emmitedPower, targetRange, incidenceAngle, targetReflectivity, targetSpecularity, targetArea);
 		double etaErr = calcErrorFactor(0.10);	
 		
@@ -115,17 +115,17 @@ public abstract class AbstractPulseRunnable implements Runnable {
 	// Energy left after attenuation by air particles in range [0,1]
 	double calcAtmosphericFactor(double targetRange) {  
 		
-	  	return Math.exp(-2 * targetRange * detector.scanner.atmosphericExtinction); 
+	  	return Math.exp(-2 * targetRange * detector.scanner.getAtmosphericExtinction()); 
   	}
 	
 	// Laser radar equation "Signature simulation..." (Carlsson et al., 2000)
 	double calcReceivedPower(double emmitedPower, double targetRange, double incidenceAngle, double targetReflectivity, double targetSpecularity, double targetArea) {			
 		
 		double Pt = emmitedPower;
-		double Dr2 = detector.scanner.cached_Dr2;
+		double Dr2 = detector.scanner.getDr2();
 		double R = targetRange;
-		double Bt2 = detector.scanner.cached_Bt2;
-		double etaSys = detector.scanner.cfg_device_efficiency;	
+		double Bt2 = detector.scanner.getBt2();
+		double etaSys = detector.scanner.getEfficiency();	
 		double etaAtm = calcAtmosphericFactor(targetRange);
 		double bdrf = targetReflectivity * phongBDRF(incidenceAngle, targetSpecularity);
 		double sigma = calcCrossSection(bdrf, targetArea, incidenceAngle);

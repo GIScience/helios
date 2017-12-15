@@ -72,8 +72,8 @@ public class XmlSurveyLoader extends XmlAssetsLoader {
 		survey.scanner.applySettingsFWF((FWFSettings)createFWFSettingsFromXml(scannerFWFSettingsNode));
 		 
 		// temp backward compatibility
-		if(survey.scanner.cfg_device_beamDivergence_rad>0) 
-			survey.scanner.FWF_settings.beamDivergence_rad=survey.scanner.cfg_device_beamDivergence_rad;
+		if(survey.scanner.getBeamDivergence()>0) 
+			survey.scanner.FWF_settings.beamDivergence_rad=survey.scanner.getBeamDivergence();
 
 		if(survey.scanner.getPulseLength_ns()>0) 
 			survey.scanner.FWF_settings.pulseLength_ns=survey.scanner.getPulseLength_ns();
@@ -154,7 +154,7 @@ public class XmlSurveyLoader extends XmlAssetsLoader {
 
 		survey.scanner.platform.scene = loadScene(surveyNode.getAttribute("scene"));
 		
-		SpectralLibrary spectralLibrary = new SpectralLibrary((float)survey.scanner.cfg_device_wavelength_m);
+		SpectralLibrary spectralLibrary = new SpectralLibrary((float)survey.scanner.getWavelenth());
 		spectralLibrary.loadReflectances();
 		spectralLibrary.setReflectances(survey.scanner.platform.scene);
 		

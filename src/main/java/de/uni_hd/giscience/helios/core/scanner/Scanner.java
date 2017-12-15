@@ -31,19 +31,19 @@ public class Scanner extends Asset {
 	public Vector3D cfg_device_headRelativeEmitterPosition = new Vector3D(0, 0, 0);
 	public Rotation cfg_device_headRelativeEmitterAttitude = new Rotation(new Vector3D(1, 0, 0), 0);
 	ArrayList<Integer> cfg_device_supportedPulseFreqs_Hz = new ArrayList<Integer>();
-	public double cfg_device_beamDivergence_rad = 0;
-	double cfg_device_pulseLength_ns = 0;
-	int cfg_setting_pulseFreq_Hz = 0;
-	public String cfg_device_id = "";
-	public double cfg_device_averagePower_w;
-	public double cfg_device_beamQuality;
-	public double cfg_device_efficiency;
-	public double cfg_device_receiverDiameter_m;
-	public double cfg_device_visibility_km;
-	public double cfg_device_wavelength_m;
+	private double cfg_device_beamDivergence_rad = 0;
+	private double cfg_device_pulseLength_ns = 0;
+	private int cfg_setting_pulseFreq_Hz = 0;
+	private String cfg_device_id = "";
+	private double cfg_device_averagePower_w;
+	private double cfg_device_beamQuality;
+	private double cfg_device_efficiency;
+	private double cfg_device_receiverDiameter_m;
+	private double cfg_device_visibility_km;
+	private double cfg_device_wavelength_m;
 	
-	public double atmosphericExtinction;
-	public double beamWaistRadius;
+	private double atmosphericExtinction;  // TODO Jorge: This should not be in this class
+	private double beamWaistRadius;
 	// ########## END Emitter ###########
 
 	// State variables:
@@ -52,8 +52,8 @@ public class Scanner extends Asset {
 	boolean state_isActive = true;
 	
 	// Cached variables
-	public double cached_Dr2;
-	public double cached_Bt2;
+	private double cached_Dr2;
+	private double cached_Bt2;
 
 	
 	public Scanner(double beamDiv_rad, Vector3D beamOrigin, Rotation beamOrientation, ArrayList<Integer> pulseFreqs, double pulseLength_ns, String visModel, 
@@ -145,9 +145,52 @@ public class Scanner extends Asset {
 		return this.cfg_device_pulseLength_ns;
 	}
 
-	
 	public boolean lastPulseWasHit() {
 		return this.state_lastPulseWasHit;
+	}
+	
+	public double getBeamDivergence() {
+		return this.cfg_device_beamDivergence_rad;
+	}
+	
+	public double getAveragePower() {
+		return this.cfg_device_averagePower_w;
+	}
+	
+	public double getBeamQuality() {
+		return this.cfg_device_beamQuality;
+	}
+		
+	public double getEfficiency() {
+		return this.cfg_device_efficiency;
+	}
+	
+	public double getReceiverDiameter() {
+		return this.cfg_device_receiverDiameter_m;
+	}
+	
+	public double getVisibility() {
+		return this.cfg_device_visibility_km;
+	}
+	
+	public double getWavelenth() {
+		return this.cfg_device_wavelength_m;
+	}
+	
+	public double getAtmosphericExtinction() {
+		return this.atmosphericExtinction;
+	}
+	
+	public double getBeamWaistRadius() {
+		return this.beamWaistRadius;
+	}
+	
+	public double getBt2() {
+		return this.cached_Bt2;
+	}
+	
+	public double getDr2() {
+		return this.cached_Dr2;
 	}
 
 	public boolean isActive() {
@@ -174,21 +217,21 @@ public class Scanner extends Asset {
 	// Simulate energy loss from aerial particles (Carlsson et al., 2001)
 	private double calcAtmosphericAttenuation() {  
 		double q;
+		double lambda = this.cfg_device_wavelength_m * 1000000000f;
+		double Vm = this.cfg_device_visibility_km;
 		
-		double wavelenth_nm = cfg_device_wavelength_m * 1000000000f;
-		
-		if (wavelenth_nm < 500 && wavelenth_nm > 2000) {
+		if (lambda < 500 && lambda > 2000) {
 			return 0;	// Do no nothing if wavelength is outside this range as the approximation will be bad
 		}				  
 		
-		if (cfg_device_visibility_km > 50) 
+		if (Vm > 50) 
 			q = 1.6; 
-		else if (cfg_device_visibility_km > 6 && cfg_device_visibility_km < 50) 
+		else if (Vm > 6 && Vm < 50) 
 			q = 1.3; 
 		else 
-			q = 0.585 * Math.pow(cfg_device_visibility_km, 0.33);		
+			q = 0.585 * Math.pow(Vm, 0.33);		
 		
-		return (3.91 / cfg_device_visibility_km) * Math.pow((wavelenth_nm / 0.55), -q);
+		return (3.91 / Vm) * Math.pow((lambda / 0.55), -q);
   	}
 
 
