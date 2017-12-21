@@ -7,14 +7,6 @@ import de.uni_hd.giscience.helios.surveyplayback.SurveyPlayback;
 import de.uni_hd.giscience.helios.surveyplayback.XmlSurveyLoader;
 import de.uni_hd.giscience.helios.visualization.JMEFrontEnd;
 
-/*
- * Coordinate system convention for the lidar sim:
- * 
- * x - right
- * y - forward
- * z - up
- */
-
 public class LidarSim {
 
 	// public static Logger log = Logger.getLogger(LidarSim.class.getName());

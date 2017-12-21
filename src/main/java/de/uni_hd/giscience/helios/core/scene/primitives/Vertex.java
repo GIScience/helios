@@ -7,8 +7,6 @@ import javax.vecmath.Color4f;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-import Jama.Matrix;
-
 public class Vertex implements Serializable {
 
 	private static final long serialVersionUID = 4530961171798023308L;

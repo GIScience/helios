@@ -327,23 +327,14 @@ public class XmlAssetsLoader {
 
 		// ########### BEGIN Read all the rest #############
 		Double beamDiv_rad = (Double) getAttribute(scannerNode, "beamDivergence_rad", Double.class, 0.0003d);
-
 		Double pulseLength_ns = (Double) getAttribute(scannerNode, "pulseLength_ns", Double.class, 1.0d);
-
-		String visModel = (String) getAttribute(scannerNode, "visModel", String.class, "");
-		
-		String id = (String) getAttribute(scannerNode, "id", String.class, "Default");
-		
-		Double avgPower = (Double) getAttribute(scannerNode, "averagePower_w", Double.class, 4.0);
-		
-		Double beamQuality = (Double) getAttribute(scannerNode, "beamQualityFactor", Double.class, 1.0);
-		
+		String visModel = (String) getAttribute(scannerNode, "visModel", String.class, "");		
+		String id = (String) getAttribute(scannerNode, "id", String.class, "Default");		
+		Double avgPower = (Double) getAttribute(scannerNode, "averagePower_w", Double.class, 4.0);		
+		Double beamQuality = (Double) getAttribute(scannerNode, "beamQualityFactor", Double.class, 1.0);		
 		Double efficiency = (Double) getAttribute(scannerNode, "opticalEfficiency", Double.class, 0.99);
-
 		Double receiverDiameter = (Double) getAttribute(scannerNode, "receiverDiameter_m", Double.class, 0.15);
-
-		Double visibility = (Double) getAttribute(scannerNode, "atmosphericVisibility_km", Double.class, 23d);
-		
+		Double visibility = (Double) getAttribute(scannerNode, "atmosphericVisibility_km", Double.class, 23d);		
 		Integer wavelength = (Integer) getAttribute(scannerNode, "wavelength_nm", Integer.class, 1064);
 		// ########### END Read all the rest #############
 

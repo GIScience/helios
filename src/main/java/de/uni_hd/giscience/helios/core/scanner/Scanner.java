@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
+import de.uni_hd.giscience.helios.Directions;
 import de.uni_hd.giscience.helios.core.Asset;
 import de.uni_hd.giscience.helios.core.platform.Platform;
 import de.uni_hd.giscience.helios.core.scanner.beamDeflector.AbstractBeamDeflector;
@@ -22,6 +23,7 @@ public class Scanner extends Asset {
 
 	// FWF settings
 	public FWFSettings FWF_settings = null;
+	private int numRays = 0;
 	//
 	
 	// Misc:
@@ -29,7 +31,7 @@ public class Scanner extends Asset {
 
 	// ########## BEGIN Emitter ###########
 	public Vector3D cfg_device_headRelativeEmitterPosition = new Vector3D(0, 0, 0);
-	public Rotation cfg_device_headRelativeEmitterAttitude = new Rotation(new Vector3D(1, 0, 0), 0);
+	public Rotation cfg_device_headRelativeEmitterAttitude = new Rotation(Directions.right, 0);
 	ArrayList<Integer> cfg_device_supportedPulseFreqs_Hz = new ArrayList<Integer>();
 	private double cfg_device_beamDivergence_rad = 0;
 	private double cfg_device_pulseLength_ns = 0;
@@ -42,7 +44,7 @@ public class Scanner extends Asset {
 	private double cfg_device_visibility_km;
 	private double cfg_device_wavelength_m;
 	
-	private double atmosphericExtinction;  // TODO Jorge: This should not be in this class
+	private double atmosphericExtinction;  // TODO Jorge: This should be in a "Atmosphere Model" class
 	private double beamWaistRadius;
 	// ########## END Emitter ###########
 
@@ -99,6 +101,7 @@ public class Scanner extends Asset {
 
 	public void applySettingsFWF(FWFSettings settings) {
 		FWF_settings=settings;
+		calcRaysNumber();
 		
 	}
 
@@ -136,6 +139,22 @@ public class Scanner extends Asset {
 		detector.simulatePulse(execService, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
 	}
 
+	
+	private void calcRaysNumber() {
+		int count = 1;
+		
+		for (int radiusStep = 0; radiusStep < FWF_settings.beamSampleQuality; radiusStep++) {
+			int circleSteps = (int) (2 * Math.PI) * radiusStep;
+			count += circleSteps;	
+		}
+		
+		numRays = count;
+		System.out.println("Number of subsampling rays: " + numRays);
+	}
+	
+	public int getNumRays() {
+		return this.numRays;
+	}
 	
 	public int getPulseFreq_Hz() {
 		return this.cfg_setting_pulseFreq_Hz;
@@ -265,10 +284,10 @@ public class Scanner extends Asset {
 	
 	@Override
 	public String toString() {
-		return "SCANNER: " + cfg_device_id + " " + 
+		return "Scanner: " + cfg_device_id + " " + 
 				"Power: " + Double.toString(cfg_device_averagePower_w) + " W " + 
 				"Divergence: " + Double.toString(cfg_device_beamDivergence_rad * 1000) + " mrad " + 
-				"Wavelength: " + Double.toString(cfg_device_wavelength_m * Math.pow(10, 9)) + " nm " + 
+				"Wavelength: " + Integer.toString((int) (cfg_device_wavelength_m * 1000000000)) + " nm " + 
 				"Visibility: " + Double.toString(cfg_device_visibility_km) + " km";
 	}
 }

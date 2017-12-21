@@ -5,17 +5,12 @@ import java.util.Random;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-import de.uni_hd.giscience.helios.LasSpec;
+import de.uni_hd.giscience.helios.LasSpecification;
 import de.uni_hd.giscience.helios.core.scanner.Measurement;
 
 public abstract class AbstractPulseRunnable implements Runnable {
 
 	// ############## BEGIN Static variables ###############
-	// TODO 5: Move this to a central place?
-	final static Vector3D forward = new Vector3D(0, 1, 0);
-	final static Vector3D right = new Vector3D(1, 0, 0);
-	final static Vector3D up = new Vector3D(0, 0, 1);
-
 	// Speed of light in m/sec:
 	final static double speedOfLight_mPerSec = 299792458;
 
@@ -170,7 +165,7 @@ public abstract class AbstractPulseRunnable implements Runnable {
 
 	void capturePoint(Measurement m) {
 		
-		if(!writeGround && m.classification == LasSpec.GROUND) {
+		if(!writeGround && m.classification == LasSpecification.GROUND) {
 			return;
 		}		
 		

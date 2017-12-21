@@ -3,7 +3,8 @@ package de.uni_hd.giscience.helios.core.scanner.detector;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-import de.uni_hd.giscience.helios.LasSpec;
+import de.uni_hd.giscience.helios.Directions;
+import de.uni_hd.giscience.helios.LasSpecification;
 import de.uni_hd.giscience.helios.core.scene.RaySceneIntersection;
 import de.uni_hd.giscience.helios.core.scene.Scene;
 
@@ -18,7 +19,7 @@ public class SingleRayPulseRunnable extends AbstractPulseRunnable {
 
 		Scene scene = detector.scanner.platform.scene;
 
-		Vector3D beamDir = absoluteBeamAttitude.applyTo(forward);
+		Vector3D beamDir = absoluteBeamAttitude.applyTo(Directions.forward);
 
 		// Early abort if central axis of the beam does not intersect with the scene:
 		double[] tMinMax = scene.getAABB().getRayIntersection(absoluteBeamOrigin, beamDir);
@@ -30,7 +31,7 @@ public class SingleRayPulseRunnable extends AbstractPulseRunnable {
 
 		RaySceneIntersection intersect = scene.getIntersection(absoluteBeamOrigin, beamDir, false);
 
-		if (intersect == null || intersect.point == null || intersect.prim.material.classification == LasSpec.WATER) {  // TODO: Deal with water do not just ignore it
+		if (intersect == null || intersect.point == null || intersect.prim.material.classification == LasSpecification.WATER) {  // TODO: Deal with water do not just ignore it
 			detector.scanner.setLastPulseWasHit(false);
 			return;
 		}
@@ -47,5 +48,4 @@ public class SingleRayPulseRunnable extends AbstractPulseRunnable {
 
 		capturePoint(absoluteBeamOrigin, beamDir, distance, intensity, 0, 0, currentPulseNum, 0, intersect.prim.part.mId, intersect.prim.material.classification);
 	}
-
 }

@@ -1,6 +1,7 @@
 package de.uni_hd.giscience.helios;
 
-public class LasSpec {
+public class LasSpecification {
+	// See https://www.asprs.org/a/society/committees/standards/LAS_1_4_r13.pdf
 	public static final int UNCLASSIFIED = 0;
     public static final int UNKNOWN = 1;
     public static final int GROUND = 2;

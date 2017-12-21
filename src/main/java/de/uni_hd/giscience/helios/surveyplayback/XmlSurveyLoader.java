@@ -155,7 +155,7 @@ public class XmlSurveyLoader extends XmlAssetsLoader {
 		survey.scanner.platform.scene = loadScene(surveyNode.getAttribute("scene"));
 		
 		SpectralLibrary spectralLibrary = new SpectralLibrary((float)survey.scanner.getWavelenth());
-		spectralLibrary.loadReflectances();
+		spectralLibrary.readReflectances();
 		spectralLibrary.setReflectances(survey.scanner.platform.scene);
 		
 		// ########### END Load scene ############

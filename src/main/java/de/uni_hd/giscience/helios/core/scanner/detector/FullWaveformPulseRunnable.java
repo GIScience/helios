@@ -1,7 +1,6 @@
 package de.uni_hd.giscience.helios.core.scanner.detector;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -11,10 +10,9 @@ import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.RotationOrder;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-import de.uni_hd.giscience.helios.LasSpec;
+import de.uni_hd.giscience.helios.Directions;
 import de.uni_hd.giscience.helios.assetsloading.ScenePart;
 import de.uni_hd.giscience.helios.core.scanner.Measurement;
-import de.uni_hd.giscience.helios.core.scanner.Scanner;
 import de.uni_hd.giscience.helios.core.scene.Material;
 import de.uni_hd.giscience.helios.core.scene.RaySceneIntersection;
 import de.uni_hd.giscience.helios.core.scene.Scene;
@@ -26,12 +24,6 @@ import de.uni_hd.giscience.helios.core.scene.primitives.Vertex;
 import org.orangepalantir.leastsquares.Fitter;
 import org.orangepalantir.leastsquares.Function;
 import org.orangepalantir.leastsquares.fitters.MarquardtFitter;
-import org.orangepalantir.leastsquares.fitters.NonLinearSolver;
-
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
-
-import Jama.Matrix;
 
 
 public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
@@ -118,12 +110,12 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 	public Vertex projectPoint(Vector3D point, Vector3D camera, double[] angles) {
 		Vector3D a = point;
 		Vector3D c = camera;
-		Vector3D e = c;
+		Vector3D e = a;
 		
 		// Camera transform
-		Vector3D AC = a.subtract(c);
+		Vector3D ac = a.subtract(c);
 		Rotation rotation = new Rotation(RotationOrder.XYZ, angles[0], angles[1], angles[2]);
-		Vector3D d = rotation.applyTo(AC);		
+		Vector3D d = rotation.applyTo(ac);		
 		
 		double frac = e.getZ() / d.getZ();
 		double bx = frac * d.getX() - e.getX();
@@ -134,132 +126,54 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 		return v;
 	}
 	
-	/*
-	public Vertex monkeyProject(Vector3D beamOrig, Vector3D point) {
-		com.jme3.renderer.Camera cam = new com.jme3.renderer.Camera();
-		Vector3f cameraPosition = new Vector3f((float) beamOrig.getX(), (float) beamOrig.getY(),(float) beamOrig.getZ());
-		Vector3f pointPosition = new Vector3f((float) point.getX(), (float) point.getY(),(float) point.getZ());
-		cam.setLocation(cameraPosition);
-		cam.lookAt(pointPosition, new Vector3f(0, 1 ,0));
-		Vector3f u = cam.getScreenCoordinates(pointPosition);
-		Vertex vert = new Vertex();
-		vert.pos = new Vector3D(u.getX(), u.getY(), u.getZ());
+	/* FIXME
+	public double calcRealArea(Rotation rotation, double incidenceAngle, Vector3D beamDir, Vector3D point, Material material, ScenePart scenePart, Sphere footprint, double footprintArea) {
 		
-		return vert;
-	}
-	 */
-	
-	// 3D Rotation matrix from a given axis and angle
-	public double[][] calcRotationMatrix(Vector3D axis, double angle) {
-		double[][] matrix = new double[3][3];
-		double cos = Math.cos(angle);
-		double sin = Math.sin(angle);
-		double x = axis.getX();
-		double y = axis.getY();
-		double z = axis.getZ();
-		double c = 1 - cos;
-		
-		matrix[0][0] = cos + x * x * c;
-		matrix[0][1] = x * y * c - z * sin;
-		matrix[0][2] = x * z * c + y * sin;
-		matrix[1][0] = y * x * c + z * sin;
-		matrix[1][1] = cos + y * y * c;
-		matrix[1][2] = y * z * c - x * sin;
-		matrix[2][0] = z * x * c - y * sin;
-		matrix[2][1] = z * y * c + x * sin;
-		matrix[2][2] = cos + z * z * c;
-
-		return matrix;
-	}
-
-
-	double[] axisAngles(Vector3D v) {
-		double[] angles = new double[3];	
-		double x2 = v.getX() * v.getX();
-		double y2 = v.getY() * v.getY();
-		double z2 = v.getZ() * v.getZ();
-		angles[0] = Math.atan2(Math.sqrt(y2 + z2), v.getX());
-		angles[1] = Math.atan2(Math.sqrt(z2 + x2), v.getY());
-		angles[2] = Math.atan2(Math.sqrt(x2 + y2), v.getZ());
-		
-		return angles;
-	}
-	
-	
-	public double calcRealArea(Rotation rot, double incidenceAngle, Vector3D beamDir, Vector3D point, Material material, ScenePart scenePart, Sphere footprint, double footprintArea) {
-		
-		Vector3D axis = beamDir.normalize().scalarMultiply(-1);	
+		Vector3D axis = beamDir.normalize();	
 		System.out.println(incidenceAngle + " " + axis.toString());
 		int count = 0;
 		
-	    for(Primitive prim : scenePart.mPrimitives) {  
-	    	count++;
+		Triangle[] triangles2d = new Triangle[scenePart.mPrimitives.size()];	    
+		
+		for(Primitive prim : scenePart.mPrimitives) {	// Transform all the primitive triangles from 3D to 2D
+		    	 
+			Triangle triangle3d = (Triangle)prim;
+			//System.out.println(triangle3d.toString());
+			double prevArea = triangle3d.calcArea3D();	
+			double prevArea2 = triangle3d.calcArea2D();	
 	    	
-			Triangle prevTri = new Triangle(prim.getVertices().get(0), prim.getVertices().get(1), prim.getVertices().get(2));
-			System.out.println(prevTri.toString());
-			double prevArea = prevTri.calcArea3D();	 
-			
-	    	/*
-	    	Vertex a = monkeyProject(absoluteBeamOrigin, point);
-	    	Vertex b = monkeyProject(absoluteBeamOrigin, point);
-	    	Vertex c = monkeyProject(absoluteBeamOrigin, point);
-	    	*/
+	    	double[] angles = rotation.getAngles(RotationOrder.XYZ);
+	    	//System.out.println("EULE rad " + angles[0] + " " + angles[1] + " " + angles[2]);
+	    	//System.out.println("EULE deg " + angles[0] * 180 / Math.PI  + " " + angles[1] * 180 / Math.PI  + " " + angles[2] * 180 / Math.PI );
 	    	
-	    	/*
-			double[][] rotationMatrix = calcRotationMatrix(axis, -incidenceAngle); 
-			Vertex a = Vertex.rotateVertex(prim.getVertices().get(0), rotationMatrix);	
-			Vertex b = Vertex.rotateVertex(prim.getVertices().get(1), rotationMatrix);	
-			Vertex c = Vertex.rotateVertex(prim.getVertices().get(2), rotationMatrix);
-			}*/
-				
-	    	
-			Rotation scannerRot = this.detector.scanner.cfg_device_headRelativeEmitterAttitude;
-			Rotation deflectorRot = this.detector.scanner.beamDeflector.getEmitterRelativeAttitude(); 
-			//Rotation rot = scannerRot.applyTo(deflectorRot);
-			
-			//Rotation rot = this.detector.scanner.scannerHead.getMountRelativeAttitude();
-			System.out.println("AXIS " + axis.toString() + " ang " + rot.getAngle() * 180 / Math.PI );
-	    	//double[] angles = this.detector.scanner.platform.getAttitude().getAngles(RotationOrder.XYZ);
-	    	
-	    	double[] angles = rot.getAngles(RotationOrder.XYZ);
-   	
-	    	//Rotation rot = new Rotation(beamDir, 0);
-	    	//angles = rot.getAngles(RotationOrder.XYZ);
-	    	
-	    	
-	    	//double[] angles = toEuler(axis.getX(), axis.getY(), axis.getZ(), incidenceAngle);
-	    	System.out.println("EULE rad " + angles[0] + " " + angles[1] + " " + angles[2]);
-	    	System.out.println("EULE deg " + angles[0] * 180 / Math.PI  + " " + angles[1] * 180 / Math.PI  + " " + angles[2] * 180 / Math.PI );
 	    	Vertex a = projectPoint(prim.getVertices().get(0).pos, absoluteBeamOrigin, angles);
 	    	Vertex b = projectPoint(prim.getVertices().get(1).pos, absoluteBeamOrigin, angles);
 	    	Vertex c = projectPoint(prim.getVertices().get(2).pos, absoluteBeamOrigin, angles);
 	    	
-	    	Triangle rotatedTriangle = new Triangle(a, b, c);
-	    	double triangleArea = rotatedTriangle.calcArea2D();	 	
-	    	System.out.println(rotatedTriangle.toString());
-			System.out.println(material.definition + " " + prevArea * 10000 + " is now " + triangleArea * 10000 + " (cm2)" );	
-			
-			//if(Math.abs(prevArea - triangleArea) > prevArea) System.exit(0);
-			
-			if(count == 3) break;
+	    	Triangle triangle2d = new Triangle(a, b, c);
+	    	triangles2d[count++] = triangle2d;
+	    	double triangleArea = triangle2d.calcArea2D();	 	
+	    	//System.out.println(triangle2d.toString());
+			//System.out.println(material.definition + " " + prevArea * 10000 + " is now " + triangleArea * 10000 + " (cm2)" );	
 	    }	
 			
-	    double area = 0;	
-			
+	    double area = 0;		
 	    count = 0;
 				
-		// Footprint and object to 2D
-		/*for (int i = 0; i < newTriangles.size() ;i++) {
-			if(newTriangles.get(i).isInsideCircle(footprint)) {
+		// Find which 2d triangles intersects with the beam footprint 
+		for (int i = 0; i < scenePart.mPrimitives.size() ;i++) {
+			if(triangles2d[i].intersectsCircle(footprint)) {
 				count++;
-				area += newTriangles.get(i).calcArea();
+				area += triangles2d[i].calcArea2D(); // TODO: Do not assume 100% overlap if intersects
 			}	
-		}*/
-		System.out.println(count + " of " + scenePart.mPrimitives.size() + " in " + " Area: + " + area / footprintArea );
-		// Intersection calculation in 2D
+		}
+			
+		System.out.println("Intersected triangles: " + count  + " of " + scenePart.mPrimitives.size());
+		System.out.println("Footprint area: " + footprintArea  + " Target area: " + area);
 		
 		return area;
 	}
+	*/
 	
 	private void captureFullWave(ArrayList<Double> fullwave, int fullwaveIndex, double min_time, double max_time, Vector3D beamOrigin, Vector3D beamDir, Long gpstime) {
 		// add noise to fullwave
@@ -276,7 +190,7 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 	public void run() {
 		Scene scene = detector.scanner.platform.scene;
 
-		Vector3D beamDir = absoluteBeamAttitude.applyTo(forward);
+		Vector3D beamDir = absoluteBeamAttitude.applyTo(Directions.forward);
 
 		// Early abort if central axis of the beam does not intersect with the scene:
 
@@ -299,8 +213,6 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 		// List to store all intersections. This is required later to reconstruct the associations between extracted points
 		// and the scene objects that caused them:
 		ArrayList<RaySceneIntersection> intersects = new ArrayList<>();
-		
-		int numRays = 7;
 
 		double radiusStep_rad =  detector.scanner.FWF_settings.beamDivergence_rad / detector.scanner.FWF_settings.beamSampleQuality;
 
@@ -310,7 +222,7 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 			double subrayDivergenceAngle_rad = radiusStep * radiusStep_rad;
 
 			// Rotate subbeam into divergence step (towards outer rim of the beam cone):
-			Rotation r1 = new Rotation(right, subrayDivergenceAngle_rad);
+			Rotation r1 = new Rotation(Directions.right, subrayDivergenceAngle_rad);
 
 			// Calculate circle step width:
 			int circleSteps = (int) (2 * Math.PI) * radiusStep;
@@ -326,10 +238,9 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 			for (int circleStep = 0; circleStep < circleSteps; circleStep++) {
 
 				// Rotate around the circle:
-				Rotation r2 = new Rotation(forward, circleStep_rad * circleStep).applyTo(r1);
+				Rotation r2 = new Rotation(Directions.forward, circleStep_rad * circleStep).applyTo(r1);
 
-				Vector3D subrayDirection = absoluteBeamAttitude.applyTo(r2).applyTo(forward);
-				Rotation rot = absoluteBeamAttitude.applyTo(r2);
+				Vector3D subrayDirection = absoluteBeamAttitude.applyTo(r2).applyTo(Directions.forward);
 
 				RaySceneIntersection intersect = scene.getIntersection(absoluteBeamOrigin, subrayDirection, false);
 
@@ -348,11 +259,16 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 					// Distance between the beam's center line and the intersection point:
 					double radius = Math.sin(subrayDivergenceAngle_rad) * distance;
 
-					double targetArea = detector.scanner.calcFootprintArea(distance) / (double)numRays; 
-					if(intersect.prim.material.classification != LasSpec.GROUND && intersect.prim.material.definition != null) {
-						targetArea = calcRealArea(rot, incidenceAngle, subrayDirection, intersect.point, intersect.prim.material, intersect.prim.part, new Sphere(intersect.point, detector.scanner.calcFootprintRadius(distance)), detector.scanner.calcFootprintArea(distance));
-						
+					double targetArea = detector.scanner.calcFootprintArea(distance) / (double) detector.scanner.getNumRays(); 
+					
+					/* TODO Jorge: The real area computation is not working yet
+					  if(intersect.prim.material.classification != LasSpecification.GROUND && intersect.prim.material.spectra != null) {
+					 
+						Rotation beamRotation = absoluteBeamAttitude.applyTo(r2);
+						targetArea = calcRealArea(beamRotation, incidenceAngle, subrayDirection, intersect.point, intersect.prim.material, intersect.prim.part, new Sphere(intersect.point, detector.scanner.calcFootprintRadius(distance)), detector.scanner.calcFootprintArea(distance));	
 					}
+					*/
+					
 					double intensity = calcIntensity(incidenceAngle, distance, intersect.prim.material.reflectance, intersect.prim.material.specularity, targetArea, radius);
 
 					reflections.put(distance, intensity);
@@ -512,12 +428,10 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 				}
 
 				String hitObject = null;
-				boolean isGround = false;
 				int classification = 0;
 				if (closestIntersection != null) {
 					//objects.add(closestIntersection.prim.part.id);
 					hitObject = closestIntersection.prim.part.mId;
-					isGround = closestIntersection.prim.material.isGround;
 					classification =  closestIntersection.prim.material.classification;
 				}
 				// ########## END Build list of objects that produced this return ###########

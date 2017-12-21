@@ -47,7 +47,7 @@ public class MaterialsFileReader {
 					}
 
 					newMat = new Material();
-					newMat.matFilePath = matFilePath.getParent();
+					newMat.matFilePath = matFilePath;
 					newMat.name = lineParts[1];
 
 				} else if (lineParts[0].equals("Ka") && lineParts.length >= 4) {
@@ -93,8 +93,8 @@ public class MaterialsFileReader {
 					newMat.classification = Integer.parseInt(lineParts[1]);
 				}
 				
-				else if (lineParts[0].equals("helios_definition") && lineParts.length >= 2) {
-					newMat.definition = lineParts[1];
+				else if (lineParts[0].equals("helios_spectra") && lineParts.length >= 2) {
+					newMat.spectra = lineParts[1];
 				}
 				// ######### END HELIOS-specific additions to the wavefront .mtl standard #########
 			}

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import javax.vecmath.Color4f;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 public class Triangle extends Primitive {
 
@@ -95,8 +94,8 @@ public class Triangle extends Primitive {
     
 	public Vector3D crossProductNaive(Vector3D v1, Vector3D v2) {
 		return new Vector3D(v1.getY() * v2.getZ() - v1.getZ()* v2.getY(),  
-			v1.getZ() * v2.getX() - v1.getX()* v2.getZ(), 
-			v1.getX() * v2.getY() - v1.getY()* v2.getX());
+							v1.getZ() * v2.getX() - v1.getX()* v2.getZ(), 
+							v1.getX() * v2.getY() - v1.getY()* v2.getX());
 	}
                
 	@Override
@@ -195,8 +194,7 @@ public class Triangle extends Primitive {
 	public double calcArea2D() {
 		double det = verts[0].getX() * (verts[1].getY() - verts[2].getY())
 				   + verts[1].getX() * (verts[2].getY() - verts[0].getY())
-				   + verts[2].getX() * (verts[0].getY() - verts[1].getY());
-		
+				   + verts[2].getX() * (verts[0].getY() - verts[1].getY());	
 		return 0.5 * Math.abs(det);
 	}
 	
@@ -207,19 +205,16 @@ public class Triangle extends Primitive {
 		return 0.5 * cross;				
 	}			
 	
-	public double euclideanDistance2D(Vector3D src, Vector3D dst) {
-		double diffX = 0, diffY = 0;
-		diffX = (src.getX() - dst.getX()) * (src.getX() - dst.getX());
-		diffY = (src.getY() - dst.getY()) * (src.getY() - dst.getY());
-		double dist = Math.sqrt(diffX + diffY);
-		//System.out.println(dist);
-		return dist;
+	public double euclideanDistance2D(Vector3D v1, Vector3D v2) {
+		double diffX = (v1.getX() - v2.getX()) * (v1.getX() - v2.getX());
+		double diffY = (v1.getY() - v2.getY()) * (v1.getY() - v2.getY());
+		return Math.sqrt(diffX + diffY);
 	}
 	
-	public boolean isInsideCircle(Sphere circle) {
+	public boolean intersectsCircle(Sphere circle) {
 		if(euclideanDistance2D(verts[0].pos, circle.center) > circle.radius &&
-				euclideanDistance2D(verts[1].pos, circle.center) > circle.radius &&
-				euclideanDistance2D(verts[2].pos, circle.center) > circle.radius) {
+		   euclideanDistance2D(verts[1].pos, circle.center) > circle.radius &&
+		   euclideanDistance2D(verts[2].pos, circle.center) > circle.radius) {
 			return false;
 		}
 		return true;

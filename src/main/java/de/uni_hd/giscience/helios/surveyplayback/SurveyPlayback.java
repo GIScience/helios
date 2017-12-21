@@ -100,7 +100,6 @@ public class SurveyPlayback extends Simulation {
 			legRemainingTime_ms = (long) ((100 - legProgress) / (float) legProgress * legElapsedTime_ms);			
 			
 			if (onGround) {	
-				System.out.println(mCurrentLegIndex);
 				progress = ((mCurrentLegIndex * 100) + legProgress) / (float) numEffectiveLegs;			
 			} else {
 				progress = (float) ((elapsedLength + legElapsedLength) * 100 / (float) mSurvey.getLength());
@@ -111,7 +110,7 @@ public class SurveyPlayback extends Simulation {
 			if(headless) {							
 				DecimalFormat df = new DecimalFormat("0.00");
 				System.out.println("Survey " + df.format(progress) + "%\tElapsed " + milliToString(elapsedTime_ms) + " Remaining " + milliToString(remainingTime_ms));
-				System.out.println("Leg " + (mCurrentLegIndex + 1) + "/" + numEffectiveLegs + " " + df.format(progress) + "%\tElapsed " + milliToString(legElapsedTime_ms) + " Remaining " + milliToString(legRemainingTime_ms));
+				System.out.println("Leg " + (mCurrentLegIndex + 1) + "/" + numEffectiveLegs + " " + df.format(legProgress) + "%\tElapsed " + milliToString(legElapsedTime_ms) + " Remaining " + milliToString(legRemainingTime_ms));
 			}	
 		}
 	}

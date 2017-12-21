@@ -25,7 +25,7 @@ public class Material implements Serializable {
 	public double reflectance = 0;	
 	public double specularity = 0;	
 	public int classification = 0;	
-	public String definition;		
+	public String spectra = "";		
 
 	public float[] ka = { 0, 0, 0, 0 };
 	public float[] kd = { 0, 0, 0, 0 };
