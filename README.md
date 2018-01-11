@@ -2,7 +2,7 @@
 
 > Heidelberg LiDAR Operations Simulator (HELIOS)
 
-Software package for interactive real-time simulation and visualization of terrestrial, mobile and airborne laser scanning surveys written in Java.
+HELIOS is a software package for interactive real-time simulation and visualization of terrestrial, mobile and airborne laser scanning surveys written in Java.
 
 Official website: http://www.geog.uni-heidelberg.de/gis/helios_en.html
 
@@ -10,16 +10,11 @@ Official website: http://www.geog.uni-heidelberg.de/gis/helios_en.html
 
 ## Table of Contents
 
-- [Background](#background)
 - [Install](#install)
 - [Usage](#usage)
 - [Documentation](#documentation)
 - [Authorship](#authorship)
 - [License](#license)
-
-## Background
-
-LiDAR (Light and Ranging Detection) technology has now become the quintessential technique for collecting geospatial data from the earth's surface. This project allows the generation of simulated LiDAR point clouds.
 
 ## Install
 
@@ -50,43 +45,50 @@ mvn package
 
 ### Eclipse IDE
 
-To add this project to Eclipse go to *File > Import > Existing Maven Projects* and select the root folder.
+To add this project to Eclipse go to *File > Import > Existing Maven Projects* and select *helios* folder.  
+You may also want to disable the spell checker: right click in the project > *Checkstyle > Deactivate Checkstyle*
 
 ## Usage
 
-HELIOS supports both single-ray and full-waveform simulations. Currently the default mode is the full-waveform. The selection between this two methods is done in the source code when creating the detector object in *XmlAssetsLoader.java*. 
+HELIOS supports both single-ray and full-waveform simulations. Currently the default mode is the full-waveform. The selection between this two methods is done in the source code when creating the detector object in [*XmlAssetsLoader.java*](src/main/java/de/uni_hd/giscience/helios/assetsloading/XmlAssetsLoader.java). 
 
 ### Input
 
-The argument of the program is the survey XML file. See [Wiki: Basic input data](https://github.com/GIScience/helios/wiki/Quick-start-guide#basic-input-data) for further details. 
+The argument of the program is the survey XML file, also the 3D models of the scene pointed in the survey are needed. See [Wiki: Basic input data](Quick-start-guide#basic-input-data) for further details. 
 
 ### Execution
 
 From the root folder run:
 
 ```bash
-java -jar target/helios-0.0.1.jar <survey-file>
+java -jar target/helios.jar <survey-file>
 ```
+To run the example survey:
+
+```bash
+java -jar target/helios.jar data/surveys/demo/tls_arbaro_demo.xml 
+```
+
 To use the batch mode (no visualization):
 
 ```bash
-java -jar target/helios-0.0.1.jar <survey-file> headless
+java -jar target/helios.jar <survey-file> headless
 ```
 ### Output
 
 Output files are generated inside *output/Survey Playback* folder.
 
-* Point cloud: File *legxxx_points.xyz* separated by spaces
+* Point cloud: File named *legxxx_points.xyz* separated by spaces  where *xxx* is the leg number.  
 Fields:  
-X Y Z I ECHO_WIDTH RN NOR FWF_ID OBJ_ID
-Example:  
+X Y Z I ECHO_WIDTH RN NOR FWF_ID OBJ_ID  
+Example:   
 -4.615 15.979 2.179 4.0393 1.4317 1 1 214275 1
-* Waveform: File *legxxx_points.xyzfullwave.txt* separated by spaces  
+* Waveform: File named *legxxx_points.xyzfullwave.txt* separated by spaces  where *xxx* is the leg number.  
 See [FWF.md](FWF.md) for further details. 
 
 ## Documentation
 
-See the [Wiki](https://github.com/GIScience/helios/wiki) for futher details.
+See [Wiki](wiki).
 
 
 ## Authorship
@@ -94,12 +96,15 @@ See the [Wiki](https://github.com/GIScience/helios/wiki) for futher details.
 GIScience Research Group  
 Institute of Geography  
 University of Heidelberg  
-Maintainers: @sebastian-bechtold @nlukac @KoeMai @deuxbot   
 
-Research paper:
+### Citation
 
 Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. Vol. III-3, pp. 161-168. http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016
 
+### Maintainers
+
+[@sebastian-bechtold](https://github.com/sebastian-bechtold) [@nlukac](https://github.com/nlukac) [@kathapand](https://github.com/kathapand) [@deuxbot](https://github.com/deuxbot) 
+
 ## License
 
-GNU General Public License v3.0
+See [LICENSE.md](LICENSE.md).
