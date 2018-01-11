@@ -54,7 +54,7 @@ HELIOS supports both single-ray and full-waveform simulations. Currently the def
 
 ### Input
 
-The argument of the program is the survey XML file, also the 3D models of the scene pointed in the survey are needed. See [Wiki: Basic input data](Quick-start-guide#basic-input-data) for further details. 
+The argument of the program is the survey XML file, also the 3D models of the scene pointed in the survey are needed. See [Wiki: Basic input data](https://github.com/GIScience/helios/wiki/Quick-start-guide#basic-input-data) for further details. 
 
 ### Execution
 
@@ -88,7 +88,7 @@ See [FWF.md](FWF.md) for further details.
 
 ## Documentation
 
-See [Wiki](wiki).
+See [Wiki](https://github.com/GIScience/helios/wiki).
 
 
 ## Authorship
