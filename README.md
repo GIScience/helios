@@ -24,16 +24,21 @@ First install the dependencies, then compile the source code, and finally execut
 
 - Oracle Java 1.8
 - Maven 3
-- Git
 
-In Ubuntu these packages can be installed by:
+You can use ```java -version``` and ```mvn -v``` to check if you already have installed those in your computer.
+
+In Ubuntu they can be installed by:
 ```bash
-sudo apt-get install oracle-java8-installer maven git
+sudo apt-get install oracle-java8-installer maven
 ```
+In Windows is less straightforward:
+
+-Download the [Java JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)  and create the environment variable *JAVA_HOME* to point to the JDK folder (e. g. *JAVA_HOME=C:\Program Files\Java\jdk1.8.0_151* ) , then add to the *PATH* the value *%JAVA_HOME%\bin*.  
+-Download the [Maven](https://maven.apache.org/download.cgi) binary zip, unzip it and move it to the desired folder (e. g. *C:\apache-maven-3.5.2*), then add the *PATH* the value *C:\apache-maven-3.5.2\bin*.
 
 ### Compilation
 
-Download the source code:
+Download the source code from this web site or from git:
 
 ```bash
 git clone https://github.com/GIScience/helios.git
