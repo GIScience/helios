@@ -61,14 +61,16 @@ public abstract class Simulation {
 		mScanner.doSimStep(mExecService);
 
 		// ######### BEGIN Real-time brake (slow down simulation to real-world time speed ) #########
-		long timePerStep_nanosec = Math.round(NANOSECONDS_PER_SECOND / this.mScanner.getPulseFreq_Hz());
-		long now = System.nanoTime();
-
-		while (now - mStopwatch < timePerStep_nanosec * mSimSpeedFactor) {
-			now = System.nanoTime();
+		if (!headless) {
+			long timePerStep_nanosec = Math.round(NANOSECONDS_PER_SECOND / this.mScanner.getPulseFreq_Hz());
+			long now = System.nanoTime();
+	
+			while (now - mStopwatch < timePerStep_nanosec * mSimSpeedFactor) {
+				now = System.nanoTime();
+			}
+			
+			mStopwatch = now;
 		}
-		
-		mStopwatch = now;
 		// ######### END Real-time brake (slow down simulation to real-world time speed ) #########
 	}
 
