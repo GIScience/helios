@@ -4,8 +4,10 @@ package de.uni_hd.giscience.helios.assetsloading;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -388,8 +390,9 @@ public class XmlAssetsLoader {
 			beamDeflector = new FiberArrayBeamDeflector(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz, numFibers);
 		} else if (str_opticsType.equals("rotating")) {
 
+			Double scanAngleMin_rad = (Double) getAttribute(scannerNode, "scanAngleMin_deg", Double.class, -scanAngleMax_rad) * (Math.PI / 180);
 			Double scanAngleEffectiveMax_rad = (Double) getAttribute(scannerNode, "scanAngleEffectiveMax_deg", Double.class, 0) * (Math.PI / 180);
-			beamDeflector = new PolygonMirrorBeamDeflector(scanFreqMax_Hz, scanFreqMin_Hz, scanAngleMax_rad, scanAngleEffectiveMax_rad);
+			beamDeflector = new PolygonMirrorBeamDeflector(scanFreqMax_Hz, scanFreqMin_Hz, scanAngleMax_rad, scanAngleMin_rad, scanAngleEffectiveMax_rad);
 		}
 
 		if (beamDeflector == null) {
@@ -422,6 +425,8 @@ public class XmlAssetsLoader {
 		template.headRotateStop_rad = 0d;
 		template.pulseFreq_Hz = null;
 		template.scanAngle_rad = 0;
+		template.verticalAngleMin_rad = 0d;
+		template.verticalAngleMax_rad = 0d;
 		template.scanFreq_Hz = null;
 
 		if (node.hasAttribute("template")) {
@@ -438,6 +443,8 @@ public class XmlAssetsLoader {
 				template.headRotateStart_rad *= (180.0 / Math.PI);
 				template.headRotateStop_rad *= (180.0 / Math.PI);
 				template.scanAngle_rad *= (180.0 / Math.PI);
+				template.verticalAngleMin_rad *= (180.0 / Math.PI);
+				template.verticalAngleMax_rad *= (180.0 / Math.PI);
 			} else {
 				System.out.println("XML Assets Loader: WARNING: Scanner settings template specified in line " + node.getUserData("lineNumber") + " not found: '" + template
 						+ "'. Using hard-coded defaults instead.");
@@ -448,6 +455,7 @@ public class XmlAssetsLoader {
 		settings.beamSampleQuality = (Integer) getAttribute(node, "beamSampleQuality", Integer.class, template.beamSampleQuality);
 		settings.headRotatePerSec_rad = (Double) getAttribute(node, "headRotatePerSec_deg", Double.class, template.headRotatePerSec_rad) * (Math.PI / 180);
 		settings.headRotateStart_rad = (Double) getAttribute(node, "headRotateStart_deg", Double.class, template.headRotateStart_rad) * (Math.PI / 180);
+		settings.verticalAngleMin_rad = (Double) getAttribute(node, "verticalAngleMin_deg", Double.class, template.verticalAngleMin_rad) * (Math.PI / 180);
 
 		double hrStop_rad = (Double) getAttribute(node, "headRotateStop_deg", Double.class, template.headRotateStop_rad) * (Math.PI / 180);
 
@@ -462,8 +470,21 @@ public class XmlAssetsLoader {
 			System.out.println("XML Assets Loader: Error: Head Rotation Stop angle must be smaller than start angle if rotation speed is negative!");
 			System.exit(-1);
 		}
-
+		
 		settings.headRotateStop_rad = hrStop_rad;
+		
+		settings.verticalAngleMax_rad = (Double) getAttribute(node, "verticalAngleMax_deg", Double.class, template.verticalAngleMax_rad) * (Math.PI / 180);
+		
+		// TODO Jorge: Move this checks to another place, this is bloated
+		if (settings.verticalAngleMin_rad == settings.verticalAngleMax_rad) {
+			System.out.println("XML Assets Loader: Error: Vertical angle min and max must be different!");
+			System.exit(-1);
+		}
+		
+		if (settings.verticalAngleMin_rad > settings.verticalAngleMax_rad) {
+			System.out.println("XML Assets Loader: Error: Vertical angle min-max are wrong!");
+			System.exit(-1);
+		}
 
 		settings.pulseFreq_Hz = (Integer) getAttribute(node, "pulseFreq_hz", Integer.class, template.pulseFreq_Hz);
 		settings.scanAngle_rad = (Double) getAttribute(node, "scanAngle_deg", Double.class, template.scanAngle_rad) * (Math.PI / 180);

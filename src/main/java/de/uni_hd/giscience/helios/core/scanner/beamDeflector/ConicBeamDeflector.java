@@ -24,7 +24,7 @@ public class ConicBeamDeflector extends AbstractBeamDeflector {
 			
 		cached_angleBetweenPulses_rad = (double) (this.cfg_device_scanFreqMax_Hz * Math.PI * 2) / settings.pulseFreq_Hz;
 
-		r1 = new Rotation(new Vector3D(1, 0, 0), this.cfg_setting_scanAngle_rad);
+		r1 = new Rotation(new Vector3D(1, 0, 0), this.cfg_setting_scanAngleRange_rad);
 	}
 	
 

@@ -5,18 +5,20 @@
 	<!-- ############### BEGIN Realistic Scanners (Do NOT MODIFY unless data is really wrong!!!) ############### -->
 
 	<!-- ##### BEGIN RIEGL VZ-400 ##### -->	
+	<!-- http://www.riegl.com/uploads/tx_pxpriegldownloads/10_DataSheet_VZ-400_2017-06-14.pdf -->	
 	<scanner 	id 							= "riegl_vz400"
 				name              			= "RIEGL VZ-400"
 				visModel					= "scanners/vz400/vz400.obj"
 				accuracy_m					= "0.005"
-			 	beamDivergence_rad 			= "0.00035"
+			 	beamDivergence_rad 			= "0.0003"
 				headRotatePerSecMax_deg		= "60"
 				
 				optics            			= "rotating"
 				pulseFreqs_Hz				= "100000,300000"
 				pulseLength_ns     			= "5"
 				rangeMin_m					= "1.5"
-				scanAngleMax_deg   			= "123"
+				scanAngleMax_deg   			= "60"
+				scanAngleMin_deg   			= "-40"
 				scanAngleEffectiveMax_deg   = "50"
 				scanFreqMin_Hz				= "3"
 				scanFreqMax_Hz				= "120">
