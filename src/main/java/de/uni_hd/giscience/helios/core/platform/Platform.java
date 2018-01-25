@@ -35,6 +35,7 @@ public class Platform extends Asset {
 	// ############### BEGIN Platform Settings ##############
 	public double cfg_settings_movePerSec_m = 0;
 	Vector3D cfg_settings_nextWaypointPosition = new Vector3D(0, 0, 0);
+	public boolean onGround = false;
 	// ############### END Platform Settings ##############
 
 	// ############# BEGIN State variables ###############
@@ -58,6 +59,7 @@ public class Platform extends Asset {
 
 	public void applySettings(PlatformSettings settings, boolean manual) {
 		cfg_settings_movePerSec_m = settings.movePerSec_m;
+		onGround = settings.onGround;
 
 		// Set platform position:		
 		setPosition(settings.getPosition());		

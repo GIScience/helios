@@ -6,6 +6,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class Sphere extends Primitive {
 
+	private static final long serialVersionUID = -5152354283320808459L;
 	double radius = 0;
 	Vector3D center;
 

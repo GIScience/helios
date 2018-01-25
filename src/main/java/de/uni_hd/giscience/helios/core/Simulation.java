@@ -32,8 +32,9 @@ public abstract class Simulation {
 
 	public boolean exitAtEnd = false;
 	
+	public boolean headless = false;
 	
-
+	protected long timeStart_ms = 0;
 	
 	public MeasurementsBuffer mbuffer = new MeasurementsBuffer();
 
@@ -60,14 +61,16 @@ public abstract class Simulation {
 		mScanner.doSimStep(mExecService);
 
 		// ######### BEGIN Real-time brake (slow down simulation to real-world time speed ) #########
-		long timePerStep_nanosec = Math.round(NANOSECONDS_PER_SECOND / this.mScanner.getPulseFreq_Hz());
-		long now = System.nanoTime();
-
-		while (now - mStopwatch < timePerStep_nanosec * mSimSpeedFactor) {
-			now = System.nanoTime();
+		if (!headless) {
+			long timePerStep_nanosec = Math.round(NANOSECONDS_PER_SECOND / this.mScanner.getPulseFreq_Hz());
+			long now = System.nanoTime();
+	
+			while (now - mStopwatch < timePerStep_nanosec * mSimSpeedFactor) {
+				now = System.nanoTime();
+			}
+			
+			mStopwatch = now;
 		}
-		
-		mStopwatch = now;
 		// ######### END Real-time brake (slow down simulation to real-world time speed ) #########
 	}
 
@@ -129,8 +132,8 @@ public abstract class Simulation {
 
 	public void start() {
 
-		long timeStart = System.nanoTime();
-
+		double timeStart_ns = System.nanoTime();
+		timeStart_ms = System.currentTimeMillis();
 		// ############# BEGIN Main simulation loop ############
 		while (!isStopped()) {
 
@@ -152,7 +155,7 @@ public abstract class Simulation {
 
 		long timeMainLoopFinish = System.nanoTime();
 
-		double seconds = (double) (timeMainLoopFinish - timeStart) / 1000000000;
+		double seconds = (double) (timeMainLoopFinish - timeStart_ns) / 1000000000;
 
 		System.out.println("Main thread simulation loop finished in " + seconds + " sec.");
 		System.out.print("Waiting for completion of pulse computation tasks...");
@@ -166,7 +169,7 @@ public abstract class Simulation {
 		}
 		long timeFinishAll = System.nanoTime();
 
-		double secondsAll = (double) (timeFinishAll - timeStart) / 1000000000;
+		double secondsAll = (double) (timeFinishAll - timeStart_ns) / 1000000000;
 
 		System.out.print("Pulse computation tasks finished in " + secondsAll + " sec.\n");
 		// ########## END Loop that waits for the executor service to complete all tasks ###########

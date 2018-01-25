@@ -1,5 +1,9 @@
 package de.uni_hd.giscience.helios.visualization.appStates;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import com.jme3.app.Application;
@@ -14,6 +18,7 @@ import com.simsilica.lemur.Container;
 import com.simsilica.lemur.HAlignment;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.TextField;
+import com.simsilica.lemur.ProgressBar;
 
 import de.uni_hd.giscience.helios.core.platform.PlatformSettings;
 import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
@@ -42,6 +47,14 @@ public class ToolbarAppState extends BaseAppState implements EventListener {
 	TextField mTextField_scanFreq_hz = null;
 
 	Button mButton_sim_pause = null;
+	
+	ProgressBar mProgressBar_survey = null;
+	ProgressBar mProgressBar_leg = null;
+	Label mLabel_surveyElapsed = null;
+	Label mLabel_surveyRemaining = null;
+	Label mLabel_legElapsed = null;
+	Label mLabel_legRemaining = null;
+	
 	// ########### ENDLemur UI elements ###############
 
 	boolean mEditWaypointsEnabled = false;
@@ -251,6 +264,29 @@ public class ToolbarAppState extends BaseAppState implements EventListener {
 */
 		// ######################## END Set up sim control panel ####################
 
+		// ######################## BEGIN Set up process panel ####################
+		Label label_progress = new Label("PROGRESS");
+		label_progress.setColor(white);
+		label_progress.setFontSize(headingSize);
+		mLabel_surveyElapsed = new Label("Elapsed");
+		mLabel_surveyRemaining = new Label("Remaining");
+		mLabel_legElapsed = new Label("Elapsed");
+		mLabel_legRemaining = new Label("Remaining");
+		
+		mProgressBar_survey = new ProgressBar();
+		mProgressBar_survey.setMessage("Survey");
+		mProgressBar_leg = new ProgressBar();
+		mProgressBar_leg.setMessage("Leg 0/" + sim.getNumEffectiveLegs());
+		
+		myWindow.addChild(label_progress);
+		myWindow.addChild(mProgressBar_survey);
+		myWindow.addChild(mLabel_surveyElapsed);
+		myWindow.addChild(mLabel_surveyRemaining);
+	    myWindow.addChild(mProgressBar_leg);
+	    myWindow.addChild(mLabel_legElapsed);
+		myWindow.addChild(mLabel_legRemaining);
+		// ######################## END Set up process panel ####################
+		
 		// ###################### BEGIN Set Up Waypoint Edit Panel #####################
 
 		Container waypointEditPanel = myWindow;
@@ -494,10 +530,23 @@ public class ToolbarAppState extends BaseAppState implements EventListener {
 		//inputManager.addListener(mActionListener, "delete_leg", "add_leg", "up", "down", "left", "right", "pgup", "pgdown");	
 	}
 
-	
 	@Override
 	public void update(float tpf) {
-
+		
+		// ############### BEGIN Update progress panel #################
+		if(!sim.isPaused()){
+		
+		mProgressBar_survey.setProgressPercent(sim.getProgress() / 100f);
+		mProgressBar_leg.setProgressPercent(sim.getLegProgress() / 100f);
+		mProgressBar_leg.setMessage("Leg " + (sim.getCurrentLegIndex() + 1) + "/" + sim.getNumEffectiveLegs());
+			
+		mLabel_surveyElapsed.setText("Elapsed      " + sim.milliToString(sim.getElapsedTime()));
+		mLabel_surveyRemaining.setText("Remaining " + sim.milliToString(sim.getRemaningTime()));
+		mLabel_legElapsed.setText("Elapsed      " + sim.milliToString(sim.getLegElapsedTime()));
+		mLabel_legRemaining.setText("Remaining " + sim.milliToString(sim.getLegRemaningTime()));
+		}
+		// ################# END Update progress panel ################
+		
 		Leg leg = sim.getCurrentLeg();
 
 		ScannerSettings ss = leg.mScannerSettings;

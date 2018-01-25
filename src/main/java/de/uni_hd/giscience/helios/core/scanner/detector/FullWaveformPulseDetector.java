@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
@@ -16,7 +18,8 @@ import de.uni_hd.giscience.helios.core.scanner.ScannerSettings;
 public class FullWaveformPulseDetector extends AbstractDetector {
 
 	BufferedWriter fullWaveFileWriter = null;
-
+	DecimalFormat df = new DecimalFormat("0.0###");
+	
 	public FullWaveformPulseDetector(Scanner scanner, double accuracy_m, double range_min) {
 		super(scanner, accuracy_m, range_min);
 		// TODO Auto-generated constructor stub
@@ -77,23 +80,24 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 	public synchronized void writeFullWave(ArrayList<Double> fullwave, Integer fullwave_index, Double min_time, Double max_time, Vector3D beamOrigin, Vector3D beamDir, Long gpstime) {
 		// ############# BEGIN Writefullwave to output file ############
 		if (fullWaveFileWriter != null) {
-			String line = fullwave_index.toString() + " ";
-			line += ((Double) beamOrigin.getX()).toString() + " ";
-			line += ((Double) beamOrigin.getY()).toString() + " ";
-			line += ((Double) beamOrigin.getZ()).toString() + " ";
-			line += ((Double) beamDir.getX()).toString() + " ";
-			line += ((Double) beamDir.getY()).toString() + " ";
-			line += ((Double) beamDir.getZ()).toString() + " ";
-			line += min_time.toString() + " ";
-			line += max_time.toString() + " ";
-
-			// add GPSTIME (since 1980) in seconds
-			line += gpstime.toString() + " ";
-
+			StringJoiner sj = new StringJoiner(" ");		
+			
+			sj.add(fullwave_index.toString())
+			.add(((Double) beamOrigin.getX()).toString())
+			.add(((Double) beamOrigin.getY()).toString())
+			.add(((Double) beamOrigin.getZ()).toString())
+			.add(((Double) beamDir.getX()).toString())
+			.add(((Double) beamDir.getY()).toString())
+			.add(((Double) beamDir.getZ()).toString())
+			.add(min_time.toString())
+			.add(max_time.toString())
+			.add(gpstime.toString());	// add GPSTIME (since 1980) in seconds
 			for (Double w : fullwave) {
-				line += w.toString() + " ";
+				sj.add(df.format(w));
 			}
-			line += "\n";
+			sj.add("\n");
+			
+			String line = sj.toString();
 
 			try {
 				fullWaveFileWriter.write(line);

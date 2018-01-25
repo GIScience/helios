@@ -1,18 +1,16 @@
 package de.uni_hd.giscience.helios.core.scanner.detector;
 
+import java.util.Random;
+
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
+import de.uni_hd.giscience.helios.LasSpecification;
 import de.uni_hd.giscience.helios.core.scanner.Measurement;
 
 public abstract class AbstractPulseRunnable implements Runnable {
 
 	// ############## BEGIN Static variables ###############
-	// TODO 5: Move this to a central place?
-	final static Vector3D forward = new Vector3D(0, 1, 0);
-	final static Vector3D right = new Vector3D(1, 0, 0);
-	final static Vector3D up = new Vector3D(0, 0, 1);
-
 	// Speed of light in m/sec:
 	final static double speedOfLight_mPerSec = 299792458;
 
@@ -33,6 +31,7 @@ public abstract class AbstractPulseRunnable implements Runnable {
 
 	// The variable 'boxmuller_use_last' is needed for the box-muller gaussian random number generator:
 	boolean boxmuller_use_last = false;
+	boolean writeGround = true;
 
 	double boxMullerRandom(double d, double e) {
 
@@ -70,45 +69,66 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		this.currentPulseNum = pulseNumber;
 		this.currentGpsTime = gpsTime;
 	}
-
-	/*
-	 * private double calcAtmosphericAttenuation(double range, double visibilityDistance, double wavelength) { // Calculate the aerosol scattering (based on: Steinvall, Waveform
-	 * simulation for 3-d sensing laser radars, 2000) double q; if (visibilityDistance > 50) q = 1.6; else if (visibilityDistance > 6 && visibilityDistance < 50) q = 1.3; else q =
-	 * 0.585 * Math.pow(visibilityDistance, 0.33);
-	 * 
-	 * double AER = (3.91 / visibilityDistance) * Math.pow((wavelength / 0.55), -q);
-	 * 
-	 * return (Math.exp(-2 * range * AER)); }
-	 */
-
-	// LiDAR energy equation (fine tuning required) + spatial distribution equation
-	double calcIntensity(double incidenceAngle, double distance, double reflect_p, double radius) {
-		// input parameters to intensity calculation
-		double Pt = 500; // peak transmitted energy at center of the beam profile
-		double eta_sys = 0.9; // LiDAR scanner efficiency
-
-		// double visibilityDistance = 100; // atmospheric visibility [km]
-		double eta_atm = 1; // calcAtmosphericAttenuation(distance, visibilityDistance, wavelength); // atmospheric attenuation
-
-		double A = reflect_p;
-		double B = 1 - reflect_p;
-		double D = 0.075 * 2; // receiver aperture diameter [m]
-		double reflectanceBRDF = ((Math.PI * D * D) / 4.0)
-				* ((A / Math.pow(Math.cos(incidenceAngle), 6)) * Math.exp(Math.tan(incidenceAngle) * Math.tan(incidenceAngle)) + B * Math.cos(incidenceAngle));
-
-		// transmitted energy with 'radius' away from center of the beam profile
-		double wavelength = 1550.0 / 1000000.0;
-		double w0 = (2 * wavelength) / (Math.PI * detector.scanner.cfg_device_beamDivergence_rad);
-		double omega = (distance * wavelength) / (Math.PI * w0 * w0);
-		double omega0 = 1 - distance / detector.cfg_device_rangeMin_m;
-		double w = w0 * Math.sqrt(omega * omega + omega0 * omega0);
-		double Pt2 = Pt * ((w0 / w) * (w0 / w)) * Math.exp((-2 * radius * radius) / (w * w));
-
-		// output intensity (based on: Carlsson et al, Signature simulation and signal analysis for 3-D laser radar, 2001)
-		return (Pt2 * reflectanceBRDF * Math.cos(incidenceAngle) * eta_atm * eta_sys);
+	
+	// Generate Gaussian-distributed error for more realistic intensity
+	double calcErrorFactor(double stdev) {
+		
+		double mean = 1;
+		Random random = new Random();	
+		return random.nextGaussian() * stdev + mean;	
+	}
+	
+	// Calculate the strength of the laser going back to the detector
+	double calcIntensity(double incidenceAngle, double targetRange, double targetReflectivity, double targetSpecularity, double targetArea) {	      
+		
+		double emmitedPower = detector.scanner.getAveragePower();
+		double intensity = calcReceivedPower(emmitedPower, targetRange, incidenceAngle, targetReflectivity, targetSpecularity, targetArea);
+		double etaErr = calcErrorFactor(0.10);	
+		
+		return intensity * etaErr * 1000000000f; // TODO Jorge: Values are so small; should be normalized to 0-255 range	
 	}
 
-	void capturePoint(Vector3D beamOrigin, Vector3D beamDir, double distance, double intensity, double echo_width, int returnNumber, int pulseReturnNumber, int fullwaveIndex, String hitObjectId) {
+	// ALS Simplification "Radiometric Calibration..." (Wagner, 2010) Eq. 14
+	double calcCrossSection(double f, double Alf, double theta) {
+		
+		return 4 * Math.PI * f * Alf * Math.cos(theta);
+	}
+	
+	// Phong reflection model "Normalization of Lidar Intensity..." (Jutzi and Gross, 2009) 
+	double phongBDRF(double incidenceAngle, double targetSpecularity) {
+		
+		double ks = targetSpecularity;	
+		double kd = (1 - ks);	
+		double n = 10;	//TODO Jorge: Each material should have its own glossiness
+
+		double diffuse = kd * Math.cos(incidenceAngle);
+		double specular = ks * Math.pow(Math.cos(2 * incidenceAngle), n);
+		
+		return diffuse + specular;
+	}
+
+	// Energy left after attenuation by air particles in range [0,1]
+	double calcAtmosphericFactor(double targetRange) {  
+		
+	  	return Math.exp(-2 * targetRange * detector.scanner.getAtmosphericExtinction()); 
+  	}
+	
+	// Laser radar equation "Signature simulation..." (Carlsson et al., 2000)
+	double calcReceivedPower(double emmitedPower, double targetRange, double incidenceAngle, double targetReflectivity, double targetSpecularity, double targetArea) {			
+		
+		double Pt = emmitedPower;
+		double Dr2 = detector.scanner.getDr2();
+		double R = targetRange;
+		double Bt2 = detector.scanner.getBt2();
+		double etaSys = detector.scanner.getEfficiency();	
+		double etaAtm = calcAtmosphericFactor(targetRange);
+		double bdrf = targetReflectivity * phongBDRF(incidenceAngle, targetSpecularity);
+		double sigma = calcCrossSection(bdrf, targetArea, incidenceAngle);
+	
+		return (Pt * Dr2) / ( 4 * Math.PI * Math.pow(R, 4) * Bt2) * etaSys * etaAtm * sigma;	
+	}
+
+	void capturePoint(Vector3D beamOrigin, Vector3D beamDir, double distance, double intensity, double echo_width, int returnNumber, int pulseReturnNumber, int fullwaveIndex, String hitObjectId, int classification) {
 
 		// Abort if point distance is below mininum scanner range:
 		if (distance < detector.cfg_device_rangeMin_m) {
@@ -136,6 +156,7 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		m.beamOrigin = beamOrigin;
 		m.beamDirection = beamDir;
 		m.hitObjectId = hitObjectId;
+		m.classification = classification;
 
 		detector.writeMeasurement(m);
 
@@ -143,7 +164,11 @@ public abstract class AbstractPulseRunnable implements Runnable {
 	}
 
 	void capturePoint(Measurement m) {
-
+		
+		if(!writeGround && m.classification == LasSpecification.GROUND) {
+			return;
+		}		
+		
 		// Abort if point distance is below mininum scanner range:
 		if (m.distance < detector.cfg_device_rangeMin_m) {
 			return;

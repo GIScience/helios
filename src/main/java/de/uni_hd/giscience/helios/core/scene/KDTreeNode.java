@@ -1,13 +1,22 @@
 package de.uni_hd.giscience.helios.core.scene;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 import de.uni_hd.giscience.helios.core.scene.primitives.AABB;
 import de.uni_hd.giscience.helios.core.scene.primitives.Primitive;
 
-public class KDTreeNode {
+public class KDTreeNode implements Serializable {
 
+	private static final long serialVersionUID = -3117219286669309220L;
 	KDTreeNode left = null;
 	KDTreeNode right = null;
 
@@ -28,7 +37,7 @@ public class KDTreeNode {
 		System.out.println("Max. # primitives in leaf: " + stats_maxNumPrimsInLeaf);
 		System.out.println("Min. # primitives in leaf: " + stats_minNumPrimsInLeaf);
 		System.out.println("Max. depth reached: : " + stats_maxDepthReached);
-
+	
 		return root;
 	}
 
@@ -132,5 +141,44 @@ public class KDTreeNode {
 
 		return node;
 
+	}	
+	
+	public void writeObject(String path) {	
+		   
+		System.out.println("Writing " + path + "...");	
+	    	
+		try {			
+			FileOutputStream fos = new FileOutputStream(path);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+		     
+		    oos.writeObject(this);
+		   
+		    oos.close();
+		    fos.close(); 		    
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}	      
+	}
+	
+	public static KDTreeNode readObject(String path) {
+		
+		KDTreeNode kdtree = null;
+		System.out.println("Reading " + path + "...");		
+		
+		try {			
+			FileInputStream fis = new FileInputStream(path);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			ObjectInputStream ois = new ObjectInputStream(bis);
+	        
+			kdtree = (KDTreeNode)ois.readObject();
+			
+			ois.close();
+			fis.close(); 
+		} catch (IOException | ClassNotFoundException e) {			
+			e.printStackTrace();
+		}
+		
+		return kdtree;
 	}
 }

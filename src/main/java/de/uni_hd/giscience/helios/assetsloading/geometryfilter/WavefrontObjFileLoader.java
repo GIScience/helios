@@ -72,6 +72,7 @@ public class WavefrontObjFileLoader extends AbstractGeometryFilter {
 
 		if (!f.exists()) {
 			System.out.println("File not found: " + filePathString);
+			System.exit(1);
 			return null;
 		}
 
@@ -95,6 +96,7 @@ public class WavefrontObjFileLoader extends AbstractGeometryFilter {
 		// log.info("Adding defalt material");
 		Material mat = new Material();
 		mat.useVertexColors = true;
+		mat.matFilePath = filePath;
 		materials.put("default", mat);
 
 		String line;

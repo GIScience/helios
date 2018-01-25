@@ -7,14 +7,6 @@ import de.uni_hd.giscience.helios.surveyplayback.SurveyPlayback;
 import de.uni_hd.giscience.helios.surveyplayback.XmlSurveyLoader;
 import de.uni_hd.giscience.helios.visualization.JMEFrontEnd;
 
-/*
- * Coordinate system convention for the lidar sim:
- * 
- * x - right
- * y - forward
- * z - up
- */
-
 public class LidarSim {
 
 	// public static Logger log = Logger.getLogger(LidarSim.class.getName());
@@ -58,8 +50,8 @@ public class LidarSim {
 		}
 
 		if (surveyFilePath.equals("")) {
-		//	surveyFilePath = "data/surveys/als_PN1.xml";
-			surveyFilePath = "data/surveys/tls_PoN3.xml";
+			System.out.println("Error: Input survey not specified");
+			System.exit(-1);
 		}
 
 		// Load survey description from XML file:
@@ -71,8 +63,7 @@ public class LidarSim {
 			System.exit(-1);
 		}
 
-		SurveyPlayback playback = new SurveyPlayback(survey);
-		playback.exitAtEnd = headless;
+		SurveyPlayback playback = new SurveyPlayback(survey, headless);
 
 		// ############ BEGIN Start visualization module #############
 
@@ -85,7 +76,7 @@ public class LidarSim {
 		}
 		// ############ END Start visualization module #############
 
-		System.out.print("Running simulation...");
+		System.out.println("Running simulation...");
 
 		playback.start();
 	}

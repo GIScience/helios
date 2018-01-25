@@ -116,13 +116,13 @@ public class JMEFrontEnd extends SimpleApplication implements EventListener {
 		mSettings.setResolution(1280, 1024);
 		mSettings.setResolution(1600, 1024);
 		// setting.setResolution(1024,768);
-		mSettings.setResolution(1024,768);
+		mSettings.setResolution(1280,720);
 
-		mSettings.setSamples(4);
+		mSettings.setSamples(2);
 
 		setSettings(mSettings);
 
-		setShowSettings(false);
+		setShowSettings(true);
 
 		// ATTENTION: This is REQUIRED to prevent freezing of the whole computer if the program loses focus!
 		// setPauseOnLostFocus() must be "false" since currently, setting it to "true" won't stop the actual simulation anyway.
