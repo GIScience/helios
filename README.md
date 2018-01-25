@@ -2,14 +2,11 @@
 
 > Heidelberg LiDAR Operations Simulator (HELIOS)
 
-HELIOS is a software package for interactive real-time simulation and visualization of terrestrial, mobile and airborne laser scanning surveys written in Java.
-
-Official website: http://www.geog.uni-heidelberg.de/gis/helios_en.html
+HELIOS is a software package for interactive real-time simulation and visualization of terrestrial, mobile and airborne laser scanning surveys written in Java. Official website: http://www.geog.uni-heidelberg.de/gis/helios_en.html
 
 [![HELIOS](http://img.youtube.com/vi/1SOg7b5q4ak/0.jpg)](https://www.youtube.com/watch?v=1SOg7b5q4ak "HELIOS")
 
 ## Table of Contents
-
 - [Install](#install)
 - [Usage](#usage)
 - [Documentation](#documentation)
@@ -17,31 +14,38 @@ Official website: http://www.geog.uni-heidelberg.de/gis/helios_en.html
 - [License](#license)
 
 ## Install
-
 First install the dependencies, then compile the source code, and finally execute it.
 
 ### Dependencies
-
 - Oracle Java 1.8
 - Maven 3
 
 You can use ```java -version``` and ```mvn -v``` to check if you already have installed those in your computer.
 
-In Ubuntu they can be installed by:
+#### Linux/Ubuntu:
+They can be installed by:
+
 ```bash
 sudo apt-get install oracle-java8-installer maven
 ```
-In Windows is less straightforward:
-
--Download the [Java JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)  and create the environment variable *JAVA_HOME* to point to the JDK folder (e. g. *JAVA_HOME=C:\Program Files\Java\jdk1.8.0_151* ) , then add to the *PATH* the value *%JAVA_HOME%\bin*.  
--Download the [Maven](https://maven.apache.org/download.cgi) binary zip, unzip it and move it to the desired folder (e. g. *C:\apache-maven-3.5.2*), then add the *PATH* the value *C:\apache-maven-3.5.2\bin*.
+#### Windows:
+In Windows is less straightforward:  
+- Java JDK  
+	1. Download the [Java JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and install it  
+	2. Create the environment variable *JAVA_HOME* to point to the JDK folder  
+	(e .g: *JAVA_HOME=C:\Program Files\Java\jdk1.8.0_151*)  
+	3. Add to the *PATH* the value *%JAVA_HOME%\bin*  
+- Maven  
+	1. Download the [Maven](https://maven.apache.org/download.cgi) binary zip  
+	2. Unzip it and move it to the desired folder (e. g. *C:\apache-maven-3.5.2*)  
+	3. Add to the *PATH* the bin folder inside (e. g. *C:\apache-maven-3.5.2\bin*)  
 
 ### Compilation
 
 Download the source code from this web site or from git:
 
 ```bash
-git clone https://github.com/GIScience/helios.git
+git clone -b developer https://github.com/GIScience/helios.git
 ```
 Then inside the root folder simply execute:
 ```bash
