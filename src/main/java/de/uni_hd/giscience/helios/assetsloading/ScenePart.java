@@ -1,5 +1,6 @@
 package de.uni_hd.giscience.helios.assetsloading;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +17,9 @@ import de.uni_hd.giscience.helios.core.scene.primitives.Primitive;
 import de.uni_hd.giscience.helios.core.scene.primitives.Triangle;
 import de.uni_hd.giscience.helios.core.scene.primitives.Vertex;
 
-public class ScenePart {
+public class ScenePart implements Serializable {
+	
+	private static final long serialVersionUID = -4091716751769356576L;
 	public ArrayList<Primitive> mPrimitives = new ArrayList<>();
 	public String mId = "";
 	

@@ -1,12 +1,14 @@
 package de.uni_hd.giscience.helios.core.scene.primitives;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-public class AABB extends Primitive {
+public class AABB extends Primitive implements Serializable {
 
+	private static final long serialVersionUID = 7460113617209305207L;
 	public Vector3D min = null;
 	public Vector3D max = null;
 

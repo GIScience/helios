@@ -9,9 +9,9 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class Triangle extends Primitive {
 
+	private static final long serialVersionUID = -870342667378612605L;
 	public final Vertex[] verts = new Vertex[3];
-
-	Vector3D faceNormal = new Vector3D(0, 0, 0);
+	private Vector3D faceNormal = new Vector3D(0, 0, 0);
 
 	public Triangle(Vertex v0, Vertex v1, Vertex v2) {
 
@@ -80,27 +80,42 @@ public class Triangle extends Primitive {
 		}
 
 		return this.faceNormal;
-	}
-
+	}     
+          
 	@Override
 	public double getIncidenceAngle_rad(Vector3D rayOrigin, Vector3D rayDir) {
-		return (Math.PI) - Math.acos(rayDir.dotProduct(faceNormal)/(rayDir.getNorm()*faceNormal.getNorm()));
+		return Math.PI - Vector3D.angle(faceNormal, rayDir);
 	}
-
+                
+	// These naive methods are much faster than the built-in in Vector3D
+	public double dotProductNaive(final Vector3D v1, Vector3D v3) {
+		return v1.getX() * v3.getX() + v1.getY() * v3.getY() + v1.getZ() * v3.getZ();
+    }
+    
+	public Vector3D crossProductNaive(Vector3D v1, Vector3D v2) {
+		return new Vector3D(v1.getY() * v2.getZ() - v1.getZ()* v2.getY(),  
+							v1.getZ() * v2.getX() - v1.getX()* v2.getZ(), 
+							v1.getX() * v2.getY() - v1.getY()* v2.getX());
+	}
+               
 	@Override
+	/*
+	 * Fast, Minimum Storage Ray/Triangle Intersection (Möller and Trumbore, 1997)
+	 * See http://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
+	 */
 	public double[] getRayIntersection(Vector3D rayOrigin, Vector3D rayDir) {
-
-		// See http://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/
+                                   
+        double eps = 0.00001;
 		double[] result = new double[1];
 
 		Vector3D e1 = this.verts[1].pos.subtract(this.verts[0].pos);
 		Vector3D e2 = this.verts[2].pos.subtract(this.verts[0].pos);
 
-		Vector3D h = rayDir.crossProduct(e2);
+		Vector3D h = crossProductNaive(rayDir, e2);
+		
+		double a = dotProductNaive(e1, h);
 
-		double a = e1.dotProduct(h);
-
-		if (a > -0.00001 && a < 0.00001) {
+		if (a > -eps && a < eps) {
 			result[0] = -1;
 			return result;
 		}
@@ -109,25 +124,25 @@ public class Triangle extends Primitive {
 
 		Vector3D s = rayOrigin.subtract(this.verts[0].pos);
 
-		double u = f * s.dotProduct(h);
+		double u = f * dotProductNaive(s, h);
 
 		if (u < 0.0 || u > 1.0) {
 			result[0] = -1;
 			return result;
 		}
 
-		Vector3D q = s.crossProduct(e1);
-
-		double v = f * rayDir.dotProduct(q);
+		Vector3D q = crossProductNaive(s, e1);
+		
+		double v = f * dotProductNaive(rayDir, q);
 
 		if (v < 0.0 || u + v > 1.0) {
 			result[0] = -1;
 			return result;
 		}
 
-		double t = f * e2.dotProduct(q);
+		double t = f * dotProductNaive(e2, q);
 
-		if (t > 0.00001) {
+		if (t > eps) {
 			result[0] = t;
 			return result;
 		}
@@ -156,6 +171,13 @@ public class Triangle extends Primitive {
 			this.faceNormal = normal_unnormalized.normalize();
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return getVertices().get(0).getX() + " " + getVertices().get(0).getY() + " " + getVertices().get(0).getZ() + "\n" +
+			   getVertices().get(1).getX() + " " + getVertices().get(1).getY() + " " + getVertices().get(1).getZ() + "\n" +
+			   getVertices().get(2).getX() + " " + getVertices().get(2).getY() + " " + getVertices().get(2).getZ();
+	}
 
 	public void setAllVertexColors(Color4f color) {
 		verts[0].color = color;
@@ -167,5 +189,34 @@ public class Triangle extends Primitive {
 		verts[0].normal = faceNormal;
 		verts[1].normal = faceNormal;
 		verts[2].normal = faceNormal;
+	}
+				
+	public double calcArea2D() {
+		double det = verts[0].getX() * (verts[1].getY() - verts[2].getY())
+				   + verts[1].getX() * (verts[2].getY() - verts[0].getY())
+				   + verts[2].getX() * (verts[0].getY() - verts[1].getY());	
+		return 0.5 * Math.abs(det);
+	}
+	
+	public double calcArea3D() {
+		Vector3D ab = new Vector3D(verts[1].getX() - verts[0].getX(), verts[1].getY() - verts[0].getY(), verts[1].getZ() - verts[0].getZ());
+		Vector3D ac = new Vector3D(verts[2].getX() - verts[0].getX(), verts[2].getY() - verts[0].getY(), verts[2].getZ() - verts[0].getZ());
+		double cross = crossProductNaive(ab, ac).getNorm();
+		return 0.5 * cross;				
+	}			
+	
+	public double euclideanDistance2D(Vector3D v1, Vector3D v2) {
+		double diffX = (v1.getX() - v2.getX()) * (v1.getX() - v2.getX());
+		double diffY = (v1.getY() - v2.getY()) * (v1.getY() - v2.getY());
+		return Math.sqrt(diffX + diffY);
+	}
+	
+	public boolean intersectsCircle(Sphere circle) {
+		if(euclideanDistance2D(verts[0].pos, circle.center) > circle.radius &&
+		   euclideanDistance2D(verts[1].pos, circle.center) > circle.radius &&
+		   euclideanDistance2D(verts[2].pos, circle.center) > circle.radius) {
+			return false;
+		}
+		return true;
 	}
 }

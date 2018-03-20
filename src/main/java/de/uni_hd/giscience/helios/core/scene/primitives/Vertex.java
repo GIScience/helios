@@ -1,12 +1,15 @@
 package de.uni_hd.giscience.helios.core.scene.primitives;
 
+import java.io.Serializable;
+
 import javax.vecmath.Color4f;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
-public class Vertex {
+public class Vertex implements Serializable {
 
+	private static final long serialVersionUID = 4530961171798023308L;
 	public Vector3D pos;
 	public Vector3D normal;
 	public Color4f color;
@@ -21,6 +24,31 @@ public class Vertex {
 		
 		return v;
 	}
+	
+	
+	public static double[] matxvec(double[][] mat, double[] vec) {
+		double[] res = new double[3];
+
+	    for (int i = 0; i < 3; i++) {
+	        double tmp = 0;
+	        for (int j = 0; j < 3; j++) {
+	        	tmp += mat[i][j] * vec[j]; 
+	        }
+	        res[i] = tmp;
+	    }
+
+	    return res;
+	}
+	
+	public static Vertex rotateVertex(Vertex v, double[][] rotationMatrix) {
+		double[] vector = new double[] {v.getX(), v.getY(), v.getZ()};
+		double[] result = matxvec(rotationMatrix, vector);
+		Vertex newVert = new Vertex();
+		newVert.pos = new Vector3D(result[0], result[1], result[2]); 
+		
+		return newVert;
+	}
+	
 	
 	public double getX() {
 		return this.pos.getX();

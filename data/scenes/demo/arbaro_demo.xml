@@ -1,101 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <document>
-	<scene id="arbaro_demo" name="Arbaro Demo">
-		
-		<sunDir x="0" y="1" z="-1" />
-		<skybox azimuth_deg="275" texturesFolder="textures/sky/sky6_1024"/> 
-		
-	
-			<part>
-			<filter type="objloader">
-				<param type="string" key="filepath" value="data/sceneparts/basic/groundplane/groundplane.obj" />
-			</filter>
-
-			<filter type="scale">
-				<param type="double" key="scale" value="100" />
-			</filter>
-		</part>	
-		
-		
-		<part>
-			<filter type="objloader">
-				<param type="string" key="filepath" value="data/sceneparts/arbaro/black_tupelo_low.obj"/>
-				<param type="boolean" key="castShadows" value="true"/>
-				<param type="boolean" key="receiveShadows" value="true"/>
-
-				<param type="boolean" key="recomputeVertexNormals" value="true"/>
-			</filter>	
-			
-			<filter type="rotate">
-				<param type="rotation" key="rotation">				
-				<rot axis="pitch" angle_deg="90"/>							
-				</param>
-			</filter>	
-
-
-			<filter type="translate">
-				<param type="vec3" key="offset" value="25;15;0"/>				
-			</filter>
-
-
-			<filter type="scale">
-				<param type="double" key="scale" value="0.5"/>						
-			</filter>				
-		</part>
-		<!-- 
-		<part>
-			<filter type="objloader">
-				<param type="string" key="filepath" value="data/sceneparts/arbaro/sassafras_low.obj"/>
-				<param type="boolean" key="castShadows" value="true"/>
-				<param type="boolean" key="receiveShadows" value="true"/>
-
-				<param type="boolean" key="recomputeVertexNormals" value="true"/>
-			</filter>	
-			
-			<filter type="rotate">
-				<param type="rotation" key="rotation">				
-				<rot axis="pitch" angle_deg="90"/>							
-				</param>
-			</filter>	
-
-			<filter type="translate">
-				<param type="vec3" key="offset" value="-25;15;0"/>				
-			</filter>
-
-
-			<filter type="scale">
-				<param type="double" key="scale" value="0.5"/>						
-			</filter>	
-		</part>
-		
-		
-		<part>
-			<filter type="objloader">
-				<param type="string" key="filepath" value="data/sceneparts/arbaro/weeping_willow_low.obj"/>
-				<param type="boolean" key="castShadows" value="true"/>
-				<param type="boolean" key="receiveShadows" value="true"/>
-
-				<param type="boolean" key="recomputeVertexNormals" value="true"/>
-			</filter>	
-			
-			<filter type="rotate">
-				<param type="rotation" key="rotation">				
-				<rot axis="pitch" angle_deg="90"/>							
-				</param>
-			</filter>	
-
-
-			<filter type="translate">
-				<param type="vec3" key="offset" value="0;0;0"/>				
-			</filter>
-
-
-			<filter type="scale">
-				<param type="double" key="scale" value="1"/>						
-			</filter>	
-
-			
-		</part>
-		 -->
-		
-	</scene>
+    <scene id="arbaro_demo" name="Arbaro Demo">
+        <sunDir x="0" y="1" z="-1" />
+        <skybox azimuth_deg="275" texturesFolder="textures/sky/sky6_1024" />
+        <part>
+            <filter type="objloader">
+                <param type="string" key="filepath" value="data/sceneparts/basic/groundplane/groundplane.obj" />
+            </filter>
+            <filter type="scale">
+                <param type="double" key="scale" value="100" />
+            </filter>
+        </part>
+        <part>
+            <filter type="objloader">
+                <param type="string" key="filepath" value="data/sceneparts/arbaro/black_tupelo_low.obj" />
+                <param type="boolean" key="castShadows" value="true" />
+                <param type="boolean" key="receiveShadows" value="true" />
+                <param type="boolean" key="recomputeVertexNormals" value="true" />
+            </filter>
+            <filter type="rotate">
+                <param type="rotation" key="rotation">
+                    <rot axis="pitch" angle_deg="90" />
+                </param>
+            </filter>
+            <filter type="translate">
+                <param type="vec3" key="offset" value="0;15;0" />
+            </filter>
+            <filter type="scale">
+                <param type="double" key="scale" value="0.5" />
+            </filter>
+        </part>
+        <part>
+            <filter type="objloader">
+                <param type="string" key="filepath" value="data/sceneparts/arbaro/sassafras_low.obj" />
+                <param type="boolean" key="castShadows" value="true" />
+                <param type="boolean" key="receiveShadows" value="true" />
+                <param type="boolean" key="recomputeVertexNormals" value="true" />
+            </filter>
+            <filter type="rotate">
+                <param type="rotation" key="rotation">
+                    <rot axis="pitch" angle_deg="90" />
+                </param>
+            </filter>
+            <filter type="translate">
+                <param type="vec3" key="offset" value="-10;15;0" />
+            </filter>
+            <filter type="scale">
+                <param type="double" key="scale" value="0.5" />
+            </filter>
+        </part>
+    </scene>
 </document>

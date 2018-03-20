@@ -1,5 +1,13 @@
 package de.uni_hd.giscience.helios.core.scene;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeMap;
@@ -13,7 +21,9 @@ import de.uni_hd.giscience.helios.core.scene.primitives.AABB;
 import de.uni_hd.giscience.helios.core.scene.primitives.Primitive;
 import de.uni_hd.giscience.helios.core.scene.primitives.Vertex;
 
-public class Scene extends Asset {
+public class Scene extends Asset implements Serializable {
+
+	private static final long serialVersionUID = -2223398133296904729L;
 
 	public ArrayList<Primitive> primitives = new ArrayList<>();
 
@@ -88,7 +98,7 @@ public class Scene extends Asset {
 		// ################ END Shift primitives to origin ##################
 
 		// ############# BEGIN Build KD-tree ##################
-		System.out.print("Building KD-Tree... ");
+		System.out.println("Building KD-Tree... ");
 
 		long timeStart = System.nanoTime();
 
@@ -176,5 +186,44 @@ public class Scene extends Asset {
 
 	public Vector3D getShift() {
 		return this.bbox_crs.min;
+	}
+	
+	public void writeObject(String path) {	
+		   
+		System.out.println("Writing " + path + "...");	
+	    	
+		try {			
+			FileOutputStream fos = new FileOutputStream(path);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+		     
+		    oos.writeObject(this);
+		   
+		    oos.close();
+		    fos.close(); 		    
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}	      
+	}
+	
+	public static Scene readObject(String path) {
+		
+		Scene scene = null;
+		System.out.println("Reading " + path + "...");		
+		
+		try {			
+			FileInputStream fis = new FileInputStream(path);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+			ObjectInputStream ois = new ObjectInputStream(bis);
+	        
+			scene = (Scene)ois.readObject();
+			
+			ois.close();
+			fis.close(); 
+		} catch (IOException | ClassNotFoundException e) {			
+			e.printStackTrace();
+		}
+		
+		return scene;
 	}
 }

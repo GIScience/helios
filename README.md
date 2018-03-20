@@ -1,56 +1,119 @@
-# HELIOS
-The Heidelberg LiDAR Operations Simulator ([HELIOS](http://www.geog.uni-heidelberg.de/gis/helios_en.html)) is a software package for interactive real-time simulation and visualization of terrestrial, mobile and airborne laser scanning surveys written in Java.
+# helios
 
-## HELIOS-FWF
-HELIOS ver. 2.0 - Full-WaveForm implementation within the Heidelberg LiDAR Operations Simulator.
+> Heidelberg LiDAR Operations Simulator (HELIOS)
 
-### Features
+HELIOS is a software package for interactive real-time simulation and visualization of terrestrial, mobile and airborne laser scanning surveys written in Java. Official website: http://www.geog.uni-heidelberg.de/gis/helios_en.html
 
-The following FWF features are included to the latest FWF HELIOS build:
-- BRDF reflectance model.
-- Gaussian decomposition to extract multiple echo returns (point coordinates,intensity,width,return number). Based on <a href="https://github.com/odinsbane/least-squares-in-java">least square fitting library</a>.
- 
-Future features will include:
-- More sophisticated atmospheric scattering model.
-- Per-scanner based input waveform profile of the outgoing pulse.
- 
-### Configuration variables (for \<FWFSettings \> in \<survey\> XML file)
-- numTimeBins (integer) - Number of bins to discretize the temporal domain of individual return.
-- numFullwaveBins (integer) - Total number of bins to discretize the entire temporal domain of FWF signal.
-- winSize (integer) - Number of neigbhouring samples to check (i.e. 1D window size) when finding local maxima for Gaussian decomposition.
-- peakEnergy (double) - Scanner's peak emitting energy [W].
-- apertureDiameter (double) - Scanner's aperture diameter [m].
-- atmosphericVisbility (double) - Decrease of intensity due atmospheric scattering. Within range [0, 1].
-- scannerEfficiency (double) - Efficiency of the scanner. Within range of [0, 1]. 
-- scannerWaveLength (double) - Scanner's operating wavelength [ns].
-- beamDivergence_rad (double) - Scanner's beam divergence angle [rad].  Used if not defined in \<scanner>.
-- pulseLength_ns (double) - Scanner's pulse length [ns]. Used if not defined in \<scanner>.
-- beamSampleQuality (integer) - Quality of spatial discretization of the subrays (higher value = more subrays within the laser cone). Default set to 3.
+[![HELIOS](http://img.youtube.com/vi/1SOg7b5q4ak/0.jpg)](https://www.youtube.com/watch?v=1SOg7b5q4ak "HELIOS")
 
-### Modification of MTF (obj material) file
+## Table of Contents
+- [Install](#install)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Authorship](#authorship)
+- [License](#license)
 
- - helios_reflectance (double) - Define the reflectance (albedo) of the given material. Within range [0, 1].
+## Install
+First install the dependencies, then compile the source code, and finally execute it.
 
-### Output point format
+### Dependencies
+- Oracle Java 1.8
+- Maven 3
 
-*point.x point.y point.z intensity echoWidth FWFIndex returnNumber returnNumPerPulse objectId*
+You can use ```java -version``` and ```mvn -v``` to check if you already have installed those in your computer.
 
-- point (double) - Coordinates of 3D captured points from echo returns in FWF signal.
-- intensity (double) - Intensity of the return [W].
-- echoWidth (double) - The full width at half maximum of the echo-return [ns].
-- returnNumber (integer) - The corresponding return number.
-- returnNumPerPulse (integer) - Number of returns per pulse.
-- FWFIndex (integer) - The index of the FWF signal.
-- objectId (string) - The id of the hit object.
+#### Linux/Ubuntu:
+They can be installed by:
 
-### Output FWF format
+```bash
+sudo apt-get install oracle-java8-installer maven
+```
+#### Windows:
+In Windows is less straightforward:  
+- Java JDK  
+	1. Download the [Java JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and install it  
+	2. Create the environment variable *JAVA_HOME* to point to the JDK folder  
+	(e .g: *JAVA_HOME=C:\Program Files\Java\jdk1.8.0_151*)  
+	3. Add to the *PATH* the value *%JAVA_HOME%\bin*  
+- Maven  
+	1. Download the [Maven](https://maven.apache.org/download.cgi) binary zip  
+	2. Unzip it and move it to the desired folder (e. g. *C:\apache-maven-3.5.2*)  
+	3. Add to the *PATH* the bin folder inside (e. g. *C:\apache-maven-3.5.2\bin*)  
 
-*FWFIndex beamOrigin.x beamOrigin.y beamOrigin.z beamDir.x beamDir.y beamDir.z minTime maxTime gpsTime FWFIntensities*
+### Compilation
 
-- FWFIndex (integer) - The index of the FWF signal (in order to match corresponding points)
-- beamOrigin (double) - 3D point of the beam's origin.
-- beamOrigin (double) - 3D vector of the beam's direction.
-- minTime (double) - FWF signal beginning time [ns].
-- maxTime (double) - FWF signal ending time [ns].
-- gpsTIme (integer) - Simulated GPS time.
-- FWFIntensities (double) - Intensities of the entire FWF signal. Number defined with numFullwaveBins.
+Download the source code from this web site or from git:
+
+```bash
+git clone -b developer https://github.com/GIScience/helios.git
+```
+Then inside the root folder simply execute:
+```bash
+mvn package
+```
+
+### Eclipse IDE
+
+To add this project to Eclipse go to *File > Import > Existing Maven Projects* and select *helios* folder.  
+You may also want to disable the spell checker: right click in the project > *Checkstyle > Deactivate Checkstyle*
+
+## Usage
+
+HELIOS supports both single-ray and full-waveform simulations. Currently the default mode is the full-waveform. The selection between this two methods is done in the source code when creating the detector object in [*XmlAssetsLoader.java*](src/main/java/de/uni_hd/giscience/helios/assetsloading/XmlAssetsLoader.java). 
+
+### Input
+
+The argument of the program is the survey XML file, also the 3D models of the scene pointed in the survey are needed. See [Wiki: Basic input data](https://github.com/GIScience/helios/wiki/Quick-start-guide#basic-input-data) for further details. 
+
+### Execution
+
+From the root folder run:
+
+```bash
+java -jar target/helios.jar <survey-file>
+```
+To run the example survey:
+
+```bash
+java -jar target/helios.jar data/surveys/demo/tls_arbaro_demo.xml 
+```
+
+To use the batch mode (no visualization):
+
+```bash
+java -jar target/helios.jar <survey-file> headless
+```
+### Output
+
+Output files are generated inside *output/Survey Playback* folder.
+
+* Point cloud: File named *legxxx_points.xyz* separated by spaces  where *xxx* is the leg number.  
+Fields:  
+X Y Z I ECHO_WIDTH RN NOR FWF_ID OBJ_ID  
+Example:   
+-4.615 15.979 2.179 4.0393 1.4317 1 1 214275 1
+* Waveform: File named *legxxx_points.xyzfullwave.txt* separated by spaces  where *xxx* is the leg number.  
+See [FWF.md](FWF.md) for further details. 
+
+## Documentation
+
+See [Wiki](https://github.com/GIScience/helios/wiki).
+
+
+## Authorship
+
+GIScience Research Group  
+Institute of Geography  
+University of Heidelberg  
+
+### Citation
+
+Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. Vol. III-3, pp. 161-168. http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016
+
+### Maintainers
+
+[@sebastian-bechtold](https://github.com/sebastian-bechtold) [@nlukac](https://github.com/nlukac) [@kathapand](https://github.com/kathapand) [@deuxbot](https://github.com/deuxbot) 
+
+## License
+
+See [LICENSE.md](LICENSE.md).
