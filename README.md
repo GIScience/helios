@@ -14,9 +14,11 @@ HELIOS is a software package for interactive real-time simulation and visualizat
 - [License](#license)
 
 ## Install
-First install the dependencies, then compile the source code, and finally execute it.
+The pre-built project is available [here](https://apps.citius.usc.es/share/f.php?h=1Rp6aU05&d=1). Note that for faster simulations **building the project is recommended**. 
 
-### Dependencies
+To build the project, first install the dependencies, then compile the source code, and finally execute it.
+
+### Requisites
 - Oracle Java 1.8
 - Maven 3
 
@@ -45,7 +47,7 @@ In Windows is less straightforward:
 Download the source code from this web site or from git:
 
 ```bash
-git clone -b developer https://github.com/GIScience/helios.git
+git clone https://github.com/GIScience/helios.git
 ```
 Then inside the root folder simply execute:
 ```bash
@@ -113,6 +115,8 @@ Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Frame
 ### Maintainers
 
 [@sebastian-bechtold](https://github.com/sebastian-bechtold) [@nlukac](https://github.com/nlukac) [@kathapand](https://github.com/kathapand) [@deuxbot](https://github.com/deuxbot) 
+
+The first HELIOS version with full-waveform support is available in [this](https://github.com/nlukac/helios-FWF) repository maintained by [@nlukac](https://github.com/nlukac).
 
 ## License
 
