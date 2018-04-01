@@ -11,6 +11,8 @@ public class ScannerSettings extends Asset {
 	public Double headRotateStop_rad = 0d;
 	public Integer pulseFreq_Hz = 0;
 	public double scanAngle_rad = 0;
+	public Double verticalAngleMin_rad = 0d;
+	public Double verticalAngleMax_rad = 0d;
 	public Integer scanFreq_Hz = 0;
 	public Double beamDivAngle=0.003;
 	public double pulseLength_ns = 0;
@@ -32,6 +34,8 @@ public class ScannerSettings extends Asset {
 		this.headRotateStop_rad = other.headRotateStop_rad;
 		this.pulseFreq_Hz = other.pulseFreq_Hz;
 		this.scanAngle_rad = other.scanAngle_rad;
+		this.verticalAngleMin_rad = other.verticalAngleMin_rad;
+		this.verticalAngleMax_rad = other.verticalAngleMax_rad;
 		this.scanFreq_Hz = other.scanFreq_Hz;
 		this.beamDivAngle = other.beamDivAngle;
 		this.pulseLength_ns = other.pulseLength_ns;

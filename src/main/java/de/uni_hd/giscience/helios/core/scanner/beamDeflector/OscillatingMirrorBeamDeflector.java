@@ -23,7 +23,7 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 	public void applySettings(ScannerSettings settings) {
 		super.applySettings(settings);
 
-		cached_angleBetweenPulses_rad = (double) (this.cfg_setting_scanFreq_Hz * this.cfg_setting_scanAngle_rad * 4) / settings.pulseFreq_Hz;
+		cached_angleBetweenPulses_rad = (double) (this.cfg_setting_scanFreq_Hz * this.cfg_setting_scanAngleRange_rad * 4) / settings.pulseFreq_Hz;
 		cached_pulsesPerScanline = (int) (((double) settings.pulseFreq_Hz) / this.cfg_setting_scanFreq_Hz);
 	}
 
@@ -40,7 +40,7 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 		// Update beam angle:
 		int bla = Math.min(currentScanLinePulse, cached_pulsesPerScanline / 2) - Math.max(0, currentScanLinePulse - cached_pulsesPerScanline / 2);
 
-		state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad + cached_angleBetweenPulses_rad * bla;
+		state_currentBeamAngle_rad = -this.cfg_setting_scanAngleRange_rad + cached_angleBetweenPulses_rad * bla;
 
 		// Rotate to current position:
 		this.cached_emitterRelativeAttitude = new Rotation(Directions.right, state_currentBeamAngle_rad);
@@ -57,7 +57,7 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 			scanAngle_deg = ((double) this.cfg_device_scanProduct) / this.cfg_setting_scanFreq_Hz;
 		}
 
-		this.cfg_setting_scanAngle_rad = scanAngle_deg * (Math.PI / 180);
+		this.cfg_setting_scanAngleRange_rad = scanAngle_deg * (Math.PI / 180);
 
 		System.out.println("Scan angle set to " + scanAngle_deg + " degrees.");
 	}
@@ -66,9 +66,9 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 	public void setScanFreq_Hz(double scanFreq_Hz) {
 
 		// Max. scan frequency is limited by scan product:
-		if (this.cfg_setting_scanAngle_rad * (180.0 / Math.PI) * scanFreq_Hz > this.cfg_device_scanProduct) {
+		if (this.cfg_setting_scanAngleRange_rad * (180.0 / Math.PI) * scanFreq_Hz > this.cfg_device_scanProduct) {
 			System.out.println("ERROR: Requested scan frequency exceeds device limitations as defined by scan product. Will set it to maximal possible value.");
-			scanFreq_Hz = ((double) this.cfg_device_scanProduct) / (this.cfg_setting_scanAngle_rad * (180.0 / Math.PI));
+			scanFreq_Hz = ((double) this.cfg_device_scanProduct) / (this.cfg_setting_scanAngleRange_rad * (180.0 / Math.PI));
 		}
 
 		this.cfg_setting_scanFreq_Hz = scanFreq_Hz;
