@@ -89,9 +89,9 @@ Output files are generated inside *output/Survey Playback* folder.
 
 * Point cloud: File named *legxxx_points.xyz* separated by spaces  where *xxx* is the leg number.  
 Fields:  
-X Y Z I ECHO_WIDTH RN NOR FWF_ID OBJ_ID  
+X Y Z I ECHO_WIDTH RN NOR FWF_ID OBJ_ID CLASS  
 Example:   
--4.615 15.979 2.179 4.0393 1.4317 1 1 214275 1
+-4.615 15.979 2.179 4.0393 1.4317 1 1 214275 1 0
 * Waveform: File named *legxxx_points.xyzfullwave.txt* separated by spaces  where *xxx* is the leg number.  
 See [FWF.md](FWF.md) for further details. 
 

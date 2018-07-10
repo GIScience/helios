@@ -41,6 +41,7 @@ public abstract class AbstractBeamDeflector {
 		
 		state_currentBeamAngle_rad = 0;
 		cached_angleBetweenPulses_rad = (double) (this.cfg_setting_scanFreq_Hz * this.cfg_setting_scanAngleRange_rad * 2) / settings.pulseFreq_Hz;
+		System.out.println("Vertical resolution: " + (float) (this.cached_angleBetweenPulses_rad * 180 / Math.PI));
 	} 
 
 	public Rotation getEmitterRelativeAttitude() {
@@ -55,12 +56,11 @@ public abstract class AbstractBeamDeflector {
 		if (scanAngle_rad < 0) {
 			scanAngle_rad = 0;
 		} else if (scanAngle_rad > this.cfg_device_scanAngleRangeMax_rad) {
+			System.out.println("Scan angle " + scanAngle_rad * (180.0 / Math.PI) + " higher than supported " + this.cfg_device_scanAngleRangeMax_rad * (180.0 / Math.PI) + ". Setting to max supported: " + this.cfg_device_scanAngleRangeMax_rad * (180.0 / Math.PI) );
 			scanAngle_rad = this.cfg_device_scanAngleRangeMax_rad;
 		}
 
 		this.cfg_setting_scanAngleRange_rad = scanAngle_rad;
-
-		// System.out.println("Scan angle set to " + this.cfg_setting_scanAngle_rad * (180.0 / Math.PI));
 	}
 
 	public boolean lastPulseLeftDevice() {

@@ -59,7 +59,7 @@ public class PolygonMirrorBeamDeflector extends AbstractBeamDeflector {
 		super.applySettings(settings);	
 		super.state_currentBeamAngle_rad = cfg_device_scanAngleMin_rad;
 		System.out.println("Vertical angle settings: " +
-				"Range: " + super.cfg_setting_scanAngleRange_rad * (180.0 / Math.PI) * 2 + "º " + 
+				"Total Range: " + super.cfg_setting_scanAngleRange_rad * (180.0 / Math.PI) * 2 + "º " + 
 				"Min: " + cfg_device_scanAngleMin_rad * (180.0 / Math.PI) + "º " + 
 				"Max: " + cfg_device_scanAngleMax_rad * (180.0 / Math.PI) + "º ");
 	}

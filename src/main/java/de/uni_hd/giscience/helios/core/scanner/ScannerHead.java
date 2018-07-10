@@ -35,6 +35,7 @@ public class ScannerHead {
 		this.cfg_setting_rotateStop_rad = settings.headRotateStop_rad;
 		this.cfg_setting_rotateStart_rad = settings.headRotateStart_rad;
 		this.cfg_setting_rotateRange_rad = Math.abs(cfg_setting_rotateStart_rad - cfg_setting_rotateStop_rad);
+		System.out.println("Horizontal resolution: " + (settings.headRotatePerSec_rad * 180 / Math.PI) / settings.scanFreq_Hz);
 	}
 
 
