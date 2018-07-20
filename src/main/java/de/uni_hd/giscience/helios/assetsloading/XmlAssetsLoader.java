@@ -390,7 +390,7 @@ public class XmlAssetsLoader {
 			beamDeflector = new FiberArrayBeamDeflector(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz, numFibers);
 		} else if (str_opticsType.equals("rotating")) {
 
-			Double scanAngleMin_rad = (Double) getAttribute(scannerNode, "scanAngleMin_deg", Double.class, -scanAngleMax_rad) * (Math.PI / 180);
+			Double scanAngleMin_rad = (Double) getAttribute(scannerNode, "scanAngleMin_deg", Double.class, -scanAngleMax_rad * (180 / Math.PI )) * (Math.PI / 180);
 			Double scanAngleEffectiveMax_rad = (Double) getAttribute(scannerNode, "scanAngleEffectiveMax_deg", Double.class, 0) * (Math.PI / 180);
 			beamDeflector = new PolygonMirrorBeamDeflector(scanFreqMax_Hz, scanFreqMin_Hz, scanAngleMax_rad, scanAngleMin_rad, scanAngleEffectiveMax_rad);
 		}
