@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <scene id="ground" name="Ground">
+        <sunDir x="0" y="1" z="-1"/>
+        <skybox azimuth_deg="275" texturesFolder="textures/sky/sky6_1024"/> 
+        <part>
+            <filter type="objloader">
+                <param type="string" key="filepath" value="data\sceneparts\basic\groundplane\groundplane.obj" />
+                <param type="vec3" key="offset" value="0;0;0"/>
+            </filter>
+            <filter type="scale">
+                <param type="double" key="scale" value="1000" />
+            </filter> 
+        </part>
+    </scene>
+</document>

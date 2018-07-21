@@ -10,17 +10,17 @@ public abstract class AbstractBeamDeflector {
 	// Device definition variables:
 	double cfg_device_scanFreqMax_Hz = 0;
 	double cfg_device_scanFreqMin_Hz = 0;
-	double cfg_device_scanAngleRangeMax_rad = 0;
+	double cfg_device_scanAngleMax_rad = 0;
 
 	// Setting variables:
 	double cfg_setting_scanFreq_Hz = 0;
-	double cfg_setting_scanAngleRange_rad = 0;
+	double cfg_setting_scanAngle_rad = 0;
 
 	// Stat variables:
 	double state_currentBeamAngle_rad = 0;
 
-	public AbstractBeamDeflector(double scanAngleRangeMax_rad, double scanFreqMax_Hz, double scanFreqMin_Hz) {
-		this.cfg_device_scanAngleRangeMax_rad = scanAngleRangeMax_rad;
+	public AbstractBeamDeflector(double scanAngleMax_rad, double scanFreqMax_Hz, double scanFreqMin_Hz) {
+		this.cfg_device_scanAngleMax_rad = scanAngleMax_rad;
 		this.cfg_device_scanFreqMax_Hz = scanFreqMax_Hz;
 		this.cfg_device_scanFreqMin_Hz = scanFreqMin_Hz;
 
@@ -40,8 +40,7 @@ public abstract class AbstractBeamDeflector {
 		setScanFreq_Hz(settings.scanFreq_Hz);
 		
 		state_currentBeamAngle_rad = 0;
-		cached_angleBetweenPulses_rad = (double) (this.cfg_setting_scanFreq_Hz * this.cfg_setting_scanAngleRange_rad * 2) / settings.pulseFreq_Hz;
-		System.out.println("Vertical resolution: " + (float) (this.cached_angleBetweenPulses_rad * 180 / Math.PI));
+		cached_angleBetweenPulses_rad = (double) (this.cfg_setting_scanFreq_Hz * this.cfg_setting_scanAngle_rad * 2) / settings.pulseFreq_Hz;
 	} 
 
 	public Rotation getEmitterRelativeAttitude() {
@@ -55,12 +54,12 @@ public abstract class AbstractBeamDeflector {
 
 		if (scanAngle_rad < 0) {
 			scanAngle_rad = 0;
-		} else if (scanAngle_rad > this.cfg_device_scanAngleRangeMax_rad) {
-			System.out.println("Scan angle " + scanAngle_rad * (180.0 / Math.PI) + " higher than supported " + this.cfg_device_scanAngleRangeMax_rad * (180.0 / Math.PI) + ". Setting to max supported: " + this.cfg_device_scanAngleRangeMax_rad * (180.0 / Math.PI) );
-			scanAngle_rad = this.cfg_device_scanAngleRangeMax_rad;
+		} else if (scanAngle_rad > this.cfg_device_scanAngleMax_rad) {
+			System.out.println("Scan angle " + scanAngle_rad * (180.0 / Math.PI) + " higher than supported " + this.cfg_device_scanAngleMax_rad * (180.0 / Math.PI) + ". Setting to max supported: " + this.cfg_device_scanAngleMax_rad * (180.0 / Math.PI) );
+			scanAngle_rad = this.cfg_device_scanAngleMax_rad;
 		}
 
-		this.cfg_setting_scanAngleRange_rad = scanAngle_rad;
+		this.cfg_setting_scanAngle_rad = scanAngle_rad;
 	}
 
 	public boolean lastPulseLeftDevice() {

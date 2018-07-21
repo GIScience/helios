@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <!-- Expected point spacing: 0.22 vertical & 0.13 horizontal -->
+    <survey name="TLS-VZ1000" scene="data/scenes/test/barrier.xml#barrier" platform="data/platforms.xml#tripod" scanner="data/scanners_tls.xml#riegl_vz1000">
+        <leg>
+            <platformSettings x="0" y="0" z="0" onGround="true" />
+            <scannerSettings active="true" pulseFreq_hz="70000" verticalAngleMin_deg="-10" verticalAngleMax_deg="5" scanFreq_hz="120" headRotatePerSec_deg="1.8" headRotateStart_deg="165" headRotateStop_deg="195"/>
+        </leg>
+    </survey>
+</document>

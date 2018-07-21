@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <!-- Expected point spacing: 0.5 vertical & 0.5 horizontal -->
+    <survey name="ALS-Q780" scene="data/scenes/test/ground.xml#ground" platform="data/platforms.xml#sr22" scanner="data/scanners_als.xml#riegl_lms-q780">
+        <leg>
+            <platformSettings x="-100" y="0" z="955" onGround="false" movePerSec_m="100"/>
+            <scannerSettings active="true" pulseFreq_hz="400000" scanAngle_deg="30" scanFreq_hz="200"/>
+        </leg>
+        <leg>
+            <platformSettings x="100" y="0" z="955" onGround="false" movePerSec_m="100"/>
+            <scannerSettings active="true" pulseFreq_hz="400000" scanAngle_deg="30" scanFreq_hz="200"/>
+        </leg>
+    </survey>
+</document>

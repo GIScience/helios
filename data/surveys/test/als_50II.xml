@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <!-- TODO Scans should exhibit a Z-shape -->
+    <survey name="ALS-50II" scene="data/scenes/test/ground.xml#ground" platform="data/platforms.xml#sr22" scanner="data/scanners_als.xml#leica_als50-ii">
+        <leg>
+            <platformSettings x="-100" y="0" z="955" onGround="false" movePerSec_m="120"/>
+            <scannerSettings active="true" pulseFreq_hz="150000" scanAngle_deg="37.5" scanFreq_hz="60"/>
+        </leg>
+        <leg>
+            <platformSettings x="100" y="0" z="955" onGround="false" movePerSec_m="120"/>
+            <scannerSettings active="true" pulseFreq_hz="150000" scanAngle_deg="37.5" scanFreq_hz="60"/>
+        </leg>
+    </survey>
+</document>

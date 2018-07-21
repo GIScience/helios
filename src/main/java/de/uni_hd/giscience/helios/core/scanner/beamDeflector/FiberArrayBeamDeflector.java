@@ -22,7 +22,7 @@ public class FiberArrayBeamDeflector extends AbstractBeamDeflector {
 	public void applySettings(ScannerSettings settings) {
 		super.applySettings(settings);
 
-		state_currentBeamAngle_rad = -this.cfg_setting_scanAngleRange_rad;
+		state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad;
 		setNumFibers(cfg_device_numFibers);
 	}
 	
@@ -30,13 +30,14 @@ public class FiberArrayBeamDeflector extends AbstractBeamDeflector {
 	public void setNumFibers(int numFibers) {
 		this.cfg_device_numFibers = numFibers;
 
-		cached_angleBetweenPulses_rad = (this.cfg_setting_scanAngleRange_rad * 2) / cfg_device_numFibers;
+		cached_angleBetweenPulses_rad = (this.cfg_setting_scanAngle_rad * 2) / cfg_device_numFibers;
+        System.out.println("Vertical resolution: " + (float) (this.cached_angleBetweenPulses_rad * 180 / Math.PI));
 	}
 
 	@Override
 	public void doSimStep() {
 
-		state_currentBeamAngle_rad = -this.cfg_setting_scanAngleRange_rad + cached_angleBetweenPulses_rad * state_currentFiber;
+		state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad + cached_angleBetweenPulses_rad * state_currentFiber;
 
 		state_currentFiber++;
 		if (state_currentFiber >= cfg_device_numFibers) {
