@@ -75,28 +75,25 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 	}
 	
 	// Calculate the strength of the laser going back to the detector
-	double calcIntensity(double incidenceAngle, double targetRange, double targetReflectivity, double targetSpecularity, double targetArea, double radius) {
-			
+	double calcIntensity(double incidenceAngle, double targetRange, double targetReflectivity, double targetSpecularity, double targetArea, double radius) {			
 		double emmitedPower = calcEmmitedPower(radius, targetRange);
 		double intensity = super.calcReceivedPower(emmitedPower, targetRange, incidenceAngle, targetReflectivity, targetSpecularity, targetArea);
 		return intensity * 1000000000f;
 	}
 			
 	// Time distribution equation to calculate the pulse beam energy increasing and decreasing in time (Carlsson et al., 2001)
-	private int calcTimePropagation(ArrayList<Double> timeWave, int numBins) {
-		double step = detector.scanner.FWF_settings.pulseLength_ns / (double) numBins;
-		double tau = (detector.scanner.FWF_settings.pulseLength_ns * 0.5) / 3.5;
-		double t = 0;
-		double t_tau = 0;
-		double pt = 0;
-		double peakValue = 0;
-		int peakIndex = 0;
+	protected int calcTimeWave(ArrayList<Double> timeWave) {
+		int peakIndex = -1;
+        double peakValue = 0;
+        double t, t_tau, pt;
+        final double t_step = detector.scanner.FWF_settings.pulseLength_ns / (double) timeWave.size();
+		final double tau = (detector.scanner.FWF_settings.pulseLength_ns * 0.5) / 3.5;		
 		
-		for (int i = 0; i < numBins; ++i) {
-			t = i * step;
+		for (int i = 0; i < timeWave.size(); i++) {
+			t = i * t_step;
 			t_tau = t / tau;
 			pt = (t_tau * t_tau) * Math.exp(-t_tau);
-			timeWave.add(pt);
+			timeWave.set(i, pt);
 			if (pt > peakValue) {
 				peakValue = pt;
 				peakIndex = i;
@@ -105,6 +102,46 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 
 		return peakIndex;
 	}
+    
+    // Multiply each sub-beam intensity with time wave and add to the full waveform 
+    protected ArrayList<Double> calcFullWaveform(final TreeMap<Double, Double> reflections, final double maxHitTime_ns, final double minHitTime_ns, final double totalHitTime_ns) {	     
+        final int numTimeBins = detector.scanner.FWF_settings.numTimeBins;
+        ArrayList<Double> timeWave = new ArrayList<>(Collections.nCopies(numTimeBins, 0.0));
+        final int peakIntensityIndex = calcTimeWave(timeWave);
+          
+        final int numFullwaveBins = detector.scanner.FWF_settings.numFullwaveBins;
+		ArrayList<Double> fullwave = new ArrayList<>(Collections.nCopies(numFullwaveBins, 0.0));
+        
+        Iterator<Entry<Double, Double>> iter = reflections.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry<Double, Double> entry = (Entry<Double, Double>) iter.next();
+			double distance_m = entry.getKey();
+			double intensity = entry.getValue();
+			double wavePeakTime_ns = (distance_m / cfg_speedOfLight_mPerNanosec);
+			double blubb = detector.scanner.FWF_settings.pulseLength_ns / (double) numTimeBins;
+			double timeStart = wavePeakTime_ns - (peakIntensityIndex * blubb);		
+            for (int i = 0; i < timeWave.size(); i++) {
+				double timeTmp = timeStart + i * blubb;
+				int fullWaveBinIndex = (int) (((timeTmp - minHitTime_ns) / totalHitTime_ns) * numFullwaveBins);
+				fullwave.set(fullWaveBinIndex, timeWave.get(i) * intensity);
+			}
+		}
+
+        return fullwave;
+    }
+    
+    Fitter initGaussianFitter(final ArrayList<Double> fullwave) {
+        double[][] xs = new double[fullwave.size()][1];
+        double[] zs = new double[fullwave.size()];     
+        for (int i = 0; i < fullwave.size(); i++) {
+            xs[i][0] = (double) i;
+            zs[i] = fullwave.get(i);
+        }     
+        Fitter fitter = new MarquardtFitter(gaussianModel);
+        fitter.setData(xs, zs);
+        
+        return fitter;
+    }
 	
 	// Perspective projection
 	public Vertex projectPoint(Vector3D point, Vector3D camera, double[] angles) {
@@ -188,7 +225,9 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 
 	@Override
 	public void run() {
-		Scene scene = detector.scanner.platform.scene;
+		ArrayList<Double> fullandecho = new ArrayList<>(); //test
+        
+        Scene scene = detector.scanner.platform.scene;
 
 		Vector3D beamDir = absoluteBeamAttitude.applyTo(Directions.forward);
 
@@ -208,7 +247,7 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 
 		// ##################### BEGIN Perform racasting for each sub-ray and find all intersections #################
 
-		TreeMap<Double, Double> reflections = new TreeMap<Double, Double>();
+		TreeMap<Double, Double> reflections = new TreeMap<>();
 
 		// List to store all intersections. This is required later to reconstruct the associations between extracted points
 		// and the scene objects that caused them:
@@ -279,102 +318,33 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 		// ######## END Outer loop over radius steps from beam center to outer edge ##############
 
 		// ##################### END Perform raycasting for each sub-ray and find all intersections #################
-
-		// ############ BEGIN Step 1: Find maximum hit distance, abort if nothing was hit #############
-		double maxHitDist_m = 0;
-		double minHitDist_m = Double.MAX_VALUE;
-
-		Iterator<Entry<Double, Double>> iter = reflections.entrySet().iterator();
-
-		while (iter.hasNext()) {
-			Entry<Double, Double> entry = (Entry<Double, Double>) iter.next();
-
-			double entryDistance = entry.getKey();
-
-			if (entryDistance > maxHitDist_m) {
-				maxHitDist_m = entryDistance;
-			}
-			if (entryDistance < minHitDist_m) {
-				minHitDist_m = entryDistance;
-			}
-		}
-
-		if (maxHitDist_m < 0) {
+	
+		final double maxHitDist_m = reflections.lastKey();
+		final double minHitDist_m = reflections.firstKey();	
+        if (maxHitDist_m < 0) { // Abort if nothing was hit
 			detector.scanner.setLastPulseWasHit(false);
 			return;
-		}
-		// ############ END Step 1: Find maximum hit distance, abort if nothing was hit #############
+		}		
 
-		// ############ BEGIN Create full waveform #############
-
-		// 2. create full waveform with t_max entries
-
-		int cfg_numTimeBins = detector.scanner.FWF_settings.numTimeBins; // discretize the time wave into X bins (time_step = beam pulse length [ns] / X)
-		int cfg_numFullwaveBins = detector.scanner.FWF_settings.numFullwaveBins; // discretize the time full waveform into X bins (time_step = total_time [ns] / X)
-
-		ArrayList<Double> time_wave = new ArrayList<Double>();
-		int peakIntensityIndex = calcTimePropagation(time_wave, cfg_numTimeBins);
-
-		ArrayList<Double> fullwave = new ArrayList<Double>(Collections.nCopies(cfg_numFullwaveBins, 0.0));
-
-		// Gaussian model fitting init
-		double[][] xs = new double[fullwave.size()][1];
-		for(int i=0;i<fullwave.size();++i) xs[i][0]=((double)i);
-		double[] zs = new double[fullwave.size()];
-		//
-    	
-		// 3. calc time at minimum and maximum distance (i.e. total beam time in fwf signal)
-		double maxHitTime_ns = maxHitDist_m / cfg_speedOfLight_mPerNanosec + detector.scanner.FWF_settings.pulseLength_ns; // [ns]
-		
-		double minHitTime_ns= minHitDist_m / cfg_speedOfLight_mPerNanosec - detector.scanner.FWF_settings.pulseLength_ns;
-
-		if(detector.cfg_device_rangeMin_m / cfg_speedOfLight_mPerNanosec > minHitTime_ns) {
+		final double maxHitTime_ns = maxHitDist_m / cfg_speedOfLight_mPerNanosec + detector.scanner.FWF_settings.pulseLength_ns;	
+		final double minHitTime_ns = minHitDist_m / cfg_speedOfLight_mPerNanosec - detector.scanner.FWF_settings.pulseLength_ns;
+        final double totalHitTime_ns = maxHitTime_ns - minHitTime_ns;
+        if(detector.cfg_device_rangeMin_m / cfg_speedOfLight_mPerNanosec > minHitTime_ns) {
 			return;
 		}
-
-		// 4. multiply each sub-beam intensity with time_wave and add to the full waveform
-
-		// ########### BEGIN Iterate over waveform data ###########
-		iter = reflections.entrySet().iterator();
-		while (iter.hasNext()) {
-			Entry<Double, Double> entry = (Entry<Double, Double>) iter.next();
-
-			// Vector3D sub_beam_dir=waveform_beamdir.get(w);
-			double entryDistance_m = entry.getKey();
-			double entryIntensity = entry.getValue();
-
-			double wavePeakTime_ns = (entryDistance_m / cfg_speedOfLight_mPerNanosec); // [ns]
-
-			double blubb = (detector.scanner.FWF_settings.pulseLength_ns / (double) cfg_numTimeBins);
-
-			double time_start = wavePeakTime_ns - (peakIntensityIndex * blubb);
-
-			for (int i = 0; i < time_wave.size(); ++i) {
-
-				double time_tmp = time_start + i * blubb;
-
-				int fullwaveBinIndex = (int) (((time_tmp-minHitTime_ns) / (maxHitTime_ns-minHitTime_ns)) * cfg_numFullwaveBins);
-				fullwave.set(fullwaveBinIndex, time_wave.get(i) * entryIntensity);
-			}
-		}
-
-		// ########### END Iterate over waveform data ###########
-
-		// ############ BEGIN Extract points from waveform data via Gaussian decomposition ################
-		int num_returns = 0;
-		int win_size = detector.scanner.FWF_settings.winSize; // search for peaks around [-win_size, win_size]
-		//double min_wave_width=detector.scanner.FWF_settings.minEchoWidth; // [ns]
-
-		for (int i=0; i < fullwave.size(); ++i) {
-			zs[i]=fullwave.get(i);
-		}
-
-		Fitter fit = new MarquardtFitter(gaussianModel);
-		fit.setData(xs, zs);
-		
-		ArrayList<Measurement> PointsMeasurement=new ArrayList<Measurement>(); // temp solution
-        double eps = 0.001;
         
+        ArrayList<Double> fullwave = calcFullWaveform(reflections, maxHitTime_ns, minHitTime_ns, totalHitTime_ns);
+ 
+		Fitter fitter = initGaussianFitter(fullwave);
+		
+        // Perform peak detection
+        final double eps = 0.001;
+        final double minEchoWidth = 0.1;  //  min_wave_width
+        final int cfg_numFullwaveBins = detector.scanner.FWF_settings.numFullwaveBins;
+        final int win_size = detector.scanner.FWF_settings.winSize; // search for peaks around [-win_size, win_size]		
+        int num_returns = 0;
+        ArrayList<Measurement> PointsMeasurement=new ArrayList<>(); // temp solution
+  
 		for (int i = 0; i < fullwave.size(); ++i) {
 			if(fullwave.get(i) < eps) continue;
 			
@@ -396,22 +366,20 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 			}
 
 			if (hasPeak) {
-				// Gaussian model fitting
-		        fit.setParameters(new double[]{0, fullwave.get(i), i, 1});
+		        fitter.setParameters(new double[]{0, fullwave.get(i), i, 1});
 		        try {
-		        	fit.fitData();
+		        	fitter.fitData();
 		        } catch (java.lang.RuntimeException e) { 
 					continue;
 				}
-		        double echo_width = (double)fit.getParameters()[3];
-		        echo_width=(echo_width/cfg_numFullwaveBins)*(maxHitTime_ns-minHitTime_ns);
-
-				if(echo_width<0.1)  {  //min_wave_width) {
+		        double echo_width = (double) fitter.getParameters()[3];
+		        echo_width = (echo_width /  (double) cfg_numFullwaveBins) * totalHitTime_ns;
+				if (echo_width < minEchoWidth )  {  
 					continue;
 				}
 					
 				// ########## END echo location, intensity and width extraction via Gaussian decomposition ###########
-				double distance = cfg_speedOfLight_mPerNanosec * ((i / (double) cfg_numFullwaveBins) * (maxHitTime_ns-minHitTime_ns)+minHitTime_ns);
+				double distance = cfg_speedOfLight_mPerNanosec * ((i / (double) cfg_numFullwaveBins) * totalHitTime_ns + minHitTime_ns);
 
 				// ########## BEGIN Build list of objects that produced this return ###########
 			
@@ -446,10 +414,16 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 				tmp.returnNumber=num_returns + 1;
 				tmp.classification = classification;
 				PointsMeasurement.add(tmp);
-
+                fullandecho.add(echo_width); fullandecho.add(fullwave.get(i));
 				++num_returns;
 			}
 		}
+    System.out.println(fullandecho);
+    if(fullandecho.get(0) == 1.1494054793226347 || fullandecho.get(0) == 1.143578712596994 && fullandecho.get(1) == 24.799861601181746 || fullandecho.get(1) == 44.1971145494791)
+        System.out.println("TRUE");
+    else
+        System.out.println("FALSE");
+    System.exit(1);
 
 		// ############ END Extract points from waveform data ################
 
