@@ -49,7 +49,11 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
     };
 
 	FullWaveformPulseDetector fwDetector;
-
+    final double t_step = detector.scanner.FWF_settings.pulseLength_ns / (double) detector.scanner.FWF_settings.numTimeBins;
+    final double tau = (detector.scanner.FWF_settings.pulseLength_ns * 0.5) / 3.5;		
+    final double blubb = detector.scanner.FWF_settings.pulseLength_ns / (double) detector.scanner.FWF_settings.numTimeBins;
+    final double cfg_device_timeMin_ns=  detector.cfg_device_rangeMin_m / cfg_speedOfLight_mPerNanosec;
+    
 	public FullWaveformPulseRunnable(FullWaveformPulseDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int currentPulseNum, long currentGpsTime) {
 
 		super((AbstractDetector) detector, absoluteBeamOrigin, absoluteBeamAttitude, currentPulseNum, currentGpsTime);
@@ -85,9 +89,7 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 	protected int calcTimeWave(ArrayList<Double> timeWave) {
 		int peakIndex = -1;
         double peakValue = 0;
-        double t, t_tau, pt;
-        final double t_step = detector.scanner.FWF_settings.pulseLength_ns / (double) timeWave.size();
-		final double tau = (detector.scanner.FWF_settings.pulseLength_ns * 0.5) / 3.5;		
+        double t, t_tau, pt;	
 		
 		for (int i = 0; i < timeWave.size(); i++) {
 			t = i * t_step;
@@ -106,19 +108,18 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
     // Multiply each sub-beam intensity with time wave and add to the full waveform 
     protected ArrayList<Double> calcFullWaveform(final TreeMap<Double, Double> reflections, final double maxHitTime_ns, final double minHitTime_ns, final double totalHitTime_ns) {	     
         final int numTimeBins = detector.scanner.FWF_settings.numTimeBins;
-        ArrayList<Double> timeWave = new ArrayList<>(Collections.nCopies(numTimeBins, 0.0));
-        final int peakIntensityIndex = calcTimeWave(timeWave);
-          
         final int numFullwaveBins = detector.scanner.FWF_settings.numFullwaveBins;
+        
+        ArrayList<Double> timeWave = new ArrayList<>(Collections.nCopies(numTimeBins, 0.0));      
 		ArrayList<Double> fullwave = new ArrayList<>(Collections.nCopies(numFullwaveBins, 0.0));
+        final int peakIntensityIndex = calcTimeWave(timeWave); 
         
         Iterator<Entry<Double, Double>> iter = reflections.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<Double, Double> entry = (Entry<Double, Double>) iter.next();
 			double distance_m = entry.getKey();
 			double intensity = entry.getValue();
-			double wavePeakTime_ns = (distance_m / cfg_speedOfLight_mPerNanosec);
-			double blubb = detector.scanner.FWF_settings.pulseLength_ns / (double) numTimeBins;
+			double wavePeakTime_ns = (distance_m / cfg_speedOfLight_mPerNanosec);		
 			double timeStart = wavePeakTime_ns - (peakIntensityIndex * blubb);		
             for (int i = 0; i < timeWave.size(); i++) {
 				double timeTmp = timeStart + i * blubb;
@@ -329,7 +330,7 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 		final double maxHitTime_ns = maxHitDist_m / cfg_speedOfLight_mPerNanosec + detector.scanner.FWF_settings.pulseLength_ns;	
 		final double minHitTime_ns = minHitDist_m / cfg_speedOfLight_mPerNanosec - detector.scanner.FWF_settings.pulseLength_ns;
         final double totalHitTime_ns = maxHitTime_ns - minHitTime_ns;
-        if(detector.cfg_device_rangeMin_m / cfg_speedOfLight_mPerNanosec > minHitTime_ns) {
+        if(cfg_device_timeMin_ns > minHitTime_ns) {
 			return;
 		}
         
