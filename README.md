@@ -14,7 +14,7 @@ HELIOS is a software package for interactive real-time simulation and visualizat
 - [License](#license)
 
 ## Install
-The pre-built project is available [here](https://apps.citius.usc.es/share/f.php?h=1Rp6aU05&d=1). Note that for faster simulations **building the project is recommended**. 
+The pre-built project is available [here](https://heibox.uni-heidelberg.de/f/06bb612921/?raw=1). Note that for faster simulations **building the project is recommended**. 
 
 To build the project, first install the dependencies, then compile the source code, and finally execute it.
 
@@ -22,7 +22,7 @@ To build the project, first install the dependencies, then compile the source co
 - Oracle Java 1.8
 - Maven 3
 
-You can use ```java -version``` and ```mvn -v``` to check if you already have installed those in your computer.
+You can use ```java -version``` and ```mvn -v``` to check if you already have installed those on your computer.
 
 #### Linux/Ubuntu:
 They can be installed by:
@@ -31,14 +31,14 @@ They can be installed by:
 sudo apt-get install oracle-java8-installer maven
 ```
 #### Windows:
-In Windows is less straightforward:  
+In Windows installation is less straightforward:  
 - Java JDK  
 	1. Download the [Java JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and install it  
 	2. Create the environment variable *JAVA_HOME* to point to the JDK folder  
 	(e .g: *JAVA_HOME=C:\Program Files\Java\jdk1.8.0_151*)  
 	3. Add to the *PATH* the value *%JAVA_HOME%\bin*  
 - Maven  
-	1. Download the [Maven](https://maven.apache.org/download.cgi) binary zip  
+	1. Download the [Maven](https://maven.apache.org/download.cgi) *binary* zip  
 	2. Unzip it and move it to the desired folder (e. g. *C:\apache-maven-3.5.2*)  
 	3. Add to the *PATH* the bin folder inside (e. g. *C:\apache-maven-3.5.2\bin*)  
 
