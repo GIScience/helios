@@ -14,7 +14,7 @@ HELIOS is a software package for interactive real-time simulation and visualizat
 - [License](#license)
 
 ## Install
-The pre-built project is available [here](https://heibox.uni-heidelberg.de/f/06bb612921/?raw=1). Note that for faster simulations **building the project is recommended**. 
+The pre-built project is available [here](https://heibox.uni-heidelberg.de/f/06bb612921/?raw=1) with a test scene and survey. Note that for faster simulations **building the project is recommended**. 
 
 To build the project, first install the dependencies, then compile the source code, and finally execute it.
 
