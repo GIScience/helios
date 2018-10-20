@@ -419,12 +419,6 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 				++num_returns;
 			}
 		}
-    System.out.println(fullandecho);
-    if(fullandecho.get(0) == 1.1494054793226347 || fullandecho.get(0) == 1.143578712596994 && fullandecho.get(1) == 24.799861601181746 || fullandecho.get(1) == 44.1971145494791)
-        System.out.println("TRUE");
-    else
-        System.out.println("FALSE");
-    System.exit(1);
 
 		// ############ END Extract points from waveform data ################
 
