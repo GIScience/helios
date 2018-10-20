@@ -52,6 +52,17 @@ public class FullWaveformPulseRunnableTest {
         assertEquals(29, worker.calcTimeWave(timeWave));
     }  
     
+//    @Test
+//    public void testFitGaussian() {          
+//        System.out.println("fitGaussian");    
+//        final ArrayList<Double> data = new ArrayList<>(Arrays.asList(0.00443185, 0.01087345, 0.02414573, 0.04852934, 0.08827937, 0.14534663, 0.21659157, 0.29212518, 0.35660488, 0.39400018, 0.39400018, 0.35660488, 0.29212518, 0.21659157, 0.14534663, 0.08827937, 0.04852934, 0.02414573, 0.01087345, 0.00443185));
+//        final double[] parameters = worker.fitGaussian(data);
+//        final double eps = 0.00000001;
+//        assertEquals(0.39894228, parameters[0], eps);
+//        assertEquals(9.50000000, parameters[1], eps);
+//        assertEquals(3.16666665, parameters[2], eps);              
+//    }  
+    
     @Test
     public void testCalcFullWaveform() {
         System.out.println("testCalcFullWaveform");

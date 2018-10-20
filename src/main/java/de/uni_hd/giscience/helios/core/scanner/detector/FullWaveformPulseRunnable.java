@@ -20,6 +20,12 @@ import de.uni_hd.giscience.helios.core.scene.primitives.Primitive;
 import de.uni_hd.giscience.helios.core.scene.primitives.Sphere;
 import de.uni_hd.giscience.helios.core.scene.primitives.Triangle;
 import de.uni_hd.giscience.helios.core.scene.primitives.Vertex;
+import java.util.Collection;
+import org.apache.commons.math3.fitting.AbstractCurveFitter;
+import org.apache.commons.math3.fitting.GaussianCurveFitter;
+import org.apache.commons.math3.fitting.WeightedObservedPoint;
+import org.apache.commons.math3.fitting.WeightedObservedPoints;
+import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
 
 import org.orangepalantir.leastsquares.Fitter;
 import org.orangepalantir.leastsquares.Function;
@@ -27,15 +33,23 @@ import org.orangepalantir.leastsquares.fitters.MarquardtFitter;
 
 
 public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
+    
+  
+    
+  
+    
     Function gaussianModel = new Function(){
         @Override
         public double evaluate(double[] values, double[] parameters) {
-            double A = parameters[0];
-            double B = parameters[1];
-            double C = parameters[2];
-            double D = parameters[3];
+            double A = parameters[0]; // noise
+            double B = parameters[1]; // amplitude
+            double C = parameters[2]; // mean
+            double D = parameters[3]; // 2sigma=?
             double x = values[0];
-            return A + B * Math.exp( - Math.pow(((x-C)/D), 2) );
+            //return A + B * Math.exp( - Math.pow(((x-C)/D), 2) );
+            double num = Math.pow(x - C, 2);
+            double den = 2 * Math.pow(D, 2);
+            return A + B * Math.exp(- num / den);
         }
         @Override
         public int getNParameters() {
@@ -142,6 +156,19 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
         fitter.setData(xs, zs);
         
         return fitter;
+    }
+    
+    double[] fitGaussian(ArrayList<Double> data, double[] guess) {  
+    //double[] fitGaussian(ArrayList<Double> data, double[] guess) {
+        WeightedObservedPoints obs = new WeightedObservedPoints();       
+        for (int i = 0; i < data.size(); i++) {
+            obs.add(i, data.get(i));
+        }
+        GaussianCurveFitter fitter = GaussianCurveFitter.create();
+        fitter.withStartPoint(guess);
+        double[] parameters = fitter.fit(obs.toList());
+       
+        return parameters; // peak, mean (mu), sdtev (sigma)
     }
 	
 	// Perspective projection
@@ -337,7 +364,8 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
         ArrayList<Double> fullwave = calcFullWaveform(reflections, maxHitTime_ns, minHitTime_ns, totalHitTime_ns);
  
 		Fitter fitter = initGaussianFitter(fullwave);
-		
+        double[] bestFit;
+        
         // Perform peak detection
         final double eps = 0.001;
         final double minEchoWidth = 0.1;  //  min_wave_width
@@ -365,16 +393,24 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 					}
 				}
 			}
-
+            
 			if (hasPeak) {
 		        fitter.setParameters(new double[]{0, fullwave.get(i), i, 1});
 		        try {
-		        	fitter.fitData();
+		        	//fitter.fitData();                  
+                    //System.out.println("LIBR " + fitter.getParameters()[1] + " " + fitter.getParameters()[2] + " " +  fitter.getParameters()[3] + " " +  fitter.getParameters()[0]);  
+                    double[] guess = new double[]{fullwave.get(i), i, 1};
+                    bestFit = fitGaussian(fullwave, guess);
+                    //System.out.println("JAVA " + bestFit[0] +  " " + bestFit[1] + " " +  bestFit[2]);
+                    
+                    //System.exit(0);
+                    
 		        } catch (java.lang.RuntimeException e) { 
 					continue;
 				}
-		        double echo_width = (double) fitter.getParameters()[3];
-		        echo_width = (echo_width /  (double) cfg_numFullwaveBins) * totalHitTime_ns;
+		        //double echo_width = (double) fitter.getParameters()[3];
+                double echo_width = (double) bestFit[2];
+                echo_width = (echo_width /  (double) cfg_numFullwaveBins) * totalHitTime_ns;
 				if (echo_width < minEchoWidth )  {  
 					continue;
 				}

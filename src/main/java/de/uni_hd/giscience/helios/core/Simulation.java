@@ -41,7 +41,7 @@ public abstract class Simulation {
 	public Simulation() {
 
 		// ######### BEGIN Configure pulse simulation threads pool ##########
-		int numThreads = Runtime.getRuntime().availableProcessors();
+		int numThreads = 1;
 		int queueSize = 5000;
 		ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(queueSize, true);
 		this.mExecService = new ThreadPoolExecutor(numThreads, numThreads, 2L, TimeUnit.MINUTES, queue, new ThreadPoolExecutor.CallerRunsPolicy());
