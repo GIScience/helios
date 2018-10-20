@@ -1,5 +1,6 @@
 package de.uni_hd.giscience.helios.surveyplayback;
 
+import com.jme3.scene.Node;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class SurveyPlayback extends Simulation {
 	private long legElapsedTime_ms = 0;
 	private long legRemainingTime_ms = 0;
 
-	public SurveyPlayback(Survey survey, boolean headless) {
+	public SurveyPlayback(Survey survey, boolean headless, Node rootNode) {
 		this.mSurvey = survey;
 		this.headless = headless;
 		this.exitAtEnd = headless;
@@ -53,6 +54,7 @@ public class SurveyPlayback extends Simulation {
 		// ######## END Create part of the leg point cloud file path #######
 
 		this.setScanner(mSurvey.scanner);
+        mSurvey.scanner.rootNode = rootNode;
 
 		// ############### BEGIN If the leg has no survey defined, create a default one ################
 		if (mSurvey.legs.size() == 0) {

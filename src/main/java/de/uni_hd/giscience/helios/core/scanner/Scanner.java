@@ -2,6 +2,7 @@
 
 package de.uni_hd.giscience.helios.core.scanner;
 
+import com.jme3.scene.Node;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
@@ -28,6 +29,8 @@ public class Scanner extends Asset {
 	
 	// Misc:
 	public String cfg_device_visModelPath = "";
+    
+    public Node rootNode;
 
 	// ########## BEGIN Emitter ###########
 	public Vector3D cfg_device_headRelativeEmitterPosition = new Vector3D(0, 0, 0);
@@ -136,7 +139,7 @@ public class Scanner extends Asset {
 		Long unixTime = System.currentTimeMillis() / 1000L;
 		Long currentGpsTime = (unixTime - 315360000) - 1000000000;
 
-		detector.simulatePulse(execService, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
+		detector.simulatePulse(execService, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime, rootNode);
 	}
 
 	

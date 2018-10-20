@@ -1,5 +1,6 @@
 package de.uni_hd.giscience.helios.core.scanner.detector;
 
+import com.jme3.scene.Node;
 import java.util.Random;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
@@ -32,6 +33,8 @@ public abstract class AbstractPulseRunnable implements Runnable {
 	// The variable 'boxmuller_use_last' is needed for the box-muller gaussian random number generator:
 	boolean boxmuller_use_last = false;
 	boolean writeGround = true;
+    
+    Node rootNode;
 
 	double boxMullerRandom(double d, double e) {
 
@@ -62,12 +65,13 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		return (d + y1 * e);
 	}
 
-	public AbstractPulseRunnable(AbstractDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int pulseNumber, Long gpsTime) {
+	public AbstractPulseRunnable(AbstractDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int pulseNumber, Long gpsTime, Node rootNode) {
 		this.detector = detector;
 		this.absoluteBeamAttitude = absoluteBeamAttitude;
 		this.absoluteBeamOrigin = absoluteBeamOrigin;
 		this.currentPulseNum = pulseNumber;
 		this.currentGpsTime = gpsTime;
+        this.rootNode = rootNode;
 	}
 	
 	// Generate Gaussian-distributed error for more realistic intensity

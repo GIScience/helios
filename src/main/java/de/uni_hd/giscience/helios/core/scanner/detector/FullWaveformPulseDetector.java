@@ -1,5 +1,6 @@
 package de.uni_hd.giscience.helios.core.scanner.detector;
 
+import com.jme3.scene.Node;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -53,11 +54,11 @@ public class FullWaveformPulseDetector extends AbstractDetector {
 	}
 
 	@Override
-	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime) {
+	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime, Node rootNode) {
 		// TODO Auto-generated method stub
 
 		// Submit pulse computation task to multithread executor service:
-		AbstractPulseRunnable worker = new FullWaveformPulseRunnable(this, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
+		AbstractPulseRunnable worker = new FullWaveformPulseRunnable(this, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime, rootNode);
 
 		// Submit pulse runnable to worker threads:
 		execService.execute(worker);

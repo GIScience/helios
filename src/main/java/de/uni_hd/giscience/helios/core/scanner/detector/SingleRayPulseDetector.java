@@ -1,5 +1,6 @@
 package de.uni_hd.giscience.helios.core.scanner.detector;
 
+import com.jme3.scene.Node;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
@@ -17,9 +18,9 @@ public class SingleRayPulseDetector extends AbstractDetector {
 	// TODO 3: Perhaps return PulseRunnable and let the Scanner class submit it, instead of submitting it here?
 
 	@Override
-	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime) {
+	public void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime, Node rootNode) {
 
-		AbstractPulseRunnable worker = new SingleRayPulseRunnable(this, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
+		AbstractPulseRunnable worker = new SingleRayPulseRunnable(this, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime, rootNode);
 
 		// Submit pulse runnable to worker threads:
 		execService.execute(worker);

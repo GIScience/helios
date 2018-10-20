@@ -1,5 +1,6 @@
 package de.uni_hd.giscience.helios.core.scanner.detector;
 
+import com.jme3.scene.Node;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -75,7 +76,7 @@ public abstract class AbstractDetector {
 		}
 	}
 
-	public abstract void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime);
+	public abstract void simulatePulse(ExecutorService execService, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int state_currentPulseNumber, long currentGpsTime, Node rootNode);
 
 	synchronized public void shutdown() {
 

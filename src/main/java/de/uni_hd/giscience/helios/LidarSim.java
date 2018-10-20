@@ -62,13 +62,13 @@ public class LidarSim {
 			System.out.println("Failed to load survey!");
 			System.exit(-1);
 		}
-
-		SurveyPlayback playback = new SurveyPlayback(survey, headless);
+        JMEFrontEnd frontend = new JMEFrontEnd();
+		SurveyPlayback playback = new SurveyPlayback(survey, headless, frontend.getRootNode());
 
 		// ############ BEGIN Start visualization module #############
 
 		if (!headless) {
-			JMEFrontEnd frontend = new JMEFrontEnd();
+			//JMEFrontEnd frontend = new JMEFrontEnd();
 			frontend.init(playback);
 
 			frontend.start();

@@ -407,8 +407,8 @@ public class XmlAssetsLoader {
 		// ############################ BEGIN Configure detector ###############################
 		Double rangeMin_m = (Double) getAttribute(scannerNode, "rangeMin_m", Double.class, 0.0d);
 		Double accuracy_m = (Double) getAttribute(scannerNode, "accuracy_m", Double.class, 0.0d);
-		scanner.detector = new FullWaveformPulseDetector(scanner, accuracy_m, rangeMin_m);
-	//	scanner.detector = new SingleRayPulseDetector(scanner, accuracy_m, rangeMin_m);
+	//	scanner.detector = new FullWaveformPulseDetector(scanner, accuracy_m, rangeMin_m);
+		scanner.detector = new SingleRayPulseDetector(scanner, accuracy_m, rangeMin_m);
 		// ############################ END Configure detector ###############################
 
 		return scanner;

@@ -47,7 +47,7 @@ public class ShowScannedSceneAppState extends BaseAppState {
 		// ######################### BEGIN Add scene part geometries to the root node #####################
 		// Create group node for the scene parts:
 		// NOTE: This is primarily done to allow easy hiding of the scene (by detaching the scene parts group node from the root node)
-		scenePartsGroupNode = new Node();
+		scenePartsGroupNode = new Node("sceneparts");
 		mWorldNode.attachChild(scenePartsGroupNode);
 
 		HashMap<de.uni_hd.giscience.helios.core.scene.Material, HashSet<Primitive>> blablubb = new HashMap<>();
@@ -296,6 +296,7 @@ public class ShowScannedSceneAppState extends BaseAppState {
 			// ################ END Configure shadow cast/receive ##################
 
 			scenePartsGroupNode.attachChild(geometry);
+            System.out.println(geometry.getKey() + "loaded");
 		}
 	}
 }

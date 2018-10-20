@@ -26,7 +26,7 @@ public class FullWaveformPulseRunnableTest {
         detector = new FullWaveformPulseDetector(scanner, 0, 0);
         detector.scanner.FWF_settings = new FWFSettings();
         detector.scanner.FWF_settings.pulseLength_ns = 4.0d;
-        worker = new FullWaveformPulseRunnable(detector, Vector3D.ZERO, Rotation.IDENTITY, 0, 0);
+        worker = new FullWaveformPulseRunnable(detector, Vector3D.ZERO, Rotation.IDENTITY, 0, 0, null);
     }
     
     @BeforeClass

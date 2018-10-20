@@ -1,5 +1,11 @@
 package de.uni_hd.giscience.helios.core.scanner.detector;
 
+import com.jme3.collision.CollisionResults;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+import static com.vividsolutions.jts.geom.CoordinateSequence.M;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -54,9 +60,9 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
     final double blubb = detector.scanner.FWF_settings.pulseLength_ns / (double) detector.scanner.FWF_settings.numTimeBins;
     final double cfg_device_timeMin_ns=  detector.cfg_device_rangeMin_m / cfg_speedOfLight_mPerNanosec;
     
-	public FullWaveformPulseRunnable(FullWaveformPulseDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int currentPulseNum, long currentGpsTime) {
+	public FullWaveformPulseRunnable(FullWaveformPulseDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int currentPulseNum, long currentGpsTime, Node rootNode) {
 
-		super((AbstractDetector) detector, absoluteBeamOrigin, absoluteBeamAttitude, currentPulseNum, currentGpsTime);
+		super((AbstractDetector) detector, absoluteBeamOrigin, absoluteBeamAttitude, currentPulseNum, currentGpsTime, rootNode);
 
 		fwDetector = detector;
 	}
@@ -226,6 +232,8 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 
 	@Override
 	public void run() {
+        Node scenePartsNode = (Node) rootNode.getChild("sceneparts");
+        
 		ArrayList<Double> fullandecho = new ArrayList<>(); //test
         
         Scene scene = detector.scanner.platform.scene;
@@ -282,40 +290,97 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 
 				Vector3D subrayDirection = absoluteBeamAttitude.applyTo(r2).applyTo(Directions.forward);
 
-				RaySceneIntersection intersect = scene.getIntersection(absoluteBeamOrigin, subrayDirection, false);
-
-				if (intersect != null && intersect.prim != null) {
-
-					intersects.add(intersect);
-
-					// Incidence angle:
-					double incidenceAngle = intersect.prim.getIncidenceAngle_rad(absoluteBeamOrigin, subrayDirection);
-
-					// Distance between beam origin and intersection:
-					double distance = intersect.point.distance(absoluteBeamOrigin);
-					
+				//RaySceneIntersection intersect = scene.getIntersection(absoluteBeamOrigin, subrayDirection, false);
+                
+                ///// JMONKEY /////       
+                //System.out.println(absoluteBeamOrigin.getX() + " " + absoluteBeamOrigin.getY() + " " + absoluteBeamOrigin.getZ());
+                //System.out.println(subrayDirection.getX() + " " + subrayDirection.getY() + " " + subrayDirection.getZ());
+                CollisionResults results = new CollisionResults();
+                Vector3f from = new Vector3f((float) absoluteBeamOrigin.getX(), (float) absoluteBeamOrigin.getZ(), (float) absoluteBeamOrigin.getY());
+                Vector3f dir = new Vector3f((float) subrayDirection.getX(), (float) subrayDirection.getZ(), (float) subrayDirection.getY());
+                Ray ray = new Ray(from, dir);          
+                scenePartsNode.collideWith(ray, results);
+                //System.out.println("Number of Collisions between" + scenePartsNode.getName()+ " and " + ray.getName() + ": " + results.size());
+                //System.out.println("Number of Collisions between" + scenePartsNode.getName()+ " and : " + results.size());
+                
+                //Geometry geom;
+                double jdist = 0; 
+                Vector3f jnormal = null;
+                for (int i = 0; i < results.size(); i++) {
+                    // For each “hit”, we know distance, impact point, geometry.
+                    float dist = results.getCollision(i).getDistance();   
+                    //Vector3f pt = results.getCollision(i).getContactPoint();
+                    Vector3f normal = results.getCollision(i).getContactNormal();
+                    //geom = results.getCollision(i).getGeometry();
+                    String target = results.getCollision(i).getGeometry().getName();
+                    //System.out.println("Selection #" + i + ": " + target + " at " + pt + ", " + dist + " WU away.");
+                    
+                    jdist = dist;
+                    jnormal = normal;
+                }
+               
+                if (results.size() > 0) {
+                
+                // Tests
+                //double cdist = intersect.point.distance(absoluteBeamOrigin);
+                //double cangle = intersect.prim.getIncidenceAngle_rad(absoluteBeamOrigin, subrayDirection); 
+                //double jangle = geom.get .getIncidenceAngle_rad(absoluteBeamOrigin, subrayDirection); 
+                Vector3D jangle3d = new Vector3D(jnormal.getX(), jnormal.getY(), jnormal.getZ());
+                Vector3D dir3d = new Vector3D(dir.getX(), dir.getY(), dir.getZ());
+                double jangle = Math.PI - Vector3D.angle(jangle3d, dir3d);
+                //System.out.println("Distances Custom " + cdist + " Monkey " + cdist);
+                //System.out.println("Angles Custom " + cangle + " Monkey " + jangle);
+                
+                ///// JMONKEY /////   
+                
+              
+					double incidenceAngle = jangle;
+					double distance = jdist;					
 					if(detector.cfg_device_rangeMin_m>distance) continue;
-
-					// Distance between the beam's center line and the intersection point:
 					double radius = Math.sin(subrayDivergenceAngle_rad) * distance;
-
 					double targetArea = detector.scanner.calcFootprintArea(distance) / (double) detector.scanner.getNumRays(); 
-					
-					/* TODO Jorge: The real area computation is not working yet
-					  if(intersect.prim.material.classification != LasSpecification.GROUND && intersect.prim.material.spectra != null) {
-					 
-						Rotation beamRotation = absoluteBeamAttitude.applyTo(r2);
-						targetArea = calcRealArea(beamRotation, incidenceAngle, subrayDirection, intersect.point, intersect.prim.material, intersect.prim.part, new Sphere(intersect.point, detector.scanner.calcFootprintRadius(distance)), detector.scanner.calcFootprintArea(distance));	
-					}
-					*/
-					
-					double intensity = calcIntensity(incidenceAngle, distance, intersect.prim.material.reflectance, intersect.prim.material.specularity, targetArea, radius);
-
+					double intensity = calcIntensity(incidenceAngle, distance, 50, 0.1, targetArea, radius);
 					reflections.put(distance, intensity);
-				}
+                }
+				
 			}
 			// ######## END Inner loop over sub-rays along the circle ##############
 		}
+                
+				
+//                if (intersect != null && intersect.prim != null) {
+//
+//					intersects.add(intersect);
+//
+//					// Incidence angle:
+//					double incidenceAngle = intersect.prim.getIncidenceAngle_rad(absoluteBeamOrigin, subrayDirection);
+//
+//					// Distance between beam origin and intersection:
+//					double distance = intersect.point.distance(absoluteBeamOrigin);
+//                     //System.out.println("Selection classic at distance " + distance);
+//					
+//					if(detector.cfg_device_rangeMin_m>distance) continue;
+//
+//					// Distance between the beam's center line and the intersection point:
+//					double radius = Math.sin(subrayDivergenceAngle_rad) * distance;
+//
+//					double targetArea = detector.scanner.calcFootprintArea(distance) / (double) detector.scanner.getNumRays(); 
+//					
+//					/* TODO Jorge: The real area computation is not working yet
+//					  if(intersect.prim.material.classification != LasSpecification.GROUND && intersect.prim.material.spectra != null) {
+//					 
+//						Rotation beamRotation = absoluteBeamAttitude.applyTo(r2);
+//						targetArea = calcRealArea(beamRotation, incidenceAngle, subrayDirection, intersect.point, intersect.prim.material, intersect.prim.part, new Sphere(intersect.point, detector.scanner.calcFootprintRadius(distance)), detector.scanner.calcFootprintArea(distance));	
+//					}
+//					*/
+//					
+//					double intensity = calcIntensity(incidenceAngle, distance, intersect.prim.material.reflectance, intersect.prim.material.specularity, targetArea, radius);
+//
+//					reflections.put(distance, intensity);
+//				}
+//			}
+//			// ######## END Inner loop over sub-rays along the circle ##############
+//		}
 		// ######## END Outer loop over radius steps from beam center to outer edge ##############
 
 		// ##################### END Perform raycasting for each sub-ray and find all intersections #################
@@ -419,12 +484,12 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 				++num_returns;
 			}
 		}
-    System.out.println(fullandecho);
-    if(fullandecho.get(0) == 1.1494054793226347 || fullandecho.get(0) == 1.143578712596994 && fullandecho.get(1) == 24.799861601181746 || fullandecho.get(1) == 44.1971145494791)
-        System.out.println("TRUE");
-    else
-        System.out.println("FALSE");
-    System.exit(1);
+//    System.out.println(fullandecho);
+//    if(fullandecho.get(0) == 1.1494054793226347 || fullandecho.get(0) == 1.143578712596994 && fullandecho.get(1) == 24.799861601181746 || fullandecho.get(1) == 44.1971145494791)
+//        System.out.println("TRUE");
+//    else
+//        System.out.println("FALSE");
+//    System.exit(1);
 
 		// ############ END Extract points from waveform data ################
 
