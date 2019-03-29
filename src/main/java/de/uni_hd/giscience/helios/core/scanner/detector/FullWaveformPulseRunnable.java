@@ -320,12 +320,24 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 
 		// ##################### END Perform raycasting for each sub-ray and find all intersections #################
 	
-		final double maxHitDist_m = reflections.lastKey();
-		final double minHitDist_m = reflections.firstKey();	
+                double maxHitDist_m = 0;
+		double minHitDist_m = Double.MAX_VALUE;
+
+		Iterator<Entry<Double, Double>> iter = reflections.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry<Double, Double> entry = (Entry<Double, Double>) iter.next();
+			double entryDistance = entry.getKey();
+			if (entryDistance > maxHitDist_m) {
+				maxHitDist_m = entryDistance;
+			}
+			if (entryDistance < minHitDist_m) {
+				minHitDist_m = entryDistance;
+			}
+		}	
         if (maxHitDist_m < 0) { // Abort if nothing was hit
 			detector.scanner.setLastPulseWasHit(false);
 			return;
-		}		
+}
 
 		final double maxHitTime_ns = maxHitDist_m / cfg_speedOfLight_mPerNanosec + detector.scanner.FWF_settings.pulseLength_ns;	
 		final double minHitTime_ns = minHitDist_m / cfg_speedOfLight_mPerNanosec - detector.scanner.FWF_settings.pulseLength_ns;
