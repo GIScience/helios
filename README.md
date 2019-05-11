@@ -129,7 +129,7 @@ If you use HELIOS in your work, please cite:
 ```
 @Article{isprs-annals-III-3-161-2016,
 AUTHOR = {Bechtold, S. and H\"ofle, B.},
-TITLE = {HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms},
+TITLE = {{HELIOS}: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms},
 JOURNAL = {ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences},
 VOLUME = {III-3},
 YEAR = {2016},
