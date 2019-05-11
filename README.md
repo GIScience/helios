@@ -1,4 +1,4 @@
-# helios
+# HELIOS
 
 > Heidelberg LiDAR Operations Simulator (HELIOS)
 
@@ -101,7 +101,7 @@ See [FWF.md](FWF.md) for further details.
 
 See [Wiki](https://github.com/GIScience/helios/wiki).
 
-## HELIOS in the Literature
+## Research using HELIOS
 
 Liu, J., Skidmore, A.K., Wang, T., Zhu, X., Premier, J., Heurich, M., Beudert, B. &amp; Jones, S. (2019): Variation of leaf angle distribution quantified by terrestrial LiDAR in natural European beech forest</a>. In: ISPRS Journal of Photogrammetry and Remote Sensing, 148, pp. 208-220. DOI: [10.1016/j.isprsjprs.2019.01.005](https://doi.org/10.1016/j.isprsjprs.2019.01.005).
 
@@ -111,18 +111,33 @@ Rebolj, D., Pučko, Z., Babič, N.Č., Bizjak, M. & Mongus, D. (2017). Point clo
 
 Bechtold, S., Hämmerle, M. &amp; Höfle, B. (2016): [Simulated full-waveform laser scanning of outcrops for development of point cloud analysis algorithms and survey planning: An application for the HELIOS lidar simulation framework](http://lvisa.geog.uni-heidelberg.de/papers/2016/Bechtold_et_al_2016.pdf). In: Proceedings of the 2nd Virtual Geoscience Conference, Bergen, Norway, 21-23 September 2016, pp 57-58.
 
-Bechtold, S. &amp; Höfle, B. (2016): HELIOS: A Multi-purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations With Airborne, Ground-based Mobile and Stationary Platforms. In: ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., III-3, pp. 161-168. DOI: [10.5194/isprs-annals-III-3-161-2016](http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016).
-
 
 ## Authorship
 
-GIScience Research Group  
+3DGeo Research Group  
 Institute of Geography  
-University of Heidelberg  
+Heidelberg University
+
+[http://www.uni-heidelberg.de/3dgeo](http://www.uni-heidelberg.de/3dgeo)
 
 ### Citation
 
 Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. Vol. III-3, pp. 161-168. DOI: [10.5194/isprs-annals-III-3-161-2016](http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016)
+
+If you use HELIOS in your work, please cite:
+
+```
+@Article{isprs-annals-III-3-161-2016,
+AUTHOR = {Bechtold, S. and H\"ofle, B.},
+TITLE = {HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms},
+JOURNAL = {ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences},
+VOLUME = {III-3},
+YEAR = {2016},
+PAGES = {161--168},
+URL = {https://www.isprs-ann-photogramm-remote-sens-spatial-inf-sci.net/III-3/161/2016/},
+DOI = {10.5194/isprs-annals-III-3-161-2016}
+}
+```
 
 ### Maintainers
 
