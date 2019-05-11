@@ -101,6 +101,18 @@ See [FWF.md](FWF.md) for further details.
 
 See [Wiki](https://github.com/GIScience/helios/wiki).
 
+## HELIOS in the Literature
+
+Liu, J., Skidmore, A.K., Wang, T., Zhu, X., Premier, J., Heurich, M., Beudert, B. &amp; Jones, S. (2019): Variation of leaf angle distribution quantified by terrestrial LiDAR in natural European beech forest</a>. In: ISPRS Journal of Photogrammetry and Remote Sensing, 148, pp. 208-220. DOI: [10.1016/j.isprsjprs.2019.01.005](https://doi.org/10.1016/j.isprsjprs.2019.01.005).
+
+Hämmerle, M., Lukač, N., Chen, K.-C., Koma, Zs., Wang, C.-K., Anders, K., &amp; Höfle, B. (2017): Simulating Various Terrestrial and UAV LiDAR Scanning Configurations for Understory Forest Structure Modelling. In: ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., IV-2/W4, pp. 59-65. DOI: [10.5194/isprs-annals-IV-2-W4-59-2017](https://doi.org/10.5194/isprs-annals-IV-2-W4-59-2017).
+
+Rebolj, D., Pučko, Z., Babič, N.Č., Bizjak, M. & Mongus, D. (2017). Point cloud quality requirements for Scan-vs-BIM based automated construction progress monitoring</a>. In: Automation in Construction, 84, pp. 323-334. DOI: [10.1016/j.autcon.2017.09.021](https://doi.org/10.1016/j.autcon.2017.09.021).
+
+Bechtold, S., Hämmerle, M. &amp; Höfle, B. (2016): [Simulated full-waveform laser scanning of outcrops for development of point cloud analysis algorithms and survey planning: An application for the HELIOS lidar simulation framework](http://lvisa.geog.uni-heidelberg.de/papers/2016/Bechtold_et_al_2016.pdf). In: Proceedings of the 2nd Virtual Geoscience Conference, Bergen, Norway, 21-23 September 2016, pp 57-58.
+
+Bechtold, S. &amp; Höfle, B. (2016): HELIOS: A Multi-purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations With Airborne, Ground-based Mobile and Stationary Platforms. In: ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., III-3, pp. 161-168. DOI: [10.5194/isprs-annals-III-3-161-2016](http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016).
+
 
 ## Authorship
 
@@ -110,7 +122,7 @@ University of Heidelberg
 
 ### Citation
 
-Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. Vol. III-3, pp. 161-168. http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016
+Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. Vol. III-3, pp. 161-168. DOI: [10.5194/isprs-annals-III-3-161-2016](http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016)
 
 ### Maintainers
 
