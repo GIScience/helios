@@ -139,7 +139,7 @@ DOI = {10.5194/isprs-annals-III-3-161-2016}
 }
 ```
 
-We are happy if you are using HELIOS in your work - [let us know](mailto:katharina.anders@uni-heidelberg.de?subject=[GitHub]%20News%20by%20HELIOS%20user)!
+We are happy if you are using HELIOS in your work - [let us know](https://www.uni-heidelberg.de/helios)!
 
 ### Maintainers
 
