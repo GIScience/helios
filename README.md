@@ -139,9 +139,11 @@ DOI = {10.5194/isprs-annals-III-3-161-2016}
 }
 ```
 
+We would be happy to know about your work with HELIOS - [let us know](mailto:katharina.anders@uni-heidelberg.de?subject=[GitHub]%20News%20by%20HELIOS%20user)!
+
 ### Maintainers
 
-[@sebastian-bechtold](https://github.com/sebastian-bechtold) [@nlukac](https://github.com/nlukac) [@kathapand](https://github.com/kathapand) [@deuxbot](https://github.com/deuxbot) 
+[@sebastian-bechtold](https://github.com/sebastian-bechtold) [@nlukac](https://github.com/nlukac) [@kathapand](https://github.com/kathapand) [@deuxbot](https://github.com/deuxbot) [@lrg-bhoefle](https://github.com/lrg-bhoefle)
 
 The first HELIOS version with full-waveform support is available in [this](https://github.com/nlukac/helios-FWF) repository maintained by [@nlukac](https://github.com/nlukac).
 
