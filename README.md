@@ -105,6 +105,8 @@ See [Wiki](https://github.com/GIScience/helios/wiki).
 
 Liu, J., Skidmore, A.K., Wang, T., Zhu, X., Premier, J., Heurich, M., Beudert, B. &amp; Jones, S. (2019): Variation of leaf angle distribution quantified by terrestrial LiDAR in natural European beech forest</a>. In: ISPRS Journal of Photogrammetry and Remote Sensing, 148, pp. 208-220. DOI: [10.1016/j.isprsjprs.2019.01.005](https://doi.org/10.1016/j.isprsjprs.2019.01.005).
 
+Xiao, W., Zaforemska, A., Smigaj, M., Wang, Y. &amp; Gaulton, R. (2019): Mean Shift Segmentation Assessment for Individual Forest Tree Delineation from Airborne Lidar Data. In: Remote Sensing, 11(11), pp. 19 (1263). DOI: [10.3390/rs11111263](https://doi.org/10.3390/rs11111263).
+
 Hämmerle, M., Lukač, N., Chen, K.-C., Koma, Zs., Wang, C.-K., Anders, K., &amp; Höfle, B. (2017): Simulating Various Terrestrial and UAV LiDAR Scanning Configurations for Understory Forest Structure Modelling. In: ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., IV-2/W4, pp. 59-65. DOI: [10.5194/isprs-annals-IV-2-W4-59-2017](https://doi.org/10.5194/isprs-annals-IV-2-W4-59-2017).
 
 Rebolj, D., Pučko, Z., Babič, N.Č., Bizjak, M. & Mongus, D. (2017). Point cloud quality requirements for Scan-vs-BIM based automated construction progress monitoring</a>. In: Automation in Construction, 84, pp. 323-334. DOI: [10.1016/j.autcon.2017.09.021](https://doi.org/10.1016/j.autcon.2017.09.021).
