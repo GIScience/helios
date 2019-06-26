@@ -10,8 +10,8 @@ import de.uni_hd.giscience.helios.core.scene.Scene;
 
 public class SingleRayPulseRunnable extends AbstractPulseRunnable {
 
-	public SingleRayPulseRunnable(AbstractDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int pulseNumber, Long gpstime) {
-		super(detector, absoluteBeamOrigin, absoluteBeamAttitude, pulseNumber, gpstime);
+	public SingleRayPulseRunnable(AbstractDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int pulseNumber, Long gpstime, int scanDirection) {
+		super(detector, absoluteBeamOrigin, absoluteBeamAttitude, pulseNumber, gpstime, scanDirection);
 	}
 
 	@Override

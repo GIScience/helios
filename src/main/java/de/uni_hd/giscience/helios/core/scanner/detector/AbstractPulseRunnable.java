@@ -28,6 +28,8 @@ public abstract class AbstractPulseRunnable implements Runnable {
 
 	int currentPulseNum;
 	Long currentGpsTime;
+        
+        int scanDirection;
 
 	// The variable 'boxmuller_use_last' is needed for the box-muller gaussian random number generator:
 	boolean boxmuller_use_last = false;
@@ -62,12 +64,13 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		return (d + y1 * e);
 	}
 
-	public AbstractPulseRunnable(AbstractDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int pulseNumber, Long gpsTime) {
+	public AbstractPulseRunnable(AbstractDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int pulseNumber, Long gpsTime, int scanDirection) {
 		this.detector = detector;
 		this.absoluteBeamAttitude = absoluteBeamAttitude;
 		this.absoluteBeamOrigin = absoluteBeamOrigin;
 		this.currentPulseNum = pulseNumber;
 		this.currentGpsTime = gpsTime;
+                this.scanDirection = scanDirection;
 	}
 	
 	// Generate Gaussian-distributed error for more realistic intensity
@@ -157,6 +160,7 @@ public abstract class AbstractPulseRunnable implements Runnable {
 		m.beamDirection = beamDir;
 		m.hitObjectId = hitObjectId;
 		m.classification = classification;
+                m.scanDirFlag = scanDirection;
 
 		detector.writeMeasurement(m);
 

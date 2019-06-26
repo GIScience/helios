@@ -5,7 +5,7 @@
         <skybox azimuth_deg="275" texturesFolder="textures/sky/sky6_1024"/> 
         <part>
             <filter type="objloader">
-                <param type="string" key="filepath" value="data\sceneparts\basic\groundplane\groundplane.obj" />
+                <param type="string" key="filepath" value="data/sceneparts/basic/groundplane/groundplane.obj" />
             </filter>
             <filter type="rotate">
                 <param type="rotation" key="rotation">

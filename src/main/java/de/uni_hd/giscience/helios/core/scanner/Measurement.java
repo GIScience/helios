@@ -16,4 +16,5 @@ public class Measurement {
 	public int pulseReturnNumber=0;
 	public int fullwaveIndex = 0;
 	public int classification = 0;
+        public int scanDirFlag = 0;
 }

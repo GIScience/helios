@@ -54,9 +54,9 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
     final double blubb = detector.scanner.FWF_settings.pulseLength_ns / (double) detector.scanner.FWF_settings.numTimeBins;
     final double cfg_device_timeMin_ns=  detector.cfg_device_rangeMin_m / cfg_speedOfLight_mPerNanosec;
     
-	public FullWaveformPulseRunnable(FullWaveformPulseDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int currentPulseNum, long currentGpsTime) {
+	public FullWaveformPulseRunnable(FullWaveformPulseDetector detector, Vector3D absoluteBeamOrigin, Rotation absoluteBeamAttitude, int currentPulseNum, long currentGpsTime, int scanDirection) {
 
-		super((AbstractDetector) detector, absoluteBeamOrigin, absoluteBeamAttitude, currentPulseNum, currentGpsTime);
+		super((AbstractDetector) detector, absoluteBeamOrigin, absoluteBeamAttitude, currentPulseNum, currentGpsTime, scanDirection);
 
 		fwDetector = detector;
 	}
@@ -426,6 +426,7 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 				tmp.hitObjectId=hitObject;
 				tmp.returnNumber=num_returns + 1;
 				tmp.classification = classification;
+                                tmp.scanDirFlag = scanDirection;
 				PointsMeasurement.add(tmp);
                 fullandecho.add(echo_width); fullandecho.add(fullwave.get(i));
 				++num_returns;

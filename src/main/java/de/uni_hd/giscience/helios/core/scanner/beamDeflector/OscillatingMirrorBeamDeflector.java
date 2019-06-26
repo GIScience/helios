@@ -18,6 +18,8 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 	int currentScanLinePulse = 0;
 
 	int cached_pulsesPerScanline = 0;
+        
+        double prevScanAngle_rad = -this.cfg_setting_scanAngle_rad;
 
 	@Override
 	public void applySettings(ScannerSettings settings) {
@@ -31,7 +33,7 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 	
 	@Override
 	public void doSimStep() {
-
+            
 		currentScanLinePulse++;
 
 		if (currentScanLinePulse == cached_pulsesPerScanline) {
@@ -42,8 +44,11 @@ public class OscillatingMirrorBeamDeflector extends AbstractBeamDeflector {
 		int bla = Math.min(currentScanLinePulse, cached_pulsesPerScanline / 2) - Math.max(0, currentScanLinePulse - cached_pulsesPerScanline / 2);
 
 		state_currentBeamAngle_rad = -this.cfg_setting_scanAngle_rad + cached_angleBetweenPulses_rad * bla;
-
-		// Rotate to current position:
+                
+                super.scanDirFlag = Math.toDegrees(state_currentBeamAngle_rad) >= Math.toDegrees(prevScanAngle_rad) ? 1 : 0;
+                prevScanAngle_rad = state_currentBeamAngle_rad;
+		
+                // Rotate to current position:
 		this.cached_emitterRelativeAttitude = new Rotation(Directions.right, state_currentBeamAngle_rad);
 	}
 

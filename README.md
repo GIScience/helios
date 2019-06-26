@@ -89,9 +89,9 @@ Output files are generated inside *output/Survey Playback* folder.
 
 * Point cloud: File named *legxxx_points.xyz* separated by spaces  where *xxx* is the leg number.  
 Fields:  
-X Y Z I ECHO_WIDTH RN NOR FWF_ID OBJ_ID CLASS  
+X Y Z I ECHO_WIDTH RN NOR FWF_ID OBJ_ID CLASS SCAN_DIR
 Example:   
--4.615 15.979 2.179 4.0393 1.4317 1 1 214275 1 0
+-4.615 15.979 2.179 4.0393 1.4317 1 1 214275 1 0 0
 * Waveform: File named *legxxx_points.xyzfullwave.txt* separated by spaces  where *xxx* is the leg number.  
 See [FWF.md](FWF.md) for further details. 
 
@@ -99,20 +99,52 @@ See [FWF.md](FWF.md) for further details.
 
 See [Wiki](https://github.com/GIScience/helios/wiki).
 
+## Research using HELIOS
+
+Liu, J., Skidmore, A.K., Wang, T., Zhu, X., Premier, J., Heurich, M., Beudert, B. &amp; Jones, S. (2019): Variation of leaf angle distribution quantified by terrestrial LiDAR in natural European beech forest</a>. In: ISPRS Journal of Photogrammetry and Remote Sensing, 148, pp. 208-220. DOI: [10.1016/j.isprsjprs.2019.01.005](https://doi.org/10.1016/j.isprsjprs.2019.01.005).
+
+Xiao, W., Zaforemska, A., Smigaj, M., Wang, Y. &amp; Gaulton, R. (2019): Mean Shift Segmentation Assessment for Individual Forest Tree Delineation from Airborne Lidar Data. In: Remote Sensing, 11(11), pp. 19 (1263). DOI: [10.3390/rs11111263](https://doi.org/10.3390/rs11111263).
+
+Hämmerle, M., Lukač, N., Chen, K.-C., Koma, Zs., Wang, C.-K., Anders, K., &amp; Höfle, B. (2017): Simulating Various Terrestrial and UAV LiDAR Scanning Configurations for Understory Forest Structure Modelling. In: ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., IV-2/W4, pp. 59-65. DOI: [10.5194/isprs-annals-IV-2-W4-59-2017](https://doi.org/10.5194/isprs-annals-IV-2-W4-59-2017).
+
+Rebolj, D., Pučko, Z., Babič, N.Č., Bizjak, M. & Mongus, D. (2017). Point cloud quality requirements for Scan-vs-BIM based automated construction progress monitoring</a>. In: Automation in Construction, 84, pp. 323-334. DOI: [10.1016/j.autcon.2017.09.021](https://doi.org/10.1016/j.autcon.2017.09.021).
+
+Bechtold, S., Hämmerle, M. &amp; Höfle, B. (2016): [Simulated full-waveform laser scanning of outcrops for development of point cloud analysis algorithms and survey planning: An application for the HELIOS lidar simulation framework](http://lvisa.geog.uni-heidelberg.de/papers/2016/Bechtold_et_al_2016.pdf). In: Proceedings of the 2nd Virtual Geoscience Conference, Bergen, Norway, 21-23 September 2016, pp 57-58.
 
 ## Authorship
 
-GIScience Research Group  
+3DGeo Research Group  
 Institute of Geography  
-University of Heidelberg  
+Heidelberg University
+
+[http://www.uni-heidelberg.de/3dgeo](http://www.uni-heidelberg.de/3dgeo)
 
 ### Citation
 
-Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. Vol. III-3, pp. 161-168. http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016
+Bechtold, S. & Höfle, B. (2016): HELIOS: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms. ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences. Vol. III-3, pp. 161-168. DOI: [10.5194/isprs-annals-III-3-161-2016](http://dx.doi.org/10.5194/isprs-annals-III-3-161-2016)
+
+If you use HELIOS in your work, please cite:
+
+```
+@Article{isprs-annals-III-3-161-2016,
+AUTHOR = {Bechtold, S. and H\"ofle, B.},
+TITLE = {{HELIOS}: A Multi-Purpose LiDAR Simulation Framework for Research, Planning and Training of Laser Scanning Operations with Airborne, Ground-Based Mobile and Stationary Platforms},
+JOURNAL = {ISPRS Annals of Photogrammetry, Remote Sensing and Spatial Information Sciences},
+VOLUME = {III-3},
+YEAR = {2016},
+PAGES = {161--168},
+URL = {https://www.isprs-ann-photogramm-remote-sens-spatial-inf-sci.net/III-3/161/2016/},
+DOI = {10.5194/isprs-annals-III-3-161-2016}
+}
+```
+
+We are happy if you are using HELIOS in your work - [let us know](https://www.uni-heidelberg.de/helios)!
 
 ### Maintainers
 
-[@sebastian-bechtold](https://github.com/sebastian-bechtold) [@nlukac](https://github.com/nlukac) [@kathapand](https://github.com/kathapand) [@deuxbot](https://github.com/deuxbot) 
+[@sebastian-bechtold](https://github.com/sebastian-bechtold) [@nlukac](https://github.com/nlukac) [@kathapand](https://github.com/kathapand) [@deuxbot](https://github.com/deuxbot) [@lrg-bhoefle](https://github.com/lrg-bhoefle)
+
+The first HELIOS version with full-waveform support is available in [this](https://github.com/nlukac/helios-FWF) repository maintained by [@nlukac](https://github.com/nlukac).
 
 ## License
 

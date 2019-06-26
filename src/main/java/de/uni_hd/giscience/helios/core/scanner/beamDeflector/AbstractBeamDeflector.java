@@ -18,6 +18,8 @@ public abstract class AbstractBeamDeflector {
 
 	// Stat variables:
 	double state_currentBeamAngle_rad = 0;
+        
+        int scanDirFlag = 0;
 
 	public AbstractBeamDeflector(double scanAngleMax_rad, double scanFreqMax_Hz, double scanFreqMin_Hz) {
 		this.cfg_device_scanAngleMax_rad = scanAngleMax_rad;
@@ -69,5 +71,8 @@ public abstract class AbstractBeamDeflector {
 	public void setScanFreq_Hz(double scanFreq_hz) {
 		this.cfg_setting_scanFreq_Hz = scanFreq_hz;
 	}
-
+        
+        public int getScanDirection() {
+                return this.scanDirFlag;
+        }
 }

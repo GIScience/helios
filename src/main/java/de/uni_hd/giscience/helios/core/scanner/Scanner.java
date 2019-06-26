@@ -136,7 +136,7 @@ public class Scanner extends Asset {
 		Long unixTime = System.currentTimeMillis() / 1000L;
 		Long currentGpsTime = (unixTime - 315360000) - 1000000000;
 
-		detector.simulatePulse(execService, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime);
+		detector.simulatePulse(execService, absoluteBeamOrigin, absoluteBeamAttitude, state_currentPulseNumber, currentGpsTime, beamDeflector.getScanDirection());
 	}
 
 	
