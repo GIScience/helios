@@ -105,7 +105,7 @@ See [Wiki](https://github.com/GIScience/helios/wiki).
 
 Liu, J., Skidmore, A.K., Wang, T., Zhu, X., Premier, J., Heurich, M., Beudert, B. &amp; Jones, S. (2019): Variation of leaf angle distribution quantified by terrestrial LiDAR in natural European beech forest. In: ISPRS Journal of Photogrammetry and Remote Sensing, 148, pp. 208-220. DOI: [10.1016/j.isprsjprs.2019.01.005](https://doi.org/10.1016/j.isprsjprs.2019.01.005).
 
-Liu, J., Wang, T., Skidmore, A.K., Jones, S., Heurich, M., Beudert, B. &amp; Premier, J. (2019): Comparison of terrestrial LiDAR and digital hemispherical photography for estimating leaf angle distribution in European broadleaf beech forests. In: ISPRS Journal of Photogrammetry and Remote Sensing, 158, 76-89. DOI: [10.1016/j.isprsjprs.2019.09.015](https://doi.org/10.1016/j.isprsjprs.2019.09.015).
+Liu, J., Wang, T., Skidmore, A.K., Jones, S., Heurich, M., Beudert, B. &amp; Premier, J. (2019): Comparison of terrestrial LiDAR and digital hemispherical photography for estimating leaf angle distribution in European broadleaf beech forests. In: ISPRS Journal of Photogrammetry and Remote Sensing, 158, pp. 76-89. DOI: [10.1016/j.isprsjprs.2019.09.015](https://doi.org/10.1016/j.isprsjprs.2019.09.015).
 
 Martínez Sánchez, J., Váquez Álvarez, Á., López Vilariño, D., Fernández Rivera, F., Cabaleiro Domínguez, J.C., Fernández Pena, T. (2019): Fast Ground Filtering of Airborne LiDAR Data Based on Iterative Scan-Line Spline Interpolation. In: Remote Sensing, 11(19), pp. 23 (2256). DOI: [10.3390/rs11192256](https://doi.org/10.3390/rs11192256).
 
