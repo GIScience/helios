@@ -113,6 +113,8 @@ Martínez Sánchez, J., Váquez Álvarez, Á., López Vilariño, D., Fernández 
 
 Xiao, W., Zaforemska, A., Smigaj, M., Wang, Y. &amp; Gaulton, R. (2019): Mean Shift Segmentation Assessment for Individual Forest Tree Delineation from Airborne Lidar Data. In: Remote Sensing, 11(11), pp. 19 (1263). DOI: [10.3390/rs11111263](https://doi.org/10.3390/rs11111263).
 
+Zhang, Z., Li, J., Guo, Y., Yang, C., &amp; Wang, C. (2019): [3D Highway Curve Reconstruction From Mobile Laser Scanning Point Clouds](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8880591). Accepted for publication in: IEEE Transactions on Intelligent Transportation Systems.
+
 Hämmerle, M., Lukač, N., Chen, K.-C., Koma, Zs., Wang, C.-K., Anders, K., &amp; Höfle, B. (2017): Simulating Various Terrestrial and UAV LiDAR Scanning Configurations for Understory Forest Structure Modelling. In: ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., IV-2/W4, pp. 59-65. DOI: [10.5194/isprs-annals-IV-2-W4-59-2017](https://doi.org/10.5194/isprs-annals-IV-2-W4-59-2017).
 
 Rebolj, D., Pučko, Z., Babič, N.Č., Bizjak, M. & Mongus, D. (2017). Point cloud quality requirements for Scan-vs-BIM based automated construction progress monitoring</a>. In: Automation in Construction, 84, pp. 323-334. DOI: [10.1016/j.autcon.2017.09.021](https://doi.org/10.1016/j.autcon.2017.09.021).
