@@ -19,7 +19,7 @@ public class PolygonMirrorBeamDeflector extends AbstractBeamDeflector {
 		super(scanAngleMax_rad, scanFreqMax_Hz, scanFreqMin_Hz);
 		
 		this.cfg_device_scanAngleEffectiveMax_rad = scanAngleEffectiveMax_rad;
-		this.cfg_device_scanAngleEffective_rad = cfg_device_scanAngleEffectiveMax_rad;
+		this.cfg_device_scanAngleEffective_rad = this.cfg_device_scanAngleEffectiveMax_rad;
 	}
 
 
