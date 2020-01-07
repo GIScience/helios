@@ -111,6 +111,8 @@ Liu, J., Wang, T., Skidmore, A.K., Jones, S., Heurich, M., Beudert, B. &amp; Pre
 
 Martínez Sánchez, J., Váquez Álvarez, Á., López Vilariño, D., Fernández Rivera, F., Cabaleiro Domínguez, J.C., Fernández Pena, T. (2019): Fast Ground Filtering of Airborne LiDAR Data Based on Iterative Scan-Line Spline Interpolation. In: Remote Sensing, 11(19), pp. 23 (2256). DOI: [10.3390/rs11192256](https://doi.org/10.3390/rs11192256).
 
+Previtali, M., Díaz-Vilariño, L., Scaioni, M. &amp; Frías Nores, E. (2019): Evaluation of the Expected Data Quality in Laser Scanning Surveying of Archaeological Sites. In: 4th International Conference on Metrology for Archaeology and Cultural Heritage, Florence, Italy, 4-6 December 2019, pp. 19-24. 
+
 Xiao, W., Zaforemska, A., Smigaj, M., Wang, Y. &amp; Gaulton, R. (2019): Mean Shift Segmentation Assessment for Individual Forest Tree Delineation from Airborne Lidar Data. In: Remote Sensing, 11(11), pp. 19 (1263). DOI: [10.3390/rs11111263](https://doi.org/10.3390/rs11111263).
 
 Zhang, Z., Li, J., Guo, Y., Yang, C., &amp; Wang, C. (2019): 3D Highway Curve Reconstruction From Mobile Laser Scanning Point Clouds. In: IEEE Transactions on Intelligent Transportation Systems. DOI: [10.1109/TITS.2019.2946259](https://doi.org/10.1109/TITS.2019.2946259).
