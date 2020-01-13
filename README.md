@@ -67,6 +67,8 @@ HELIOS supports both single-ray and full-waveform simulations. Currently the def
 
 The argument of the program is the survey XML file, also the 3D models of the scene pointed in the survey are needed. See [Wiki: Basic input data](https://github.com/GIScience/helios/wiki/Quick-start-guide#basic-input-data) for further details. 
 
+This [Blender addon](https://github.com/neumicha/Blender2Helios) can be used to convert Blender scenes to HELIOS scenes.
+
 ### Execution
 
 From the root folder run:
