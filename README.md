@@ -105,6 +105,8 @@ See [Wiki](https://github.com/GIScience/helios/wiki).
 
 ## Research using HELIOS
 
+Zhu, X., Liu, J., Skidmore, A.K., Premier, J., Heurich, M. (2020): A voxel matching method for effective leaf area index estimation in temperate deciduous forests from leaf-on and leaf-off airborne LiDAR data. In: Remote Sensing of Environment, 240. DOI: [10.1016/j.rse.2020.111696](https://doi.org/10.1016/j.rse.2020.111696).
+
 Lin, C.-H. & Wang, C.-K. (2019): [Point Density Simulation for ALS Survey](https://www.geog.uni-heidelberg.de/md/chemgeo/geog/gis/mmt2019-lin_and_wang_compr.pdf). In: Proceedings of the 11th International Conference on Mobile Mapping Technology (MMT2019), Shenzhen, China. pp. 157-160. 
 
 Liu, J., Skidmore, A.K., Wang, T., Zhu, X., Premier, J., Heurich, M., Beudert, B. &amp; Jones, S. (2019): Variation of leaf angle distribution quantified by terrestrial LiDAR in natural European beech forest. In: ISPRS Journal of Photogrammetry and Remote Sensing, 148, pp. 208-220. DOI: [10.1016/j.isprsjprs.2019.01.005](https://doi.org/10.1016/j.isprsjprs.2019.01.005).
