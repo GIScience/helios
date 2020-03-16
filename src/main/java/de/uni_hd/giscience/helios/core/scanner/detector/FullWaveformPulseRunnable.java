@@ -354,7 +354,7 @@ public class FullWaveformPulseRunnable extends AbstractPulseRunnable {
 				double time_tmp = time_start + i * blubb;
 
 				int fullwaveBinIndex = (int) (((time_tmp-minHitTime_ns) / (maxHitTime_ns-minHitTime_ns)) * cfg_numFullwaveBins);
-				fullwave.set(fullwaveBinIndex, time_wave.get(i) * entryIntensity);
+				fullwave.set(fullwaveBinIndex, fullwave.get(fullwaveBinIndex) + time_wave.get(i) * entryIntensity);
 			}
 		}
 
