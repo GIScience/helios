@@ -109,6 +109,8 @@ Park, M., Baek, Y., Dinare, M., Lee, D., Park, K.-H., Ahn, J., Kim, D., Medina, 
 
 Wang, D. (2020): Unsupervised semantic and instance segmentation of forest point clouds. In: ISPRS Journal of Photogrammetry and Remote Sensing 165 (2020), pp. 86-97. DOI: [10.1016/j.isprsjprs.2020.04.020](https://doi.org/10.1016/j.isprsjprs.2020.04.020). 
 
+Wang, D., Schraik, D., Hovi, A., Rautiainen, M. (2020): Direct estimation of photon recollision probability using terrestrial laser scanning. In: Remote Sensing of Environment 247 (2020), pp. 1-12. DOI: [10.1016/j.rse.2020.111932](https://doi.org/10.1016/j.rse.2020.111932). 
+
 Zhu, X., Liu, J., Skidmore, A.K., Premier, J., Heurich, M. (2020): A voxel matching method for effective leaf area index estimation in temperate deciduous forests from leaf-on and leaf-off airborne LiDAR data. In: Remote Sensing of Environment, 240. DOI: [10.1016/j.rse.2020.111696](https://doi.org/10.1016/j.rse.2020.111696).
 
 Lin, C.-H. & Wang, C.-K. (2019): [Point Density Simulation for ALS Survey](https://www.geog.uni-heidelberg.de/md/chemgeo/geog/gis/mmt2019-lin_and_wang_compr.pdf). In: Proceedings of the 11th International Conference on Mobile Mapping Technology (MMT2019), Shenzhen, China. pp. 157-160. 
