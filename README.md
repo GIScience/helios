@@ -105,7 +105,8 @@ See [Wiki](https://github.com/GIScience/helios/wiki).
 
 ## Research using HELIOS
 
-Li, L., Mu, X., Soma, M., Wan,P., Qi, J., Hu, R., Zhang, W., Tong, Y., Yan, G. (2020): An Iterative-Mode Scan Design of Terrestrial Laser Scanning in Forests for Minimizing Occlusion Effects, IEEE Transactions on Geoscience and Remote Sensing, DOI: [10.1109/TGRS.2020.3018643](https://doi.org/10.1109/TGRS.2020.3018643).
+<!--
+Li, L., Mu, X., Soma, M., Wan,P., Qi, J., Hu, R., Zhang, W., Tong, Y., Yan, G. (2020): An Iterative-Mode Scan Design of Terrestrial Laser Scanning in Forests for Minimizing Occlusion Effects, IEEE Transactions on Geoscience and Remote Sensing, DOI: [10.1109/TGRS.2020.3018643](https://doi.org/10.1109/TGRS.2020.3018643). -->
 
 Backes, D., Smigaj, M., Schimka, M., Zahs, V., Grznárová, A., and Scaioni, M. (2020): River morphology monitoring of a small-scale alpine riverbed using drone photogrammetry and LiDAR, Int. Arch. Photogramm. Remote Sens. Spatial Inf. Sci., XLIII-B2-2020, 1017–1024, DOI: [10.5194/isprs-archives-XLIII-B2-2020-1017-2020](https://doi.org/10.5194/isprs-archives-XLIII-B2-2020-1017-2020). 
 
