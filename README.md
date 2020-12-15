@@ -103,13 +103,15 @@ See [FWF.md](FWF.md) for further details.
 
 See [Wiki](https://github.com/GIScience/helios/wiki).
 
-## Research using HELIOS
+## HELIOS-related Publications
 
 Backes, D., Smigaj, M., Schimka, M., Zahs, V., Grznárová, A., and Scaioni, M. (2020): River morphology monitoring of a small-scale alpine riverbed using drone photogrammetry and LiDAR, Int. Arch. Photogramm. Remote Sens. Spatial Inf. Sci., XLIII-B2-2020, 1017–1024, DOI: [10.5194/isprs-archives-XLIII-B2-2020-1017-2020](https://doi.org/10.5194/isprs-archives-XLIII-B2-2020-1017-2020). 
 
 Li, L., Mu, X., Soma, M., Wan,P., Qi, J., Hu, R., Zhang, W., Tong, Y., Yan, G. (2020): An Iterative-Mode Scan Design of Terrestrial Laser Scanning in Forests for Minimizing Occlusion Effects, IEEE Transactions on Geoscience and Remote Sensing, DOI: [10.1109/TGRS.2020.3018643](https://doi.org/10.1109/TGRS.2020.3018643).
 
 Park, M., Baek, Y., Dinare, M., Lee, D., Park, K.-H., Ahn, J., Kim, D., Medina, J., Choi, W.-J., Kim, S., Zhou, C., Heo, J. & Lee, K. (2020): Hetero-integration enables fast switching time-of-flight sensors for light detection and ranging. In: Sci Rep 10, 2764 (2020), pp. 1-8. DOI: [10.1038/s41598-020-59677-x](https://doi.org/10.1038/s41598-020-59677-x).
+
+Schlager, B., Muckenhuber, S., Schmidt, S., Holzer, H. et al. (2020): State-of-the-Art Sensor Models for Virtual Testing of Advanced Driver Assistance Systems/Autonomous Driving Functions. In: SAE International Journal of Connected and Automated Vehicles 3 (3), pp. 233-261. DOI: [10.4271/12-03-03-0018](https://doi.org/10.4271/12-03-03-0018).
 
 Wang, D. (2020): Unsupervised semantic and instance segmentation of forest point clouds. In: ISPRS Journal of Photogrammetry and Remote Sensing 165 (2020), pp. 86-97. DOI: [10.1016/j.isprsjprs.2020.04.020](https://doi.org/10.1016/j.isprsjprs.2020.04.020). 
 
